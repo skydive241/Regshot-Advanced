@@ -27,9 +27,8 @@ The current version v2.0.1.
 ## Support this project
 If you like this tool please consider supporting it via the PayPal button:
 <!---[![Donate with PayPal](https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QT54MSJR6QU7Y)--->
-<!---
-[![Donate with PayPal](https://www.paypalobjects.com/en_US/AT/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QT54MSJR6QU7Y)
---->
+[![Donate with PayPal](https://www.paypalobjects.com/en_US/AT/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate?hosted_button_id=V66487JTMNPW8)
+
 Donations maybe give me the possibility, to maintain **Regshot advanced** in the future and maybe create new output formats, further do improvements and enhancements. But, of course, you don't have to donate to use this tool. 
 
 ## Disclaimer
