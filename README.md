@@ -16,7 +16,7 @@ BUT **Regshot advanced** got a plethora of configuration possibilities and produ
 ## Installation and usage of Regshot advanced 
 Installation and usage of **Regshot advanced** is fairly easy: just compile (or use the assets) and start the program by double clicking its exe file. **Regshot advanced** doesn't create any own registry data or file outside its directory (except for the chosen log files of course).
 
-For more details about its configuration, have a look at the wiki.
+For more details about its configuration, have a look at the [wiki](https://github.com/skydive241/Regshot-Advanced/wiki).
 
 ## Latest news
 * **February, the 22nd 2021**: Initial release (source and binary will be uploaded during the next days)
