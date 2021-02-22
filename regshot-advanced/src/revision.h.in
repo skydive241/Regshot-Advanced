@@ -1,0 +1,29 @@
+/*
+    Copyright 2011-2012 Regshot Team
+
+    This file is part of Regshot.
+
+    Regshot is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 2.1 of the License, or
+    (at your option) any later version.
+
+    Regshot is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with Regshot.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef REGSHOT_REVISION_H
+#define REGSHOT_REVISION_H
+
+
+#define REGSHOT_REVISION_NUM          $WCREV$
+#define REGSHOT_REVISION_NUM_SUFFIX   $WCMODS?M:$$WCMIXED?M:$
+#define REGSHOT_REVISION_MOD          $WCMODS?1:0$$WCMIXED?1:0$
+
+
+#endif // REGSHOT_REVISION_H
