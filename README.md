@@ -6,12 +6,15 @@ Its use is very simple: do the first shot before e.g. an installer runs, do the 
 BUT **Regshot advanced** got a plethora of configuration possibilities and produces log files in various formats:
 * Plain TXT files
 * HTML files
-* CMD files for undoing the changes
-* An easy parsable text file called "UNL"
+* CMD files (only for undoing the changes)
+* Easy parsable text files called "UNL"
 * REG files undoing or repeating the registry changes
-* NSIS installer and uninstaller files, directly usable by the appropriate compiler
-* Innosetup installer and uninstaller files, directly usable by the appropriate compiler
+* NSIS installer and uninstaller files, directly usable by the appropriate compiler (see great open source installer nsis: https://nsis.sourceforge.io/Main_Page) 
+* Innosetup installer and uninstaller files, directly usable by the appropriate compiler (see great open source installer innosetup: https://jrsoftware.org/isinfo.php) 
 
+## Disclaimer
+**Important**
+Use this project at your own risc and handle its output with care!!!! The authors and contributors will not be able to provide any help if you damage your windows installation by using this tool....
 
 ## Support this project
 If you like this tool please consider supporting it via the PayPal button:
@@ -20,7 +23,4 @@ If you like this tool please consider supporting it via the PayPal button:
 [![Donate with PayPal](https://www.paypalobjects.com/en_US/AT/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QT54MSJR6QU7Y)
 
 Donations maybe give me the possibility, to maintain **Regshot advanced** in the future and maybe create new output formats, further do improvements and enhancements. 
-## Disclaimer
 
-**Important**
-Use this project at your own risc and handle its output with care!!!! The authors and contributors will not be able to provide any help if you damage your windows installation by using this tool....
