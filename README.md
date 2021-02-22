@@ -9,5 +9,6 @@ If you like this tool please consider supporting it via the PayPal button:
 
 ## Disclaimer
 This project does not use or include any resource from PayPal. It is created completely from scratch. PayPal is a registered trademark of PayPal, Inc. The PayPal logo is a trademark of PayPal, Inc.
+
 **Important**
 Use this project at your own risc. The authors and contributors will not be able to provide any help if you damage your windows installation by using this tool....
