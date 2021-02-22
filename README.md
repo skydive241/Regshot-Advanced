@@ -13,6 +13,8 @@ BUT **Regshot advanced** got a plethora of configuration possibilities and produ
 * NSIS installer and uninstaller files, directly usable by the appropriate compiler (see great open source installer **[nsis](https://nsis.sourceforge.io/Main_Page)**) 
 * Innosetup installer and uninstaller files, directly usable by the appropriate compiler (see great open source installer **[innosetup](https://jrsoftware.org/isinfo.php)**) 
 
+![Demo Animation](.images/regshot_main.jpg?raw=true)
+
 ## Installation and usage of Regshot advanced 
 Installation and usage of **Regshot advanced** is fairly easy: just compile (or use the assets) and start the program by double clicking its exe file. **Regshot advanced** doesn't create any own registry data or file outside its directory (except for the chosen log files of course).
 
