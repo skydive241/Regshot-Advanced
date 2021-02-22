@@ -1,0 +1,70 @@
+Important steps to take before a release:
+=========================================
+
+#0
+- recommended folder structure on your disk:
+  Regshot
+   -> branches (NOT a working copy)
+       -> X.Y.Z (working copy of a beta version)
+   -> tags (NOT a working copy)
+       -> X.Y.Z (working copy of a release version)
+   -> trunk (working copy of latest developement)
+  when checking out the branches or tags folder directly then all versions would be on your disk all the time
+  by using a normal folder for "branches"/"tags" and checking out versions separately the working copies of uninteresting versions can be easily discarded
+
+#1 Preparation
+- clean up the repository: update the trunk working copy, commit tested changes, etc.
+- check "files/ReadMe.txt" if nobody was forgotten concerning contributions, bugs fixes, and so on
+- check the date, year and version in all .txt files
+  (files/History.txt, files/ReadMe.txt)
+- edit "src/version.rc.h" for the correct version number and copyright years
+- edit "src/res/Regshot.exe.manifest" for the correct version number
+- commit changes
+
+#2 Create a branch for beta phase
+- copy the trunk to a new branch
+  svn copy https://svn.code.sf.net/p/regshot/code/trunk https://svn.code.sf.net/p/regshot/code/branches/X.Y.Z -m "Branch X.Y.Z"
+- the branch will be used to maintain bugfixes for this version
+
+#3 Build beta from branch
+- checkout branch in a new separate folder (this ensures nothing was forgotten in trunk to be committed)
+  svn checkout https://svn.code.sf.net/p/regshot/code/branches/X.Y.Z
+- edit all .txt files to reflect beta status
+  (files/History.txt, files/ReadMe.txt)
+- edit "src/version.rc.h" to set the correct version type "beta"
+- commit changes
+- build all builds with VS2008
+
+#3 Tests
+- test (shots & save, compare, clean, load, compare, clean, quit)
+- test
+- test
+
+#4 Create a tag for release
+- Tag the new version
+  svn copy https://svn.code.sf.net/p/regshot/code/branches/X.Y.Z https://svn.code.sf.net/p/regshot/code/tags/X.Y.Z -m "Tag X.Y.Z"
+
+#5 Build release from tag
+- checkout tag in a new separate folder (this ensures nothing was forgotten in branch to be committed)
+  svn checkout https://svn.code.sf.net/p/regshot/code/tags/X.Y.Z
+- edit all .txt files to reflect release status
+  (files/History.txt, files/ReadMe.txt)
+- edit "src/version.rc.h" to set the correct version type "release"
+- commit changes
+- build all builds with VS2008
+- final test
+
+#6 Create zip packages
+- use "make_packages.bat" to create release packages
+
+
+If anything of the above fails, forget about a release and correct the errors first!
+If it worked out ok, however, do a release!
+
+
+#7 Release
+- upload the zips to sourceforge.net
+- shut down your computer! Go and have a drink. You deserve one now!
+- 12 hours later, check back the tickets for the first terrible errors we forgot to fix!
+
+:)
