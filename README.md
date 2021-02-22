@@ -20,7 +20,7 @@ BUT **Regshot advanced** got a plethora of configuration possibilities and produ
 The current version v2.0.1
 
 ## Disclaimer
-**Important**
+**Important:**
 Use this project at your own risc and handle its output with care!!!! The authors and contributors will not be able to provide any help if you damage your windows installation by using this tool....
 
 ## Support this project
