@@ -17,7 +17,7 @@ BUT **Regshot advanced** got a plethora of configuration possibilities and produ
 * **February, the 22nd 2021**: Initial release
 
 ## Current versions
-The current version v2.0.1
+The current version v2.0.1 (source and binary will be uploaded during the next days).
 
 ## Disclaimer
 **Important:**
@@ -34,4 +34,4 @@ Donations maybe give me the possibility, to maintain **Regshot advanced** in the
 ## Installation and usage of Regshot advanced 
 Installation and usage of **Regshot advanced** is fairly easy: just compile (or use the assets) and start the program by double clicking its exe file. **Regshot advanced** doesn't create any own registry data or file outside its directory (except for the chosen log files of course).
 
-For more details about its configuration, have a look at he wiki.
+For more details about its configuration, have a look at the wiki.
