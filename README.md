@@ -13,6 +13,12 @@ BUT **Regshot advanced** got a plethora of configuration possibilities and produ
 * NSIS installer and uninstaller files, directly usable by the appropriate compiler (see great open source installer **[nsis](https://nsis.sourceforge.io/Main_Page)**) 
 * Innosetup installer and uninstaller files, directly usable by the appropriate compiler (see great open source installer **[innosetup](https://jrsoftware.org/isinfo.php)**) 
 
+## Latest news
+* **February, the 22nd 2021**: Initial release
+
+## Current versions
+The current version v2.0.1
+
 ## Disclaimer
 **Important**
 Use this project at your own risc and handle its output with care!!!! The authors and contributors will not be able to provide any help if you damage your windows installation by using this tool....
