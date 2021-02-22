@@ -10,7 +10,7 @@ BUT **Regshot advanced** got a plethora of configuration possibilities and produ
 * CMD files (only for undoing the changes)
 * Easy parsable text files called "UNL"
 * REG files undoing or repeating the registry changes
-* NSIS installer and uninstaller files, directly usable by the appropriate compiler (see great open source installer [nsis](https://nsis.sourceforge.io/Main_Page)) 
+* NSIS installer and uninstaller files, directly usable by the appropriate compiler (see great open source installer **[nsis](https://nsis.sourceforge.io/Main_Page)**) 
 * Innosetup installer and uninstaller files, directly usable by the appropriate compiler (see great open source installer **[innosetup](https://jrsoftware.org/isinfo.php)**) 
 
 ## Disclaimer
