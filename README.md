@@ -1,5 +1,5 @@
 # Regshot advanced
-##Description
+## Description
 **Regshot advanced** is a tool to monitor and log filesystem and registry changes for example done by an installer. Its main purpose is to detect things modified or added by tools running on windows systems.
 
 Its use is very simple: do the first shot before e.g. an installer runs, do the second shot directly after installation, and last, compare the shots.
@@ -25,4 +25,7 @@ If you like this tool please consider supporting it via the PayPal button:
 --->
 Donations maybe give me the possibility, to maintain **Regshot advanced** in the future and maybe create new output formats, further do improvements and enhancements. But, of course, you don't have to donate to use this tool. 
 
-# Usage of Regshot advanced 
+# Installation and usage of Regshot advanced 
+Installation and usage of **Regshot advanced** is fairly easy: just compile (or use the assets) and start the program by double clicking its exe file. **Regshot advanced** doesn't create any own registry data or file outside its directory (except for the chosen log files of course).
+
+For more details about its configuration, have a look at he wiki.
