@@ -7,6 +7,7 @@ If you like this tool please consider supporting it via the PayPal button:
 
 [![Donate with PayPal](https://www.paypalobjects.com/en_US/AT/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QT54MSJR6QU7Y)
 
-
+## Disclaimer
+This project does not use or include any resource from PayPal. It is created completely from scratch. PayPal is a registered trademark of PayPal, Inc. The PayPal logo is a trademark of PayPal, Inc.
 **Important**
 Use this project at your own risc. The authors and contributors will not be able to provide any help if you damage your windows installation by using this tool....
