@@ -4,3 +4,6 @@ Regshot advanced is a tool to monitor and log filesystem and registry changes fo
 If you like this tool please consider supporting it via the PayPal button:
 
 [![Donate with PayPal](https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QT54MSJR6QU7Y)
+
+**Important**
+Use this project at your own risc. The authors and contributors will not be able to provide any help if you damage your windows installation by using this tool....
