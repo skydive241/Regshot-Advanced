@@ -1,0 +1,622 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include <winresrc.h>
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Deutsch (Deutschland) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MENU1 MENUEX
+BEGIN
+    POPUP "File",                           65535,MFT_STRING,MFS_ENABLED
+    BEGIN
+        MENUITEM "Open",                        ID_FILE_OPEN,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "Clear all",                   ID_FILE_CLEARALL,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "Options",                     ID_FILE_OPTIONS,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "Quit",                        ID_FILE_QUIT,MFT_STRING,MFS_ENABLED
+    END
+    POPUP "1. Shot",                        65535,MFT_STRING,MFS_ENABLED
+    BEGIN
+        MENUITEM "Shot",                        ID_1_SHOT,MFT_STRING,MFS_ENABLED
+        MENUITEM "Shot and Save...",            ID_1_SHOTANDSAVE,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "Load...",                     ID_1_LOAD,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "Save...",                     ID_1_SAVE,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "Clear",                       ID_1_CLEAR,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "Info",                        ID_1_INFO,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "Swap",                        ID_1_SWAP,MFT_STRING,MFS_ENABLED
+    END
+    POPUP "2. Shot",                        65535,MFT_STRING,MFS_ENABLED
+    BEGIN
+        MENUITEM "Shot, Compare and Output",    ID_2_SHOTCOMPAREOUTPUT,MFT_STRING,MFS_ENABLED
+        MENUITEM "Shot",                        ID_2_SHOT,MFT_STRING,MFS_ENABLED
+        MENUITEM "Shot and Save...",            ID_2_SHOTANDSAVE,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "Load...",                     ID_2_LOAD,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "Save...",                     ID_2_SAVE,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "Clear",                       ID_2_CLEAR,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "Info",                        ID_2_INFO,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "Swap",                        ID_2_SWAP,MFT_STRING,MFS_ENABLED
+    END
+    POPUP "Compare",                        65535,MFT_STRING,MFS_ENABLED
+    BEGIN
+        MENUITEM "Compare",                     ID_COMPARE_COMPARE,MFT_STRING,MFS_ENABLED
+        MENUITEM "Compare and Output",          ID_COMPARE_COMPAREANDOUTPUT,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "Output",                      ID_COMPARE_OUTPUT,MFT_STRING,MFS_ENABLED
+        MENUITEM "Output (only filesystem)",    ID_COMPARE_OUTPUT_FS,MFT_STRING,MFS_ENABLED
+        MENUITEM "Output (only regsitry)",      ID_COMPARE_OUTPUT_REG,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "Clear",                       ID_COMPARE_CLEAR,MFT_STRING,MFS_ENABLED
+        MENUITEM MFT_SEPARATOR
+        MENUITEM "Info",                        ID_COMPARE_INFO,MFT_STRING,MFS_ENABLED
+    END
+    MENUITEM "Settings",                    ID_SETTINGS,MFT_STRING,MFS_ENABLED
+    POPUP "Help",                           65535,MFT_STRING | MFT_RIGHTJUSTIFY,MFS_ENABLED
+    BEGIN
+        MENUITEM "About",                       ID_HELP_ABOUT,MFT_STRING,MFS_ENABLED
+    END
+END
+
+IDR_MENU_CONTEXT_SKIPLIST MENU
+BEGIN
+    POPUP "Context Menu"
+    BEGIN
+        MENUITEM "Check all",                   ID_CONTEXTMENU_CHECKALL
+        MENUITEM "Uncheck all",                 ID_CONTEXTMENU_UNCHECKALL
+        MENUITEM "Invert checks",               ID_CONTEXTMENU_INVERTCHECKS
+        MENUITEM SEPARATOR
+        MENUITEM "Delete Item",                 ID_CONTEXTMENU_DELETE
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON_GREEN          ICON                    "res\\circle_green.ico"
+
+IDI_ICON_RED            ICON                    "res\\circle_red.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG_TV_REGS DIALOGEX 0, 0, 419, 418
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Registry comparison result"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_TREE_SKIPS,"SysTreeView32",TVS_HASBUTTONS | TVS_LINESATROOT | TVS_CHECKBOXES | WS_BORDER | WS_HSCROLL | WS_TABSTOP,7,19,405,392
+    CONTROL         "Suppress output files",IDC_CHECK_SUPPRESS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,7,159,10
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_DIALOG_TV_REGS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 412
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 411
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_DIALOG_TV_REGS AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_TREE                BITMAP                  "res\\folder.bmp"
+
+IDB_FILE                BITMAP                  "res\\value.bmp"
+
+IDB_FOLDER_CLOSED       BITMAP                  "res\\folderclosed.bmp"
+
+IDB_FOLDER_OPEN         BITMAP                  "res\\folderopen.bmp"
+
+#endif    // Deutsch (Deutschland) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Englisch (USA) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_MAINICON            ICON                    "res\\regshot.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_DIALOG1 DIALOGEX 0, 0, 413, 221
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_MINIMIZEBOX | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "^^^^^^^^^^^^^^^^^^"
+MENU IDR_MENU1
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDITTITLE,11,14,141,14,ES_AUTOHSCROLL
+    CONTROL         "HKEY_LOCAL_MACHINE",IDC_CHECK_HKLM,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,50,88,10
+    CONTROL         "HKEY_USERS",IDC_CHECK_HKU,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,64,88,10
+    CONTROL         "HKEY_CURRENT_USER",IDC_CHECK_HKCU,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,15,78,88,10
+    CONTROL         "&Scan dir1[;dir2;dir3;...;dir nn]:",IDC_CHECKDIR,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,138,50,149,10
+    EDITTEXT        IDC_EDITDIR,137,65,126,14,ES_AUTOHSCROLL | WS_DISABLED
+    CONTROL         ".CMD file",IDC_CHECK_BAT,"Button",BS_AUTOCHECKBOX,13,110,58,10
+    CONTROL         ".UNL file",IDC_CHECK_UNL,"Button",BS_AUTOCHECKBOX,72,110,42,10
+    EDITTEXT        IDC_EDITPATH,11,143,260,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDITCOMMENT,11,176,281,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "&1st shot",IDC_1STSHOT,357,7,49,13
+    PUSHBUTTON      "&2nd shot",IDC_2NDSHOT,357,24,49,13,WS_DISABLED
+    PUSHBUTTON      "C&ompare",IDC_COMPARE,357,82,49,13,WS_DISABLED
+    PUSHBUTTON      "&Clear all",IDC_CLEARALL,357,99,49,13,WS_DISABLED
+    PUSHBUTTON      "&Quit",IDC_QUIT,357,116,49,13
+    CONTROL         "&HTML document",IDC_CHECK_HTML,"Button",BS_AUTOCHECKBOX,121,110,67,10
+    GROUPBOX        "Title/Subdirectory",IDC_STATIC_TITLE,0,3,163,32
+    PUSHBUTTON      "Scans",IDC_BROWSE1,270,66,23,13
+    PUSHBUTTON      "...",IDC_BROWSE2,275,143,18,13
+    LTEXT           "",IDC_TEXTCOUNT1,8,208,75,8,NOT WS_VISIBLE
+    LTEXT           "",IDC_TEXTCOUNT2,94,208,68,8,NOT WS_VISIBLE
+    LTEXT           "",IDC_TEXTCOUNT3,175,208,70,8,NOT WS_VISIBLE
+    GROUPBOX        "Compare logs save as:",IDC_STATICSAVEFORMAT,0,96,298,31
+    GROUPBOX        "Directories",IDC_STATIC_DIRS,132,39,165,53
+    GROUPBOX        "Output path:",IDC_STATICOUTPUTPATH,0,131,298,31
+    GROUPBOX        "Add comment into the log:",IDC_STATICADDCOMMENT,0,165,298,31
+    CONTROL         "Progress1",IDC_PROGBAR,"msctls_progress32",NOT WS_VISIBLE | WS_BORDER,7,210,375,9
+    GROUPBOX        "Registry-Rootkeys",IDC_STATIC_REGS,7,39,117,53
+    CONTROL         "",IDC_TEXTCOUNT4,"Static",SS_LEFTNOWORDWRAP | NOT WS_VISIBLE | WS_GROUP,8,197,366,8
+    CONTROL         "(*) Delete shot files",IDC_CHECK_DELSHOTS,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,311,131,95,10,WS_EX_RIGHT
+    CONTROL         "Default actions",IDC_CHECK_DEFAULTS,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,311,142,95,10,WS_EX_RIGHT
+    CONTROL         "Automatic compare",IDC_CHECK_AUTOCOMPARE,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,311,153,95,10,WS_EX_RIGHT
+    CONTROL         "Log only added parts",IDC_CHECK_ONLYADDED,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,311,39,95,10,WS_EX_RIGHT
+    PUSHBUTTON      "Save",IDC_SAVE_INI,330,116,25,13,BS_CENTER
+    PUSHBUTTON      "Load",IDC_LOAD_INI,302,116,25,13,BS_CENTER
+    ICON            "",IDC_STATIC_BMP,389,197,20,20,SS_CENTERIMAGE
+    CONTROL         "Don't log registry data",IDC_CHECK_NOVALS,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,311,164,95,10,WS_EX_RIGHT
+    RTEXT           "(*) Not saved to ini",IDC_TEXT_REMARK,293,210,89,8,0,WS_EX_RIGHT
+    PUSHBUTTON      "Dirs",IDC_PROP_DIRS,330,82,25,13,BS_CENTER
+    PUSHBUTTON      "Regs",IDC_PROP_REGS,302,82,25,13,BS_CENTER
+    CONTROL         "Log with old ""unl order""",IDC_CHECK_UNLORDER,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,311,175,95,10,WS_EX_RIGHT
+    COMBOBOX        IDC_COMBO_MAINCP,219,107,73,30,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Check result before output",IDC_CHECK_RESULT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,306,61,100,10,WS_EX_RIGHT
+    EDITTEXT        IDC_EDIT_OUTPUTLINES,180,14,40,14,ES_AUTOHSCROLL | ES_NUMBER
+    GROUPBOX        "Maximum output lines per value",IDC_STATIC_OUTPUTLINES,172,3,125,32
+    CONTROL         "No filters for next comparison",IDC_CHECK_NOFILTERS,
+                    "Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,301,50,105,10,WS_EX_RIGHT
+    PUSHBUTTON      "Set",IDC_OUTPUT_RESET,189,107,23,13,BS_CENTER
+    CONTROL         "Reset adhoc filters before",IDC_CHECK_RESETADHOC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,306,72,100,10,WS_EX_RIGHT
+    PUSHBUTTON      "Clear2",IDC_PROP_CLEAR2,330,99,25,13,BS_CENTER | WS_DISABLED
+    PUSHBUTTON      "Clear1",IDC_PROP_CLEAR1,302,99,25,13,BS_CENTER | WS_DISABLED
+    CONTROL         "Open result in standard editor",IDC_CHECK_OPENEDITOR,
+                    "Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | WS_TABSTOP,299,185,107,10,WS_EX_RIGHT
+END
+
+IDD_DIALOG_OPT_SKIPREG DIALOGEX 0, 0, 391, 228
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE | WS_CAPTION
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_ADDSKIPSTRING,7,193,341,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Add",IDC_BUTTON_ADDSKIP,352,193,32,14
+    CONTROL         "",IDC_LIST_SKIP,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,7,377,180
+    PUSHBUTTON      "Save",IDC_BUTTON_SAVESKIP2INI,352,210,32,14
+    LTEXT           "Use short form (e.g. HKU\\...). No plausibility checks here. Later added skips apply to comparison output.",IDC_STATIC_SKIP_COMMENT,7,208,341,8
+    LTEXT           "",IDC_STATIC_SKIP_COMMENT2,29,217,319,8
+    LTEXT           "SID:",IDC_STATIC_SKIP_COMMENT3,7,217,15,8
+END
+
+IDD_DIALOG_OPT_SKIPDIR DIALOGEX 0, 0, 391, 229
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE | WS_CAPTION
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_ADDSKIPSTRING,7,195,317,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Add",IDC_BUTTON_ADDSKIP,352,195,32,14
+    CONTROL         "",IDC_LIST_SKIP,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,7,377,183
+    PUSHBUTTON      "Save",IDC_BUTTON_SAVESKIP2INI,352,212,32,14
+    LTEXT           "No plausibility checks here. Later added skips apply to comparison output.",IDC_STATIC_SKIP_COMMENT,7,210,341,8
+    PUSHBUTTON      "...",IDC_BROWSE_FILESKIP,328,196,18,13
+END
+
+IDD_DIALOG_OPT_SKIPFILE DIALOGEX 0, 0, 391, 229
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_ADDSKIPSTRING,7,194,317,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Add",IDC_BUTTON_ADDSKIP,352,194,32,14
+    CONTROL         "",IDC_LIST_SKIP,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,7,377,182
+    PUSHBUTTON      "Save",IDC_BUTTON_SAVESKIP2INI,352,211,32,14
+    LTEXT           "No plausibility checks here. Later added skips apply to comparison output.",IDC_STATIC_SKIP_COMMENT,7,209,341,8
+    PUSHBUTTON      "...",IDC_BROWSE_FILESKIP,328,195,18,13
+END
+
+IDD_DIALOG_OPT_SCANDIR DIALOGEX 0, 0, 391, 230
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE | WS_CAPTION
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_ADDSKIPSTRING,7,196,317,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Add",IDC_BUTTON_ADDSKIP,352,196,32,14
+    CONTROL         "",IDC_LIST_SKIP,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,7,377,185
+    PUSHBUTTON      "Save",IDC_BUTTON_SAVESKIP2INI,352,213,32,14
+    LTEXT           "No plausibility checks here. Later added skips apply to comparison output.",IDC_STATIC_SKIP_COMMENT,7,211,341,8
+    PUSHBUTTON      "...",IDC_BROWSE_FILESKIP,328,197,18,13
+END
+
+IDD_DIALOG_OPT_COMMON DIALOGEX 0, 0, 391, 230
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE | WS_CAPTION
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Ask about saving shots on exit",IDC_CHECK_OPT_STOREONQUIT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,17,171,10
+    CONTROL         "Use long registry rootkeys",IDC_CHECK_OPT_LONGREGKEYS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,204,17,171,10
+    CONTROL         "Use blank lines to separate objects",IDC_CHECK_OPT_SEPARATEOBJECTS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,204,30,171,10
+    CONTROL         "Don't display info after shot",IDC_CHECK_OPT_DONTDISPLAYINFO,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,69,171,10
+    COMBOBOX        IDC_COMBOLANGUAGE,305,195,74,55,CBS_DROPDOWNLIST | CBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Common properties",IDC_STATIC_COMMON,7,7,377,216
+    CONTROL         "Don't display info after comparison",IDC_CHECK_OPT_DONTDISPLAYRESULT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,82,171,10
+    CONTROL         "Always save settings on exit",IDC_CHECK_OPT_SAVEINI,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,204,82,171,10
+    LTEXT           "(Language selection ALWAYS saved to ini)",IDC_STATIC_LANGUAGESELECTIONTOINI,206,211,173,8,0,WS_EX_RIGHT
+    CONTROL         "Ask only if shots were not yet compared",IDC_CHECK_OPT_STOREONLYUNCOMP,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,30,171,10
+    CONTROL         "Don't use filters when loading shots",IDC_CHECK_OPT_NOFILTERS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,43,171,10
+    EDITTEXT        IDC_COMMON_EDIT_EDITOR,15,104,153,14,ES_AUTOHSCROLL
+    LTEXT           "Editor to open log files with:",IDC_STATIC_EDITOR,16,94,151,8
+    PUSHBUTTON      "...",IDC_COMMON_BROWSEEDITOR,172,104,18,13,BS_CENTER
+    CONTROL         "File operations: delete READ-ONLY files",IDC_CHECK_OPT_READONLY,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,204,43,171,10
+    CONTROL         "File operations: delete folders not empty",IDC_CHECK_OPT_NONEMPTY,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,204,56,171,10
+    CONTROL         "Log environment strings",IDC_CHECK_OPT_ENVIRONMENT,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,204,69,171,10
+    CONTROL         "Show automatically added SID filters",IDC_CHECK_OPT_SIDFILTERS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,56,171,10
+END
+
+IDD_DIALOG_OPT_COMMON_2 DIALOGEX 0, 0, 391, 230
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE | WS_CAPTION
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "Plain &TXT",IDC_CHECK_TXT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,214,183,10
+    GROUPBOX        "REG properties",IDC_STATIC_REG,7,126,187,83
+    CONTROL         "Make restoration *-UNINSTALL.REG file",IDC_CHECK_REGDEL,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,140,163,10
+    CONTROL         "Make installation *-INSTALL.REG file",IDC_CHECK_REGINS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,153,163,10
+    GROUPBOX        "Filetype",IDC_STATIC_REGFORMAT,16,166,170,27
+    CONTROL         "REGEDIT5 (UTF-16 LE)",IDC_REGEDIT5,"Button",BS_AUTORADIOBUTTON,23,177,84,10
+    CONTROL         "REGEDIT4 (ANSI)",IDC_REGEDIT4,"Button",BS_AUTORADIOBUTTON | WS_DISABLED,111,177,70,10
+    GROUPBOX        "ISS properties",IDC_STATIC_INF,204,7,180,99
+    CONTROL         "Make restoration *-UNINSTALL.ISS file",IDC_CHECK_ISSDEL,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,213,20,163,10
+    CONTROL         "Make installation *-INSTALL.ISS file",IDC_CHECK_ISSINS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,213,33,163,10
+    CONTROL         "Use different output folder for compilation:",IDC_CHECK_ISSOUTPUTFOLDER,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,213,45,163,10
+    EDITTEXT        IDC_COMMON_EDIT_ISSOUTPUT,212,55,146,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_COMMON_BROWSEISSOUTPUT,362,55,18,13,BS_CENTER
+    CONTROL         "Open *.ISS files with specific tool:",IDC_CHECK_ISSEDITOR,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,213,73,163,10
+    EDITTEXT        IDC_COMMON_EDIT_ISSEDITOR,213,84,146,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_COMMON_BROWSEISSEDITOR,363,84,18,13,BS_CENTER
+    GROUPBOX        "NSI properties",IDC_STATIC_NSI,7,7,187,99
+    CONTROL         "Make restoration *-UNINSTALL.NSI file",IDC_CHECK_NSIDEL,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,20,163,10
+    CONTROL         "Make installation *-INSTALL.NSI file",IDC_CHECK_NSIINS,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,33,163,10
+    CONTROL         "Use different output folder for compilation:",IDC_CHECK_NSIOUTPUTFOLDER,
+                    "Button",BS_AUTOCHECKBOX | WS_DISABLED | WS_TABSTOP,16,45,163,10
+    EDITTEXT        IDC_COMMON_EDIT_NSIOUTPUT,15,55,146,14,ES_AUTOHSCROLL | WS_DISABLED
+    PUSHBUTTON      "...",IDC_COMMON_BROWSENSIOUTPUT,165,55,18,13,BS_CENTER
+    CONTROL         "Additionally open *.NSI files with compiler:",IDC_CHECK_NSIEDITOR,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,16,73,163,10
+    EDITTEXT        IDC_COMMON_EDIT_NSIEDITOR,16,84,146,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_COMMON_BROWSENSIEDITOR,166,84,18,13,BS_CENTER
+END
+
+IDD_DIALOG_OPT_SCANREG DIALOGEX 0, 0, 391, 228
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_VISIBLE | WS_CAPTION
+CAPTION "Dialog"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    EDITTEXT        IDC_EDIT_ADDSKIPSTRING,7,193,341,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Add",IDC_BUTTON_ADDSKIP,352,193,32,14
+    CONTROL         "",IDC_LIST_SKIP,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_NOLABELWRAP | LVS_ALIGNLEFT | LVS_NOSORTHEADER | WS_BORDER | WS_TABSTOP,7,7,377,180
+    PUSHBUTTON      "Save",IDC_BUTTON_SAVESKIP2INI,352,210,32,14
+    LTEXT           "Use short form (e.g. HKU\\...). No plausibility checks here. Entrys ONLY apply to comparison output.",IDC_STATIC_SKIP_COMMENT,7,208,341,8
+    LTEXT           "At least ONE entry has to be active to use whitelist. ALL ENTRYS SAVED TO INI AS ""INACTIVE""!!!!",IDC_STATIC_SKIP_COMMENT3,7,217,314,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_DIALOG1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 406
+        VERTGUIDE, 11
+        VERTGUIDE, 131
+        VERTGUIDE, 137
+        VERTGUIDE, 189
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 218
+    END
+
+    IDD_DIALOG_OPT_SKIPREG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 384
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 221
+    END
+
+    IDD_DIALOG_OPT_SKIPDIR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 384
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 222
+    END
+
+    IDD_DIALOG_OPT_SKIPFILE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 384
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 222
+    END
+
+    IDD_DIALOG_OPT_SCANDIR, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 384
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 223
+    END
+
+    IDD_DIALOG_OPT_COMMON, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 384
+        VERTGUIDE, 195
+        VERTGUIDE, 377
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 223
+    END
+
+    IDD_DIALOG_OPT_COMMON_2, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 384
+        VERTGUIDE, 194
+        VERTGUIDE, 377
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 223
+    END
+
+    IDD_DIALOG_OPT_SCANREG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 384
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 221
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_DIALOG1 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG_OPT_SKIPREG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG_OPT_SKIPDIR AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG_OPT_SKIPFILE AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG_OPT_SCANDIR AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG_OPT_COMMON AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG_OPT_COMMON_2 AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DIALOG_OPT_SCANREG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include <winresrc.h>\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// RT_MANIFEST
+//
+
+1                       RT_MANIFEST             "res\\Regshot.exe.manifest"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 0,0,0,0
+ PRODUCTVERSION 0,0,0,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "https://github.com/skydive241/Regshot-Advanced"
+            VALUE "CompanyName", "Patrick (skydive241@gmx.de)"
+            VALUE "FileDescription", "Regshot 64-Bit Unicode"
+            VALUE "FileVersion", "2.0.5"
+            VALUE "InternalName", "Regshot Advanced"
+            VALUE "LegalCopyright", "Copyright (C) 1999-2021, Patrick (skydive241@gmx.de), Regshot Team and all contributors"
+            VALUE "ProductName", "Regshot Advanced"
+            VALUE "ProductVersion", "2.0.5"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // Englisch (USA) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

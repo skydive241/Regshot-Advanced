@@ -1,0 +1,3 @@
+When debugging with Visual Studio make sure that Working Directory is set to
+$(TargetDir) inside the project properties for all configurations.
+Otherwise the program will not find its ini files.

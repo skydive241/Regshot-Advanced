@@ -1,0 +1,5 @@
+#!/bin/sh
+/usr/bin/svnnotify --repos-path "$1" --revision "$2" --to "regshot-commit@lists.sourceforge.net" --subject-prefix "SF.net SVN: regshot-code:" --subject-cx --no-first-line --viewcvs-url "http://sourceforge.net/p/regshot/code/%s" --user-domain "users.sourceforge.net" -l /usr/bin/svnlook
+# --footer "This was sent by the SourceForge.net collaborative development platform, the world's largest Open Source development site."
+# --with-diff --max-diff-length 100000
+exit 0
