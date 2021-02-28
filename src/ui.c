@@ -215,7 +215,7 @@ VOID UI_DisableSelectionButtons(VOID)
     EnableWindow(GetDlgItem(hMainWnd, IDC_CHECK_HKCU), FALSE);
     EnableWindow(GetDlgItem(hMainWnd, IDC_CHECKDIR), FALSE);
     EnableWindow(GetDlgItem(hMainWnd, IDC_EDITDIR), FALSE);
-    EnableWindow(GetDlgItem(hMainWnd, IDC_BROWSE1), FALSE);
+    EnableWindow(GetDlgItem(hMainWnd, IDC_PROP_SCANS), FALSE);
     EnableWindow(GetDlgItem(hMainWnd, IDC_LOAD_INI), FALSE);
 
     UpdateWindow(hMainWnd);
@@ -241,7 +241,7 @@ VOID UI_EnableMainButtons(VOID)
     EnableWindow(GetDlgItem(hMainWnd, IDC_CHECK_HKCU), TRUE);
     EnableWindow(GetDlgItem(hMainWnd, IDC_CHECKDIR), TRUE);
 //    EnableWindow(GetDlgItem(hMainWnd, IDC_EDITDIR), TRUE);
-    EnableWindow(GetDlgItem(hMainWnd, IDC_BROWSE1), TRUE);
+    EnableWindow(GetDlgItem(hMainWnd, IDC_PROP_SCANS), TRUE);
     EnableWindow(GetDlgItem(hMainWnd, IDC_1STSHOT), TRUE);
     EnableWindow(GetDlgItem(hMainWnd, IDC_LOAD_INI), TRUE);
 
@@ -289,6 +289,8 @@ VOID UI_EnableMainButtons(VOID)
     if (CompareResult.fFilled) {
         EnableMenuItem(hMainMenu, ID_COMPARE_COMPARE, MF_BYCOMMAND | MF_GRAYED);
         EnableMenuItem(hMainMenu, ID_COMPARE_COMPAREANDOUTPUT, MF_BYCOMMAND | MF_GRAYED);
+        EnableMenuItem(hMainMenu, ID_COMPARE_COMPAREANDOUTPUT_FS, MF_BYCOMMAND | MF_GRAYED);
+        EnableMenuItem(hMainMenu, ID_COMPARE_COMPAREANDOUTPUT_REG, MF_BYCOMMAND | MF_GRAYED);
         EnableMenuItem(hMainMenu, ID_COMPARE_OUTPUT, MF_BYCOMMAND | MF_ENABLED);
         EnableMenuItem(hMainMenu, ID_COMPARE_OUTPUT_FS, MF_BYCOMMAND | MF_ENABLED);
         EnableMenuItem(hMainMenu, ID_COMPARE_OUTPUT_REG, MF_BYCOMMAND | MF_ENABLED);
@@ -298,6 +300,8 @@ VOID UI_EnableMainButtons(VOID)
     else {
         EnableMenuItem(hMainMenu, ID_COMPARE_COMPARE, MF_BYCOMMAND | MF_ENABLED);
         EnableMenuItem(hMainMenu, ID_COMPARE_COMPAREANDOUTPUT, MF_BYCOMMAND | MF_ENABLED);
+        EnableMenuItem(hMainMenu, ID_COMPARE_COMPAREANDOUTPUT_FS, MF_BYCOMMAND | MF_ENABLED);
+        EnableMenuItem(hMainMenu, ID_COMPARE_COMPAREANDOUTPUT_REG, MF_BYCOMMAND | MF_ENABLED);
         EnableMenuItem(hMainMenu, ID_COMPARE_OUTPUT, MF_BYCOMMAND | MF_GRAYED);
         EnableMenuItem(hMainMenu, ID_COMPARE_OUTPUT_FS, MF_BYCOMMAND | MF_GRAYED);
         EnableMenuItem(hMainMenu, ID_COMPARE_OUTPUT_REG, MF_BYCOMMAND | MF_GRAYED);
@@ -317,7 +321,7 @@ VOID UI_EnableMainButtons(VOID)
             EnableWindow(GetDlgItem(hMainWnd, IDC_CHECK_HKCU), FALSE);
             EnableWindow(GetDlgItem(hMainWnd, IDC_CHECKDIR), FALSE);
             EnableWindow(GetDlgItem(hMainWnd, IDC_EDITDIR), FALSE);
-            EnableWindow(GetDlgItem(hMainWnd, IDC_BROWSE1), FALSE);
+            EnableWindow(GetDlgItem(hMainWnd, IDC_PROP_SCANS), FALSE);
             EnableWindow(GetDlgItem(hMainWnd, IDC_LOAD_INI), FALSE);
         }
     }
@@ -403,6 +407,8 @@ VOID UI_CreateComparePopupMenu(VOID)
 
     AppendMenu(hButtonsMenu, MF_STRING, IDM_COMPARE, asLangTexts[iszTextButtonCompare].lpszText);
     AppendMenu(hButtonsMenu, MF_STRING, IDM_COMPAREOUTPUT, asLangTexts[iszTextMenuCompareOutput].lpszText);
+    AppendMenu(hButtonsMenu, MF_STRING, IDM_COMPAREOUTPUT_FS, asLangTexts[iszTextMenuCompareCompareOutputFS].lpszText);
+    AppendMenu(hButtonsMenu, MF_STRING, IDM_COMPAREOUTPUT_REG, asLangTexts[iszTextMenuCompareCompareOutputReg].lpszText);
     AppendMenu(hButtonsMenu, MF_SEPARATOR, IDM_BREAK, NULL);
     AppendMenu(hButtonsMenu, MF_STRING, IDM_OUTPUT, asLangTexts[iszTextMenuOutput].lpszText);
     AppendMenu(hButtonsMenu, MF_STRING, IDM_OUTPUT_FS, asLangTexts[iszTextMenuOutputFS].lpszText);
@@ -416,6 +422,8 @@ VOID UI_CreateComparePopupMenu(VOID)
         nIDDefault = IDM_INFO;
         EnableMenuItem(hButtonsMenu, IDM_COMPARE, MF_BYCOMMAND | MF_GRAYED);
         EnableMenuItem(hButtonsMenu, IDM_COMPAREOUTPUT, MF_BYCOMMAND | MF_GRAYED);
+        EnableMenuItem(hButtonsMenu, IDM_COMPAREOUTPUT_FS, MF_BYCOMMAND | MF_GRAYED);
+        EnableMenuItem(hButtonsMenu, IDM_COMPAREOUTPUT_REG, MF_BYCOMMAND | MF_GRAYED);
     } else {
         nIDDefault = IDM_COMPARE;
         EnableMenuItem(hButtonsMenu, IDM_OUTPUT, MF_BYCOMMAND | MF_GRAYED);

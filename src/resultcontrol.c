@@ -246,10 +246,14 @@ BOOL BuildSkipString(HWND hwndTV, HTREEITEM hItem, int iPropertyPage)
     DWORD iSkipCounter = 0;
     DWORD nSkipListSize = 0;
 
-    if (iPropertyPage == PROP_TVREGS)
+    if (iPropertyPage == PROP_TVREGS) {
         pSkipList = pRegSkipList;
-    else
+        bRegSkipAdded = TRUE;
+    }
+    else {
         pSkipList = pFileSkipList;
+        bFileSkipAdded = TRUE;
+    }
 
     for (iSkipCounter = 0; (NULL != pSkipList[iSkipCounter].lpSkipString); iSkipCounter++);
     pSkipList[iSkipCounter].lpSkipString = MYALLOC0(EXTDIRLEN * sizeof(TCHAR));
@@ -298,7 +302,7 @@ BOOL BuildSkipString(HWND hwndTV, HTREEITEM hItem, int iPropertyPage)
     _tcscpy(pSkipList[iSkipCounter].lpSkipString, TEXT(""));
     for (int i = iStringCounter; i >= 0; i--) {
         if (pSkipList != NULL) {
-            if ((pSkipList[iSkipCounter].lpSkipString != NULL) && (lpszNodeTextTV[i] != NULL)) {
+            if ((pSkipList[iSkipCounter].lpSkipString != NULL) && (lpszNodeTextTV != NULL) && (lpszNodeTextTV[i] != NULL)) {
                 _tcscat(pSkipList[iSkipCounter].lpSkipString, lpszNodeTextTV[i]);
             }
             MYFREE(lpszNodeTextTV[i]);
@@ -345,6 +349,7 @@ BOOL InsertRootItems(HWND hwndTV, int iPropertyPage)
     TV_INSERTSTRUCT tvinsert;
     HTREEITEM hRootItem;
     TCHAR szRootKeys[3][6] = { TEXT("HKLM\0"), TEXT("HKU\0"), TEXT("HKCU\0") };
+//    TCHAR szRootKeysLong[3][20] = { TEXT("HKEY_LOCAL_MACHINE\0"), TEXT("HKEY_USERS\0"), TEXT("HKEY_CURRENT_USER\0") };
 
     if (iPropertyPage == 0) {
         for (int i = 0; i < _countof(szRootKeys); i++) {
@@ -352,6 +357,7 @@ BOOL InsertRootItems(HWND hwndTV, int iPropertyPage)
             tvinsert.hParent = NULL;
             tvinsert.hInsertAfter = TVI_ROOT;
             tvinsert.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
+//            tvinsert.item.pszText = (fUseLongRegHead ? szRootKeysLong[i]: szRootKeys[i]);
             tvinsert.item.pszText = szRootKeys[i];
             tvinsert.item.iImage = 0;
             tvinsert.item.iSelectedImage = 0;
@@ -441,7 +447,6 @@ BOOL InitTreeViewItems(HWND hwndTV, int iPropertyPage)
 {
     TV_INSERTSTRUCT tvinsert;
     LPCOMPRESULTNEW lpCR;
-//    LPTSTR lpszFullName = NULL;
     LPTSTR lpszValueName = NULL;
     LPTSTR lpszFullNameTV = MYALLOC0(EXTDIRLEN * sizeof(TCHAR));
     LPTSTR pos = NULL;
@@ -468,92 +473,10 @@ BOOL InitTreeViewItems(HWND hwndTV, int iPropertyPage)
         if ((NULL != lpCR->lpContentOld) && (NULL == lpCR->lpContentNew)) {
             if (!CheckFilters(lpCR->lpContentOld, lpszFullNameTV, &lpszValueName, lpCR->nActionType, &bKey))
                 continue;
-            
-            //lpszFullName = NULL;
-            //if ((KEYDEL == lpCR->nActionType) || (KEYADD == lpCR->nActionType)) {
-            //    bKey = TRUE;
-            //    lpszFullName = GetWholeKeyName(lpCR->lpContentOld, FALSE);
-            //}
-            //else if ((VALDEL == lpCR->nActionType) || (VALADD == lpCR->nActionType) || (VALMODI == lpCR->nActionType)) {
-            //    bKey = FALSE;
-            //    lpszFullName = GetWholeKeyName(((LPVALUECONTENT)(lpCR->lpContentOld))->lpFatherKC, FALSE);
-            //    lpszValueName = ((LPVALUECONTENT)(lpCR->lpContentOld))->lpszValueName;
-            //}
-            //if (lpszFullName != NULL)
-            //    _tcscpy(lpszFullNameTV, lpszFullName);
-
-            //if ((KEYDEL == lpCR->nActionType) || (KEYADD == lpCR->nActionType) ||
-            //    (VALDEL == lpCR->nActionType) || (VALADD == lpCR->nActionType) || (VALMODI == lpCR->nActionType)) {
-            //    if (!IsInWhiteList(lpszFullName, (bRegWhitelistAdded ? TRUE : FALSE))) {
-            //        MYFREE(lpszFullName);
-            //        continue;
-            //    }
-            //    if (IsInSkipList(lpszFullName, pRegSkipList, (bRegSkipAdded ? TRUE : FALSE))) {
-            //        MYFREE(lpszFullName);
-            //        continue;
-            //    }
-            //}
-            //if ((DIRDEL == lpCR->nActionType) || (DIRADD == lpCR->nActionType) ||
-            //    (DIRMODI == lpCR->nActionType) || (FILEDEL == lpCR->nActionType) ||
-            //    (FILEADD == lpCR->nActionType) || (FILEMODI == lpCR->nActionType)) {
-            //    if ((DIRDEL == lpCR->nActionType) || (DIRADD == lpCR->nActionType) || (DIRMODI == lpCR->nActionType))
-            //        bKey = TRUE;
-            //    else
-            //        bKey = FALSE;
-            //    lpszFullName = GetWholeFileName(lpCR->lpContentOld, 0, FALSE);
-            //    if (lpszFullName != NULL)
-            //        _tcscpy(lpszFullNameTV, lpszFullName);
-            //    if (IsInSkipList(lpszFullName, pFileSkipList, (bFileSkipAdded ? TRUE : FALSE))) {
-            //        MYFREE(lpszFullName);
-            //        continue;
-            //    }
-            //}
-            //MYFREE(lpszFullName);
         }
         if (NULL != lpCR->lpContentNew) {
-//            CheckFilters(LPVALUECONTENT lpContent, LPTSTR lpszKeyName, LPTSTR lpszValueName, DWORD nActionType, BOOL * pbKey)
             if (!CheckFilters(lpCR->lpContentNew, lpszFullNameTV, &lpszValueName, lpCR->nActionType, &bKey))
                 continue;
-            
-            //lpszFullName = NULL;
-            //if ((KEYDEL == lpCR->nActionType) || (KEYADD == lpCR->nActionType)) {
-            //    bKey = TRUE;
-            //    lpszFullName = GetWholeKeyName(lpCR->lpContentNew, FALSE);
-            //}
-            //else if ((VALDEL == lpCR->nActionType) || (VALADD == lpCR->nActionType) || (VALMODI == lpCR->nActionType)) {
-            //    bKey = FALSE;
-            //    lpszFullName = GetWholeKeyName(((LPVALUECONTENT)(lpCR->lpContentNew))->lpFatherKC, FALSE);
-            //    lpszValueName = ((LPVALUECONTENT)(lpCR->lpContentNew))->lpszValueName;
-            //}
-            //if (lpszFullName != NULL)
-            //    _tcscpy(lpszFullNameTV, lpszFullName);
-        
-            //if ((KEYDEL == lpCR->nActionType) || (KEYADD == lpCR->nActionType) ||
-            //    (VALDEL == lpCR->nActionType) || (VALADD == lpCR->nActionType) || (VALMODI == lpCR->nActionType)) {
-            //    if (!IsInWhiteList(lpszFullName, (bRegWhitelistAdded ? TRUE : FALSE))) {
-            //        MYFREE(lpszFullName);
-            //        continue;
-            //    }
-            //    if (IsInSkipList(lpszFullName, pRegSkipList, (bRegSkipAdded ? TRUE : FALSE))) {
-            //        MYFREE(lpszFullName);
-            //        continue;
-            //    }
-            //}
-            //if ((DIRDEL == lpCR->nActionType) || (DIRADD == lpCR->nActionType) || (DIRMODI == lpCR->nActionType) ||
-            //    (FILEDEL == lpCR->nActionType) || (FILEADD == lpCR->nActionType) || (FILEMODI == lpCR->nActionType)) {
-            //    if ((DIRDEL == lpCR->nActionType) || (DIRADD == lpCR->nActionType) || (DIRMODI == lpCR->nActionType)) 
-            //        bKey = TRUE;
-            //    else
-            //        bKey = FALSE;
-            //    lpszFullName = GetWholeFileName(lpCR->lpContentNew, 0, FALSE);
-            //    if (lpszFullName != NULL)
-            //        _tcscpy(lpszFullNameTV, lpszFullName);
-            //    if (IsInSkipList(lpszFullName, pFileSkipList, (bFileSkipAdded ? TRUE : FALSE))) {
-            //        MYFREE(lpszFullName);
-            //        continue;
-            //    }
-            //}
-            //MYFREE(lpszFullName);
         }
         
         NamePartTV = lpszFullNameTV;

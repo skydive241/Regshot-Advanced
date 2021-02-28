@@ -343,8 +343,10 @@ LPTSTR TransData(LPTSTR lpszValueData[], LPVALUECONTENT lpVC, DWORD nConversionT
 //        case REG_RESOURCE_REQUIREMENTS_LIST:
 //            break;
         case REG_QWORD:
-            if ((iOutputType == OUT_ISS_INSTALL) || (iOutputType == OUT_ISS_DEINSTALL))
+            if ((iOutputType == OUT_ISS_INSTALL) || (iOutputType == OUT_ISS_DEINSTALL)) {
                 _tcscat(lpszValueType, TEXT("$"));
+                _tcscpy(lpszDivider, TEXT(""));
+            }
             else
                 _tcscat(lpszValueType, TEXT("hex(b):"));
 //        case REG_QWORD_LITTLE_ENDIAN:
@@ -443,7 +445,10 @@ LPTSTR TransData(LPTSTR lpszValueData[], LPVALUECONTENT lpVC, DWORD nConversionT
                 for (ibCurrent = 0; ibCurrent < sizeof(DWORD); ibCurrent++) {
                     ((LPBYTE)&nDwordCpu)[ibCurrent] = lpVC->lpValueData[sizeof(DWORD) - 1 - ibCurrent];
                 }
-                ConvertDataToBinaryFormat(lpszValueData, lpVC, nActionType, iNameLength, nConversionType, lpszValueType, lpszDivider, iOutputType);
+                if ((iOutputType == OUT_ISS_DEINSTALL) || (iOutputType == OUT_ISS_INSTALL))
+                    ConvertDWORD2LongString(lpszValueData, lpVC, lpDword, nActionType, iNameLength, lpszValueType, lpszDivider, iOutputType);
+                else
+                    ConvertDataToBinaryFormat(lpszValueData, lpVC, nActionType, iNameLength, nConversionType, lpszValueType, lpszDivider, iOutputType);
                 break;
 
 #if 1 == __LITTLE_ENDIAN__
@@ -474,8 +479,10 @@ LPTSTR TransData(LPTSTR lpszValueData[], LPVALUECONTENT lpVC, DWORD nConversionT
 #elif
             //case REG_QWORD_BIG_ENDIAN:
 #endif
-//            ConvertQWORD2LongString(lpszValueData, lpVC, lpQword, nActionType, iNameLength, lpszValueType, lpszDivider, iOutputType);
-                ConvertDataToBinaryFormat(lpszValueData, lpVC, nActionType, iNameLength, nConversionType, lpszValueType, lpszDivider, iOutputType);
+                if ((iOutputType == OUT_ISS_DEINSTALL) || (iOutputType == OUT_ISS_INSTALL))
+                    ConvertQWORD2LongString(lpszValueData, lpVC, lpQword, nActionType, iNameLength, lpszValueType, lpszDivider, iOutputType);
+                else
+                    ConvertDataToBinaryFormat(lpszValueData, lpVC, nActionType, iNameLength, nConversionType, lpszValueType, lpszDivider, iOutputType);
                 break;
 
             case REG_EXPAND_SZ:
@@ -531,8 +538,8 @@ BOOL ConvertMultiSZ2Strings(LPTSTR lpszValueData[], LPVALUECONTENT lpVC, DWORD n
         cchToGo = cbData / sizeof(TCHAR);  // convert byte count to char count
         while ((cchToGo > 0) && (*lpszSrc)) {
             if (0 != cchActual) {
-                if ((iOutputType == OUT_ISS_DEINSTALL) || (iOutputType == OUT_INF_INSTALL)) {
-                    _tcscpy(lpszDst, TEXT("{break}"));
+                if ((iOutputType == OUT_ISS_DEINSTALL) || (iOutputType == OUT_ISS_INSTALL)) {
+                    _tcscpy(lpszDst, TEXT("}break}"));
                     lpszDst += 7;
                     cchActual += 7;
                 }
@@ -557,7 +564,9 @@ BOOL ConvertMultiSZ2Strings(LPTSTR lpszValueData[], LPVALUECONTENT lpVC, DWORD n
             cchToGo -= 1;
         }
     }
-    _tcscpy(lpszDst, TEXT("\""));
+//    _tcsncpy(lpszDst, TEXT("\""), 1);
+    lpStringBuffer[cchActual+1] = _T('\"');
+    lpStringBuffer[cchActual+2] = _T('\0');
     cchActual += 3 + 1 + 1;  // account for null char
     lpszValueData[0] = MYALLOC(cchActual * sizeof(TCHAR));
     if (lpszValueData[0] != NULL)
@@ -684,17 +693,22 @@ BOOL ConvertDataToBinaryFormat(LPTSTR lpszValueData[], LPVALUECONTENT lpVC, DWOR
                 }
 
                 // _sntprintf(lpszValueData[iLineCount] + (_tcslen(lpszValueType) + ((size_t)ibCurrent * 3)), 4, TEXT("%02X%s"), *(lpVC->lpValueData + ibCurrent), lpszDivider);
-                _sntprintf(lpszActualByte, 3, TEXT("%02X\0"), *(lpVC->lpValueData + ibCurrent));
+                _sntprintf(lpszActualByte, 2, TEXT("%02X"), *(lpVC->lpValueData + ibCurrent));
+                lpszActualByte[2] = _T('\0');
 //                _sntprintf(lpszValueData[iLineCount] + iBytesCount, 4, TEXT("%02X%s"), *(lpVC->lpValueData + ibCurrent), lpszDivider);
-                _tcscat(lpszValueData[iLineCount], lpszActualByte);
-                _tcscat(lpszValueData[iLineCount], lpszDivider);
+                if (lpszValueData[iLineCount] != NULL) {
+                    _tcscat(lpszValueData[iLineCount], lpszActualByte);
+                    _tcscat(lpszValueData[iLineCount], lpszDivider);
+                }
                 iTrailingZeroes = (_tcscmp(lpszActualByte, TEXT("00")) == 0 ? iTrailingZeroes + 1 : 0);
                 iBytesCount += 2 + _tcslen(lpszDivider);
                 iBytesCurrentLine++;
             }
             else {
-                _sntprintf(lpszActualByte, 3, TEXT("%02X\0"), *(lpVC->lpValueData + ibCurrent));
-                _tcscat(lpszValueData[iLineCount], lpszActualByte);
+                _sntprintf(lpszActualByte, 2, TEXT("%02X"), *(lpVC->lpValueData + ibCurrent));
+                lpszActualByte[2] = _T('\0');
+                if (lpszValueData[iLineCount] != NULL)
+                    _tcscat(lpszValueData[iLineCount], lpszActualByte);
                 //_sntprintf(lpszValueData[iLineCount] + iBytesCount, 4, TEXT("%02X"), *(lpVC->lpValueData + ibCurrent));
                 iTrailingZeroes = (_tcscmp(lpszActualByte, TEXT("00")) == 0 ? iTrailingZeroes + 1 : 0);
                 iBytesCurrentLine++;
@@ -772,11 +786,12 @@ LPTSTR GetWholeValueData(LPTSTR lpszValueData[], LPVALUECONTENT lpVC, DWORD nAct
                         cchActual++;  // account for null char
                     }
                 }
-                if ((cchActual * sizeof(TCHAR)) == cbData) {
+                // TODO: Prüfung hier (REG_MULTI_SZ vs. REG_BINARY) überdenken....
+//                if ((cchActual * sizeof(TCHAR)) == cbData) {
                     lpszValueData[0] = TransData(lpszValueData, lpVC, lpVC->nTypeCode, nActionType, iNameLength, iOutputType);
-                } else {
-                    lpszValueData[0] = TransData(lpszValueData, lpVC, REG_BINARY, nActionType, iNameLength, iOutputType);
-                }
+//                } else {
+//                    lpszValueData[0] = TransData(lpszValueData, lpVC, REG_BINARY, nActionType, iNameLength, iOutputType);
+//                }
                 break;
 
             case REG_DWORD_LITTLE_ENDIAN:
@@ -1035,15 +1050,7 @@ size_t ResultToString(LPTSTR rgszResultStrings[], size_t iResultStringsMac, size
         }
 
         // create result
-//        if (iResultStringsNew < MAX_RESULT_STRINGS) {
         if (iResultStringsNew - iLinesWrittenOldPart < nOutMaxResultLines) {
-            //rgszResultStrings[iResultStringsNew] = MYALLOC((_tcslen(lpszName) + cchData + 1) * sizeof(TCHAR));
-            //_tcscpy(rgszResultStrings[iResultStringsNew], lpszName);
-            //if (NULL != lpszData) {
-            //    _tcscat(rgszResultStrings[iResultStringsNew], lpszData);
-            //}
-            //iResultStringsNew++;
-//            for (int i = 0; iResultStringsNew < MAX_RESULT_STRINGS; i++) {
             for (int i = 0; iResultStringsNew - iLinesWrittenOldPart < nOutMaxResultLines; i++) {
                 if ((i > 0) && (lpszValueData[i] == NULL))
                     break;
@@ -1560,6 +1567,9 @@ BOOL OutputComparisonResult(VOID)
     LPTSTR lpszBuffer;
     LPTSTR lpszExtension = TEXT("");
     LPTSTR lpszFilenameSuffix = TEXT("");
+    LPTSTR lpszFilenameInstallerSuffix = TEXT("-Installer");
+    LPTSTR lpszFilenameUninstallerSuffix = TEXT("-Uninstaller");
+    LPTSTR lpszFilenameLogSuffix = TEXT("-log");
     LPTSTR lpszDestFileName;
     DWORD  nBufferSize = 2048;
     size_t cchString;
@@ -1571,7 +1581,7 @@ BOOL OutputComparisonResult(VOID)
     }
 
     if ((BOOL)SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_RESULT), BM_GETCHECK, (WPARAM)0, (LPARAM)0)) {
-        DoTVPropertySheet(hMainWnd, PROP_TVREGS);
+        DoTVPropertySheet(hMainWnd, (bCompareReg ? PROP_TVREGS : PROP_TVDIRS));
         if (bNoOutput) {
             bNoOutput = FALSE;
             return TRUE;
@@ -1622,16 +1632,18 @@ BOOL OutputComparisonResult(VOID)
 
     for (int i = OUT_UNL; i < OUTPUTTYPES; i++) {
         BOOL fUseLongRegHeadBackup = fUseLongRegHead;
-        // read common flags for output from gui (reset flags if they are wrong for certaib output type)
+        BOOL fOutSeparateObjsBackup = fOutSeparateObjs;
+        BOOL fLogEnvironmentStringsBackup = fLogEnvironmentStrings;
+        
+        // read common flags for output from gui (reset flags if they are wrong for certain output type)
         fNoVals = (BOOL)SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_NOVALS), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
         fOnlyNewEntries = (BOOL)SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_ONLYADDED), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
         fLogUNLOrder = (BOOL)SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_UNLORDER), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
-//        fLogEnvironmentStrings = (BOOL)SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_ENVIRONMENT), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
         int nResult = (int)SendDlgItemMessage(hMainWnd, IDC_COMBO_MAINCP, CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
-        //if (CB_ERR == nResult) {
-        //    return FALSE;
-        //}
-        if (nResult == 0)
+        if (CB_ERR == nResult) {
+            nCodePage = 65001;
+        }
+        else if (nResult == 0)
             nCodePage = 0;
         else if (nResult == 1)
             nCodePage = -1;
@@ -1641,78 +1653,66 @@ BOOL OutputComparisonResult(VOID)
         if (nOutputType[i]) {
             switch (i) {
             case OUT_UNL:
+                lpszFilenameSuffix = lpszFilenameUninstallerSuffix;
                 lpszExtension = TEXT(".unl");
-//                fNoVals = TRUE;
+                fOutSeparateObjs = FALSE;
                 break;
             case OUT_TXT:
+                lpszFilenameSuffix = lpszFilenameLogSuffix;
                 lpszExtension = TEXT(".txt");
                 break;
             case OUT_HTML:
+                lpszFilenameSuffix = lpszFilenameLogSuffix;
                 lpszExtension = TEXT(".htm");
                 break;
             case OUT_BAT:
+                lpszFilenameSuffix = lpszFilenameUninstallerSuffix;
                 lpszExtension = TEXT(".cmd");
                 fOnlyNewEntries = TRUE;
                 fLogUNLOrder = FALSE;
+                fUseLongRegHead = FALSE;
+                fOutSeparateObjs = FALSE;
                 break;
             case OUT_REG_DEINSTALL:
-                lpszExtension = TEXT(".reg");
-                lpszFilenameSuffix = TEXT("-Uninstaller");
-                fLogUNLOrder = FALSE;
-                fNoVals = FALSE;
-                nCodePage = (fREG5 ? -1 : 0);
-                fUseLongRegHead = TRUE;
-                break;
             case OUT_REG_INSTALL:
+                lpszFilenameSuffix = (i == OUT_REG_DEINSTALL ? lpszFilenameUninstallerSuffix : lpszFilenameInstallerSuffix);
                 lpszExtension = TEXT(".reg");
-                lpszFilenameSuffix = TEXT("-Installer");
                 fLogUNLOrder = FALSE;
                 fNoVals = FALSE;
                 nCodePage = (fREG5 ? -1 : 0);
                 fUseLongRegHead = TRUE;
+                fOutSeparateObjs = FALSE;
                 break;
             case OUT_ISS_DEINSTALL:
-                lpszExtension = TEXT(".iss"); 
-                lpszFilenameSuffix = TEXT("-Uninstaller");
-                fLogUNLOrder = FALSE;
-                fLogEnvironmentStrings = FALSE;
-                fNoVals = FALSE;
-                break;
             case OUT_ISS_INSTALL:
+                lpszFilenameSuffix = (i == OUT_ISS_DEINSTALL ? lpszFilenameUninstallerSuffix : lpszFilenameInstallerSuffix);
                 lpszExtension = TEXT(".iss");
-                lpszFilenameSuffix = TEXT("-Installer");
                 fLogUNLOrder = FALSE;
                 fLogEnvironmentStrings = FALSE;
                 fNoVals = FALSE;
+                fOutSeparateObjs = FALSE;
                 break;
             case OUT_NSI_DEINSTALL:
-                lpszExtension = TEXT(".nsi"); 
-                lpszFilenameSuffix = TEXT("-Uninstaller");
-                fLogUNLOrder = FALSE;
-                fLogEnvironmentStrings = FALSE;
-                fNoVals = FALSE;
-                break;
             case OUT_NSI_INSTALL:
+                lpszFilenameSuffix = (i == OUT_NSI_DEINSTALL ? lpszFilenameUninstallerSuffix : lpszFilenameInstallerSuffix);
                 lpszExtension = TEXT(".nsi");
-                lpszFilenameSuffix = TEXT("-Installer");
                 fLogUNLOrder = FALSE;
                 fLogEnvironmentStrings = FALSE;
                 fNoVals = FALSE;
+                fOutSeparateObjs = FALSE;
                 break;
             case OUT_INF_DEINSTALL:
-                lpszExtension = TEXT(".inf");
-                lpszFilenameSuffix = TEXT("-Uninstaller");
-                break;
             case OUT_INF_INSTALL:
+                lpszFilenameSuffix = (i == OUT_INF_DEINSTALL ? lpszFilenameUninstallerSuffix : lpszFilenameInstallerSuffix);
                 lpszExtension = TEXT(".inf");
-                lpszFilenameSuffix = TEXT("-Installer");
+                fOutSeparateObjs = FALSE;
                 break;
             }
         }
         else
             continue;
 
-        lpszDestFileName = MYALLOC0(EXTDIRLEN * sizeof(TCHAR));
+        lpszDestFileName = MYALLOC0((MAX_PATH + 1) * sizeof(TCHAR));
         lpszBuffer = MYALLOC0(nBufferSize * sizeof(TCHAR)); // nBufferSize must > commentlength + 10 .txt 0000
         GetDlgItemText(hMainWnd, IDC_EDITCOMMENT, lpszBuffer, COMMENTLENGTH);  // length incl. NULL character
 
@@ -1744,21 +1744,14 @@ BOOL OutputComparisonResult(VOID)
             _tcscat(lpszDestFileName, TEXT("report.css"));
             HANDLE hFile = CreateFile(lpszDestFileName, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
             WriteHTML_CSS(hFile);
-            // Close file
             CloseHandle(hFile);
         }
 
         _tcscpy(lpszDestFileName, lpszOutputPath);
-    //    if (ReplaceInvalidFileNameChars(lpszBuffer)) {
         if (ReplaceInvalidFileNameChars(lpszTitle)) {
-    //        _tcscat(lpszDestFileName, lpszBuffer);
             _tcscat(lpszDestFileName, lpszTitle);
         } else {
-            //if (fAsUNL) {
-            //    _tcscat(lpszDestFileName, lpszTitle);
-            //}
-            //else
-                _tcscat(lpszDestFileName, lpszResultFileBaseName);
+            _tcscat(lpszDestFileName, lpszResultFileBaseName);
         }
 
         _tcscat(lpszDestFileName, lpszFilenameSuffix);
@@ -1832,7 +1825,7 @@ BOOL OutputComparisonResult(VOID)
                    CompareResult.lpShot1->systemtime.wHour, CompareResult.lpShot1->systemtime.wMinute, CompareResult.lpShot1->systemtime.wSecond,
                    CompareResult.lpShot2->systemtime.wYear, CompareResult.lpShot2->systemtime.wMonth, CompareResult.lpShot2->systemtime.wDay,
                    CompareResult.lpShot2->systemtime.wHour, CompareResult.lpShot2->systemtime.wMinute, CompareResult.lpShot2->systemtime.wSecond);
-        lpszBuffer[nBufferSize - 1] = (TCHAR)'\0'; // saftey NULL char
+        lpszBuffer[nBufferSize - 1] = (TCHAR)'\0';
         WriteTitle(hFile, asLangTexts[iszTextDateTime].lpszText, lpszBuffer, i);
 
         lpszBuffer[0] = (TCHAR)'\0';
@@ -1858,17 +1851,11 @@ BOOL OutputComparisonResult(VOID)
         if (i == OUT_UNL) {
             WriteUNLINIKeys(hFile);
         }
-        else if (i == OUT_ISS_DEINSTALL) {
-            WriteISSSetupKeys(hFile, FALSE);
+        else if ((i == OUT_ISS_DEINSTALL) || (i == OUT_ISS_INSTALL)) {
+            WriteISSSetupKeys(hFile, (i == OUT_ISS_DEINSTALL ? FALSE : TRUE));
         }
-        else if (i == OUT_ISS_INSTALL) {
-            WriteISSSetupKeys(hFile, TRUE);
-        }
-        else if (i == OUT_NSI_DEINSTALL) {
-            WriteNSISetupKeys(hFile, FALSE);
-        }
-        else if (i == OUT_NSI_INSTALL) {
-            WriteNSISetupKeys(hFile, TRUE);
+        else if ((i == OUT_NSI_DEINSTALL) || (i == OUT_NSI_INSTALL)) {
+            WriteNSISetupKeys(hFile, (i == OUT_NSI_DEINSTALL ? FALSE : TRUE));
         }
 
         MYFREE(lpszBuffer);
@@ -1916,7 +1903,6 @@ BOOL OutputComparisonResult(VOID)
                     // Write keyadd part
                     if (0 != CompareResult.stcAdded.cKeys) {
                         WriteTableHead(hFile, asLangTexts[iszTextKeyAdd].lpszText, CompareResult.stcAdded.cKeys, i);
-                        //                    WritePartNew(hFile, KEYADD, CompareResult.stCRHeads.lpCRRegistryLast, i);
                         WritePart(hFile, KEYADD, CompareResult.stCRHeads.lpCRKeyAdded, i);
                     }
                     // Write valadd part
@@ -1993,52 +1979,37 @@ BOOL OutputComparisonResult(VOID)
                     if (0 != CompareResult.stcAdded.cDirs) {
                         if (i == OUT_ISS_INSTALL)
                             WriteFileCP(hFile, nCodePage, lpszISSSectionDirs, (DWORD)(_tcslen(lpszISSSectionDirs) * sizeof(TCHAR)), &NBW, NULL);
-//                        else if (i == OUT_ISS_DEINSTALL)
-//                            WriteFileCP(hFile, nCodePage, lpszISSSectionInstallDelete, (DWORD)(_tcslen(lpszISSSectionInstallDelete) * sizeof(TCHAR)), &NBW, NULL);
                         WriteTableHead(hFile, asLangTexts[iszTextDirAdd].lpszText, CompareResult.stcAdded.cDirs, i);
-//                        WritePartNew(hFile, DIRADD, CompareResult.stCRHeads.lpCRFilesystemLast, i);
                         WritePart(hFile, DIRADD, CompareResult.stCRHeads.lpCRDirAdded, i);
-//                        if (i == OUT_ISS_INSTALL) {
-                            WriteFileCP(hFile, nCodePage, lpszCRLF, (DWORD)(_tcslen(lpszCRLF) * sizeof(TCHAR)), &NBW, NULL);
-//                        }
+                        WriteFileCP(hFile, nCodePage, lpszCRLF, (DWORD)(_tcslen(lpszCRLF) * sizeof(TCHAR)), &NBW, NULL);
                     }
                     // Write file add part
                     if (0 != CompareResult.stcAdded.cFiles) {
                         if (i == OUT_ISS_INSTALL)
                             WriteFileCP(hFile, nCodePage, lpszISSSectionFiles, (DWORD)(_tcslen(lpszISSSectionFiles) * sizeof(TCHAR)), &NBW, NULL);
-//                        else if (i == OUT_ISS_DEINSTALL)
-//                            WriteFileCP(hFile, nCodePage, lpszISSSectionInstallDelete, (DWORD)(_tcslen(lpszISSSectionInstallDelete) * sizeof(TCHAR)), &NBW, NULL);
                         WriteTableHead(hFile, asLangTexts[iszTextFileAdd].lpszText, CompareResult.stcAdded.cFiles, i);
                         WritePart(hFile, FILEADD, CompareResult.stCRHeads.lpCRFileAdded, i);
-//                        if (i == OUT_ISS_INSTALL) {
-                            WriteFileCP(hFile, nCodePage, lpszCRLF, (DWORD)(_tcslen(lpszCRLF) * sizeof(TCHAR)), &NBW, NULL);
-//                        }
+                        WriteFileCP(hFile, nCodePage, lpszCRLF, (DWORD)(_tcslen(lpszCRLF) * sizeof(TCHAR)), &NBW, NULL);
                     }
                 }
 // Uninstaller (.html, .unl, .txt, .cmd, -uninstall.reg, -uninstall.iss): FileAdd/DirAdd/FileModi/DirModi/DirDel/FileDel
                 else {
                     // Write file add part
                     if (0 != CompareResult.stcAdded.cFiles) {
-//                        if (i == OUT_ISS_INSTALL)
-//                            WriteFileCP(hFile, nCodePage, lpszISSSectionFiles, (DWORD)(_tcslen(lpszISSSectionFiles) * sizeof(TCHAR)), &NBW, NULL);
                         if (i == OUT_ISS_DEINSTALL)
                             WriteFileCP(hFile, nCodePage, lpszISSSectionInstallDelete, (DWORD)(_tcslen(lpszISSSectionInstallDelete) * sizeof(TCHAR)), &NBW, NULL);
                         WriteTableHead(hFile, asLangTexts[iszTextFileAdd].lpszText, CompareResult.stcAdded.cFiles, i);
                         WritePart(hFile, FILEADD, CompareResult.stCRHeads.lpCRFileAdded, i);
-//                        if ((i == OUT_ISS_INSTALL) || (i == OUT_ISS_DEINSTALL)) {
                         if ((i == OUT_ISS_DEINSTALL) || (i == OUT_NSI_DEINSTALL)) {
                             WriteFileCP(hFile, nCodePage, lpszCRLF, (DWORD)(_tcslen(lpszCRLF) * sizeof(TCHAR)), &NBW, NULL);
                         }
                     }
                     // Write directory add part
                     if (0 != CompareResult.stcAdded.cDirs) {
-//                        if (i == OUT_ISS_INSTALL)
-//                            WriteFileCP(hFile, nCodePage, lpszISSSectionDirs, (DWORD)(_tcslen(lpszISSSectionDirs) * sizeof(TCHAR)), &NBW, NULL);
                         if (i == OUT_ISS_DEINSTALL)
                             WriteFileCP(hFile, nCodePage, lpszISSSectionInstallDelete, (DWORD)(_tcslen(lpszISSSectionInstallDelete) * sizeof(TCHAR)), &NBW, NULL);
                         WriteTableHead(hFile, asLangTexts[iszTextDirAdd].lpszText, CompareResult.stcAdded.cDirs, i);
                         WritePartNew(hFile, DIRADD, CompareResult.stCRHeads.lpCRFilesystemLast, i);
-//                        if ((i == OUT_ISS_INSTALL) || (i == OUT_ISS_DEINSTALL)) {
                         if ((i == OUT_ISS_DEINSTALL) || (i == OUT_NSI_DEINSTALL)) {
                             WriteFileCP(hFile, nCodePage, lpszCRLF, (DWORD)(_tcslen(lpszCRLF) * sizeof(TCHAR)), &NBW, NULL);
                         }
@@ -2059,52 +2030,37 @@ BOOL OutputComparisonResult(VOID)
                     if (!fOnlyNewEntries && (0 != CompareResult.stcDeleted.cFiles)) {
                         if (i == OUT_ISS_INSTALL)
                             WriteFileCP(hFile, nCodePage, lpszISSSectionInstallDelete, (DWORD)(_tcslen(lpszISSSectionInstallDelete) * sizeof(TCHAR)), &NBW, NULL);
-//                        else if (i == OUT_ISS_DEINSTALL)
-//                            WriteFileCP(hFile, nCodePage, lpszISSSectionFiles, (DWORD)(_tcslen(lpszISSSectionFiles) * sizeof(TCHAR)), &NBW, NULL);
                         WriteTableHead(hFile, asLangTexts[iszTextFileDel].lpszText, CompareResult.stcDeleted.cFiles, i);
                         WritePart(hFile, FILEDEL, CompareResult.stCRHeads.lpCRFileDeleted, i);
-//                        if ((i == OUT_ISS_INSTALL) || (i == OUT_ISS_DEINSTALL)) {
-                            WriteFileCP(hFile, nCodePage, lpszCRLF, (DWORD)(_tcslen(lpszCRLF) * sizeof(TCHAR)), &NBW, NULL);
-//                        }
+                        WriteFileCP(hFile, nCodePage, lpszCRLF, (DWORD)(_tcslen(lpszCRLF) * sizeof(TCHAR)), &NBW, NULL);
                     }
                     // Write directory del part
                     if (!fOnlyNewEntries && (0 != CompareResult.stcDeleted.cDirs)) {
                         if (i == OUT_ISS_INSTALL)
                             WriteFileCP(hFile, nCodePage, lpszISSSectionInstallDelete, (DWORD)(_tcslen(lpszISSSectionInstallDelete) * sizeof(TCHAR)), &NBW, NULL);
-//                        else if (i == OUT_ISS_DEINSTALL)
-//                            WriteFileCP(hFile, nCodePage, lpszISSSectionDirs, (DWORD)(_tcslen(lpszISSSectionDirs) * sizeof(TCHAR)), &NBW, NULL);
                         WriteTableHead(hFile, asLangTexts[iszTextDirDel].lpszText, CompareResult.stcDeleted.cDirs, i);
                         WritePart(hFile, DIRDEL, CompareResult.stCRHeads.lpCRDirDeleted, i);
-//                        if ((i == OUT_ISS_INSTALL) || (i == OUT_ISS_DEINSTALL)) {
-                            WriteFileCP(hFile, nCodePage, lpszCRLF, (DWORD)(_tcslen(lpszCRLF) * sizeof(TCHAR)), &NBW, NULL);
-//                        }
+                        WriteFileCP(hFile, nCodePage, lpszCRLF, (DWORD)(_tcslen(lpszCRLF) * sizeof(TCHAR)), &NBW, NULL);
                     }
                 }
 // Uninstaller (.html, .unl, .txt, .cmd, -uninstall.reg, -uninstall.iss, -uninstall.nsi): FileAdd/DirAdd/FileModi/DirModi/DirDel/FileDel
                 else {
                     // Write directory del part
                     if (!fOnlyNewEntries && (0 != CompareResult.stcDeleted.cDirs)) {
-//                        if (i == OUT_ISS_INSTALL)
-//                            WriteFileCP(hFile, nCodePage, lpszISSSectionInstallDelete, (DWORD)(_tcslen(lpszISSSectionInstallDelete) * sizeof(TCHAR)), &NBW, NULL);
                         if (i == OUT_ISS_DEINSTALL)
                             WriteFileCP(hFile, nCodePage, lpszISSSectionDirs, (DWORD)(_tcslen(lpszISSSectionDirs) * sizeof(TCHAR)), &NBW, NULL);
                         WriteTableHead(hFile, asLangTexts[iszTextDirDel].lpszText, CompareResult.stcDeleted.cDirs, i);
                         WritePart(hFile, DIRDEL, CompareResult.stCRHeads.lpCRDirDeleted, i);
-//                        if ((i == OUT_ISS_INSTALL) || (i == OUT_ISS_DEINSTALL)) {
                         if ((i == OUT_ISS_DEINSTALL) || (i == OUT_NSI_DEINSTALL)) {
                             WriteFileCP(hFile, nCodePage, lpszCRLF, (DWORD)(_tcslen(lpszCRLF) * sizeof(TCHAR)), &NBW, NULL);
                         }
                     }
                     // Write file del part
                     if (!fOnlyNewEntries && (0 != CompareResult.stcDeleted.cFiles)) {
-//                        if (i == OUT_ISS_INSTALL)
-//                            WriteFileCP(hFile, nCodePage, lpszISSSectionInstallDelete, (DWORD)(_tcslen(lpszISSSectionInstallDelete) * sizeof(TCHAR)), &NBW, NULL);
-//                        else if (i == OUT_ISS_DEINSTALL)
                         if (i == OUT_ISS_DEINSTALL)
                             WriteFileCP(hFile, nCodePage, lpszISSSectionFiles, (DWORD)(_tcslen(lpszISSSectionFiles) * sizeof(TCHAR)), &NBW, NULL);
                         WriteTableHead(hFile, asLangTexts[iszTextFileDel].lpszText, CompareResult.stcDeleted.cFiles, i);
                         WritePart(hFile, FILEDEL, CompareResult.stCRHeads.lpCRFileDeleted, i);
-//                        if ((i == OUT_ISS_INSTALL) || (i == OUT_ISS_DEINSTALL)) {
                         if ((i == OUT_ISS_DEINSTALL) || (i == OUT_NSI_DEINSTALL)) {
                             WriteFileCP(hFile, nCodePage, lpszCRLF, (DWORD)(_tcslen(lpszCRLF) * sizeof(TCHAR)), &NBW, NULL);
                         }
@@ -2136,9 +2092,7 @@ BOOL OutputComparisonResult(VOID)
         // Close file
         CloseHandle(hFile);
 
-//        int iIniValue = GetPrivateProfileInt(lpszIniOutput, lpszIniOpenEditor, 1, lpszRegshotIni); // default from 0 to 1 in 1.8.2 (TEXT)
         fOpenEditor = (BOOL)SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_OPENEDITOR), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
-        //    if (iIniValue==1 && (32 >= (size_t)ShellExecute(hMainWnd, TEXT("open"), lpszDestFileName, NULL, NULL, SW_SHOW))) {
         if (fOpenEditor) {
             if (i == OUT_HTML) {
                 if ((32 >= (size_t)ShellExecute(hMainWnd, TEXT("open"), lpszDestFileName, NULL, NULL, SW_SHOW))) 
@@ -2154,12 +2108,12 @@ BOOL OutputComparisonResult(VOID)
                         _tspawnlp(_P_NOWAIT, lpszISSEditor, lpszBuffer, lpszBuffer, NULL);
                     }
                     else if ((i == OUT_NSI_DEINSTALL) || (i == OUT_NSI_INSTALL)) {
-                        _tspawnlp(_P_NOWAIT, lpszEditor, lpszBuffer, lpszBuffer, NULL);   // TEXT("-z=unicode")
+                        _tspawnlp(_P_NOWAIT, lpszEditor, lpszBuffer, lpszBuffer, NULL);
                         if (fUseDifferentNSIEditor)
                             _tspawnlp(_P_NOWAIT, lpszNSIEditor, lpszBuffer, lpszBuffer, NULL);
                     }
                     else
-                        _tspawnlp(_P_NOWAIT, lpszEditor, lpszBuffer, lpszBuffer, NULL);   // TEXT("-z=unicode")
+                        _tspawnlp(_P_NOWAIT, lpszEditor, lpszBuffer, lpszBuffer, NULL);
                 }
                 MYFREE(lpszBuffer);
             }
@@ -2167,6 +2121,8 @@ BOOL OutputComparisonResult(VOID)
         MYFREE(lpszDestFileName);
 
         fUseLongRegHead = fUseLongRegHeadBackup;
+        fOutSeparateObjs = fOutSeparateObjsBackup;    
+        fLogEnvironmentStrings = fLogEnvironmentStringsBackup;
     }
 
     UI_ShowHideProgressBar(SW_HIDE);
@@ -2290,11 +2246,6 @@ VOID FreeAllKeyContents(LPKEYCONTENT lpKC)
 // ----------------------------------------------------------------------
 VOID FreeShot(LPREGSHOT lpShot)
 {
-    //if (lpShot->fFirst) {
-    //    SendMessage(GetDlgItem(hWnd, IDC_CHECK_SAVEINI), BM_SETCHECK, (WPARAM)BST_CHECKED, (LPARAM)0);
-    //    SendMessage(hWnd, WM_COMMAND, (WPARAM)IDC_CHECK_SAVEINI, (LPARAM)0);
-    //}
-
     if (NULL != lpShot->lpszComputerName) {
         MYFREE(lpShot->lpszComputerName);
     }
@@ -2335,7 +2286,6 @@ LPKEYCONTENT GetRegistrySnap(LPREGSHOT lpShot, HKEY hRegKey, LPTSTR lpszRegKeyNa
     LPTSTR lpszFullNameUI;
 
     // Process registry key itself, then key values with data, then sub keys (see msdn.microsoft.com/en-us/library/windows/desktop/ms724256.aspx)
-
     // Extra local block to reduce stack usage due to recursive calls
     {
         LPTSTR lpszFullName;
@@ -2359,9 +2309,7 @@ LPKEYCONTENT GetRegistrySnap(LPREGSHOT lpShot, HKEY hRegKey, LPTSTR lpszRegKeyNa
 
         // Check if key is to be excluded
         lpszFullNameUI = GetWholeKeyName(lpKC, FALSE);
-//        if (NULL != lprgszRegSkipStrings[0]) {  // only if there is something to exclude
         if (NULL != pRegSkipList[0].lpSkipString) {  // only if there is something to exclude
-//            if ((NULL != lpKC->lpszKeyName) && (IsInSkipList(lpKC->lpszKeyName, lprgszRegSkipStrings))) {
             if ((NULL != lpKC->lpszKeyName) && (IsInSkipList(lpKC->lpszKeyName, pRegSkipList, FALSE))) {
                 MYFREE(lpszFullNameUI);
                 FreeAllKeyContents(lpKC);
@@ -2783,16 +2731,19 @@ VOID SaveRegKeys(HANDLE hFile, LPREGSHOT lpShot, LPKEYCONTENT lpKC, DWORD nFPFat
             if (NULL != lpszKeyName) {
                 sKC.nKeyNameLen = (DWORD)lpKC->cchKeyName;
 
-                if ((fUseLongRegHead) && (0 == nFPFatherKey)) {
-                    // Adopt to long HKLM/HKU
-                    if (lpszHKLMShort == lpszKeyName) {
-                        lpszKeyName = lpszHKLMLong;
-                        sKC.nKeyNameLen = (DWORD)_tcslen(lpszKeyName);;
-                    } else if (lpszHKUShort == lpszKeyName) {
-                        lpszKeyName = lpszHKULong;
-                        sKC.nKeyNameLen = (DWORD)_tcslen(lpszKeyName);;
-                    }
-                }
+                //if ((fUseLongRegHead) && (0 == nFPFatherKey)) {
+                //    // Adopt to long HKLM/HKU
+                //    if (lpszHKLMShort == lpszKeyName) {
+                //        lpszKeyName = lpszHKLMLong;
+                //        sKC.nKeyNameLen = (DWORD)_tcslen(lpszKeyName);;
+                //    } else if (lpszHKUShort == lpszKeyName) {
+                //        lpszKeyName = lpszHKULong;
+                //        sKC.nKeyNameLen = (DWORD)_tcslen(lpszKeyName);;
+                //    } else if (lpszHKCUShort == lpszKeyName) {
+                //        lpszKeyName = lpszHKULong;
+                //        sKC.nKeyNameLen = (DWORD)_tcslen(lpszKeyName);;
+                //    }
+                //}
 
                 // Determine key name length and file offset
                 if (0 < sKC.nKeyNameLen) {  // otherwise leave it all 0

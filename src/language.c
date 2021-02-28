@@ -90,120 +90,202 @@ VOID SetTextsToDefaultLanguage(VOID)
     ZeroMemory(asLangTexts, sizeof(asLangTexts));
 
     // Set English default language strings
-    asLangTexts[iszTextKey].lpszText               = TEXT("Keys:");
-    asLangTexts[iszTextValue].lpszText             = TEXT("Values:");
-    asLangTexts[iszTextDir].lpszText               = TEXT("Dirs:");
-    asLangTexts[iszTextFile].lpszText              = TEXT("Files:");
-    asLangTexts[iszTextTime].lpszText              = TEXT("Time:");
-    asLangTexts[iszTextKeyAdd].lpszText            = TEXT("Keys added:");
-    asLangTexts[iszTextKeyDel].lpszText            = TEXT("Keys deleted:");
-    asLangTexts[iszTextValAdd].lpszText            = TEXT("Values added:");
-    asLangTexts[iszTextValDel].lpszText            = TEXT("Values deleted:");
-    asLangTexts[iszTextValModi].lpszText           = TEXT("Values modified:");
-    asLangTexts[iszTextRegistryModi].lpszText      = TEXT("Registry objects changed:");
-    asLangTexts[iszTextFileAdd].lpszText           = TEXT("Files added:");
-    asLangTexts[iszTextFileDel].lpszText           = TEXT("Files deleted:");
-    asLangTexts[iszTextFileModi].lpszText          = TEXT("Files [attributes?] modified:");
-    asLangTexts[iszTextDirAdd].lpszText            = TEXT("Folders added:");
-    asLangTexts[iszTextDirDel].lpszText            = TEXT("Folders deleted:");
-    asLangTexts[iszTextDirModi].lpszText           = TEXT("Folders attributes changed:");
-    asLangTexts[iszTextFilesystemModi].lpszText    = TEXT("Filesystem objects changed:");
-    asLangTexts[iszTextTotal].lpszText             = TEXT("Total changes:");
-    asLangTexts[iszTextComments].lpszText          = TEXT("Comments:");
-    asLangTexts[iszTextDateTime].lpszText          = TEXT("Datetime:");
-    asLangTexts[iszTextComputer].lpszText          = TEXT("Computer:");
-    asLangTexts[iszTextUsername].lpszText          = TEXT("Username:");
-    asLangTexts[iszTextAbout].lpszText             = TEXT("About");
-    asLangTexts[iszTextError].lpszText             = TEXT("Error");
-    asLangTexts[iszTextErrorExecViewer].lpszText   = TEXT("Error call External Viewer!");
-    asLangTexts[iszTextErrorCreateFile].lpszText   = TEXT("Error creating file!");
-    asLangTexts[iszTextErrorOpenFile].lpszText     = TEXT("Error open file!");
-    asLangTexts[iszTextErrorMoveFP].lpszText       = TEXT("Error move file pointer!");
+    asLangTexts[iszTextKey].lpszText                    = TEXT("Keys:");
+    asLangTexts[iszTextValue].lpszText                  = TEXT("Values:");
+    asLangTexts[iszTextDir].lpszText                    = TEXT("Dirs:");
+    asLangTexts[iszTextFile].lpszText                   = TEXT("Files:");
+    asLangTexts[iszTextTime].lpszText                   = TEXT("Time:");
+    asLangTexts[iszTextKeyAdd].lpszText                 = TEXT("Keys added:");
+    asLangTexts[iszTextKeyDel].lpszText                 = TEXT("Keys deleted:");
+    asLangTexts[iszTextValAdd].lpszText                 = TEXT("Values added:");
+    asLangTexts[iszTextValDel].lpszText                 = TEXT("Values deleted:");
+    asLangTexts[iszTextValModi].lpszText                = TEXT("Values modified:");
+    asLangTexts[iszTextRegistryModi].lpszText           = TEXT("Registry objects changed:");
+    asLangTexts[iszTextFileAdd].lpszText                = TEXT("Files added:");
+    asLangTexts[iszTextFileDel].lpszText                = TEXT("Files deleted:");
+    asLangTexts[iszTextFileModi].lpszText               = TEXT("Files [attributes?] modified:");
+    asLangTexts[iszTextDirAdd].lpszText                 = TEXT("Folders added:");
+    asLangTexts[iszTextDirDel].lpszText                 = TEXT("Folders deleted:");
+    asLangTexts[iszTextDirModi].lpszText                = TEXT("Folders attributes changed:");
+    asLangTexts[iszTextFilesystemModi].lpszText         = TEXT("Filesystem objects changed:");
+    asLangTexts[iszTextTotal].lpszText                  = TEXT("Total changes:");
+    asLangTexts[iszTextComments].lpszText               = TEXT("Comments:");
+    asLangTexts[iszTextDateTime].lpszText               = TEXT("Datetime:");
+    asLangTexts[iszTextComputer].lpszText               = TEXT("Computer:");
+    asLangTexts[iszTextUsername].lpszText               = TEXT("Username:");
+    asLangTexts[iszTextAbout].lpszText                  = TEXT("About");
+    asLangTexts[iszTextError].lpszText                  = TEXT("Error");
+    asLangTexts[iszTextErrorExecViewer].lpszText        = TEXT("Error call External Viewer!");
+    asLangTexts[iszTextErrorCreateFile].lpszText        = TEXT("Error creating file!");
+    asLangTexts[iszTextErrorOpenFile].lpszText          = TEXT("Error open file!");
+    asLangTexts[iszTextErrorMoveFP].lpszText            = TEXT("Error move file pointer!");
 
-    asLangTexts[iszTextButtonShot1].lpszText       = TEXT("&1st shot");
-    asLangTexts[iszTextButtonShot1].nIDDlgItem     = IDC_1STSHOT;
+    asLangTexts[iszTextButtonShot1].lpszText            = TEXT("&1st shot");
+    asLangTexts[iszTextButtonShot1].nIDDialog           = DLG_MAIN;
+    asLangTexts[iszTextButtonShot1].nIDDlgItem          = IDC_1STSHOT;
 
-    asLangTexts[iszTextButtonShot2].lpszText       = TEXT("&2nd shot");
-    asLangTexts[iszTextButtonShot2].nIDDlgItem     = IDC_2NDSHOT;
+    asLangTexts[iszTextButtonShot2].lpszText            = TEXT("&2nd shot");
+    asLangTexts[iszTextButtonShot2].nIDDialog           = DLG_MAIN;
+    asLangTexts[iszTextButtonShot2].nIDDlgItem          = IDC_2NDSHOT;
 
-    asLangTexts[iszTextButtonCompare].lpszText     = TEXT("C&ompare");
-    asLangTexts[iszTextButtonCompare].nIDDlgItem   = IDC_COMPARE;
+    asLangTexts[iszTextButtonCompare].lpszText          = TEXT("C&ompare");
+    asLangTexts[iszTextButtonCompare].nIDDialog         = DLG_MAIN;
+    asLangTexts[iszTextButtonCompare].nIDDlgItem        = IDC_COMPARE;
 
-    asLangTexts[iszTextMenuClear].lpszText         = TEXT("&Clear");
+    asLangTexts[iszTextMenuClear].lpszText              = TEXT("&Clear");
 
-    asLangTexts[iszTextButtonQuit].lpszText        = TEXT("&Quit");
-    asLangTexts[iszTextButtonQuit].nIDDlgItem      = IDC_QUIT;
+    asLangTexts[iszTextButtonQuit].lpszText             = TEXT("&Quit");
+    asLangTexts[iszTextButtonQuit].nIDDialog = DLG_MAIN;
+    asLangTexts[iszTextButtonQuit].nIDDlgItem           = IDC_QUIT;
     lpszQuit = asLangTexts[iszTextButtonQuit].lpszText;
 
-    asLangTexts[iszTextButtonAbout].lpszText       = TEXT("&About...");
-    asLangTexts[iszTextButtonAbout].nIDDlgItem     = IDC_ABOUT;
+    asLangTexts[iszTextButtonAbout].lpszText            = TEXT("&About...");
+    asLangTexts[iszTextButtonAbout].nIDDialog = DLG_MAIN;
+    asLangTexts[iszTextButtonAbout].nIDDlgItem          = IDC_ABOUT;
 
-    asLangTexts[iszTextTextMonitor].lpszText       = TEXT("&Monitor...");
-    //asLangTexts[iszTextTextMonitor].nIDDlgItem     = IDC_MONITOR;
+    asLangTexts[iszTextTextMonitor].lpszText            = TEXT("&Monitor...");
+    //asLangTexts[iszTextTextMonitor].nIDDlgItem          = IDC_MONITOR;
 
-    asLangTexts[iszTextTextCompare].lpszText       = TEXT("Compare logs save as:");
-    asLangTexts[iszTextTextCompare].nIDDlgItem     = IDC_STATICSAVEFORMAT;
+    asLangTexts[iszTextTextCompare].lpszText            = TEXT("Compare logs save as:");
+    asLangTexts[iszTextTextCompare].nIDDialog = DLG_MAIN;
+    asLangTexts[iszTextTextCompare].nIDDlgItem          = IDC_STATICSAVEFORMAT;
 
-    asLangTexts[iszTextTextOutput].lpszText        = TEXT("Output path:");
-    asLangTexts[iszTextTextOutput].nIDDlgItem      = IDC_STATICOUTPUTPATH;
+    asLangTexts[iszTextTextOutput].lpszText             = TEXT("Output path:");
+    asLangTexts[iszTextTextOutput].nIDDialog = DLG_MAIN;
+    asLangTexts[iszTextTextOutput].nIDDlgItem           = IDC_STATICOUTPUTPATH;
 
-    asLangTexts[iszTextTextComment].lpszText       = TEXT("Add comment into the log:");
-    asLangTexts[iszTextTextComment].nIDDlgItem     = IDC_STATICADDCOMMENT;
+    asLangTexts[iszTextTextComment].lpszText            = TEXT("Add comment into the log:");
+    asLangTexts[iszTextTextComment].nIDDialog = DLG_MAIN;
+    asLangTexts[iszTextTextComment].nIDDlgItem          = IDC_STATICADDCOMMENT;
 
-    asLangTexts[iszTextRadioPlain].lpszText        = TEXT("CMD file");
-    asLangTexts[iszTextRadioPlain].nIDDlgItem      = IDC_CHECK_BAT;
+    asLangTexts[iszTextRadioPlain].lpszText             = TEXT("CMD file");
+    asLangTexts[iszTextRadioPlain].nIDDialog = DLG_MAIN;
+    asLangTexts[iszTextRadioPlain].nIDDlgItem           = IDC_CHECK_BAT;
 
-    asLangTexts[iszTextRadioHTML].lpszText         = TEXT("&HTML document");
-    asLangTexts[iszTextRadioHTML].nIDDlgItem       = IDC_CHECK_HTML;
+    asLangTexts[iszTextRadioHTML].lpszText              = TEXT("&HTML document");
+    asLangTexts[iszTextRadioHTML].nIDDialog = DLG_MAIN;
+    asLangTexts[iszTextRadioHTML].nIDDlgItem            = IDC_CHECK_HTML;
 
-    asLangTexts[iszTextTextScan].lpszText          = TEXT("&Scan dir1[;dir2;dir3;...;dir nn]:");
-    asLangTexts[iszTextTextScan].nIDDlgItem        = IDC_CHECKDIR;
+    asLangTexts[iszTextTextScan].lpszText               = TEXT("&Scan dir1[;dir2;dir3;...;dir nn]:");
+    asLangTexts[iszTextTextScan].nIDDialog = DLG_MAIN;
+    asLangTexts[iszTextTextScan].nIDDlgItem             = IDC_CHECKDIR;
 
-    asLangTexts[iszTextMenuShot].lpszText          = TEXT("&Shot");
-    asLangTexts[iszTextMenuShotSave].lpszText      = TEXT("Shot and Sa&ve...");
-    asLangTexts[iszTextMenuLoad].lpszText          = TEXT("Loa&d...");
+    asLangTexts[iszTextMenuShotSave].lpszText           = TEXT("Shot and Sa&ve...");
+    asLangTexts[iszTextMenuLoad].lpszText               = TEXT("Loa&d...");
 
-    asLangTexts[iszTextButtonClearAll].lpszText    = TEXT("&Clear all");
-    asLangTexts[iszTextButtonClearAll].nIDDlgItem  = IDC_CLEARALL;
+    asLangTexts[iszTextButtonClearAll].lpszText         = TEXT("&Clear all");
+    asLangTexts[iszTextButtonClearAll].nIDDialog = DLG_MAIN;
+    asLangTexts[iszTextButtonClearAll].nIDDlgItem       = IDC_CLEARALL;
 
-    asLangTexts[iszTextMenuClearShot1].lpszText    = TEXT("Clear &1st shot");
-    asLangTexts[iszTextMenuClearShot2].lpszText    = TEXT("Clear &2nd shot");
+    asLangTexts[iszTextMenuClearShot1].lpszText         = TEXT("Clear &1st shot");
+    asLangTexts[iszTextMenuClearShot2].lpszText         = TEXT("Clear &2nd shot");
 
-    asLangTexts[iszTextMenuSave].lpszText          = TEXT("S&ave...");
-    asLangTexts[iszTextMenuInfo].lpszText          = TEXT("&Info");
-    asLangTexts[iszTextMenuSwap].lpszText          = TEXT("S&wap");
+    asLangTexts[iszTextMenuSave].lpszText               = TEXT("S&ave...");
+    asLangTexts[iszTextMenuInfo].lpszText               = TEXT("&Info");
+    asLangTexts[iszTextMenuSwap].lpszText               = TEXT("S&wap");
 
-    asLangTexts[iszTextMenuCompareOutput].lpszText = TEXT("Com&pare and Output");
-    asLangTexts[iszTextMenuShotCompareOutput].lpszText = TEXT("Shot, Compare a&nd Output");
-    asLangTexts[iszTextMenuOutput].lpszText        = TEXT("Ou&tput");
-    asLangTexts[iszTextMenuOutputFS].lpszText        = TEXT("Ou&tput (only filesystem)");
-    asLangTexts[iszTextMenuOutputReg].lpszText        = TEXT("Ou&tput (only registry)");
+    asLangTexts[iszTextMenuCompareOutput].lpszText      = TEXT("Com&pare and Output");
+    asLangTexts[iszTextMenuCompareCompareOutputFS].lpszText   = TEXT("Compare a&nd Output (only filesystem)");
+    asLangTexts[iszTextMenuCompareCompareOutputReg].lpszText  = TEXT("Compare a&nd Output (only registry)");
+    asLangTexts[iszTextMenuShotCompareOutput].lpszText  = TEXT("Shot, Compare a&nd Output");
+    asLangTexts[iszTextMenuOutput].lpszText             = TEXT("Ou&tput");
+    asLangTexts[iszTextMenuOutputFS].lpszText           = TEXT("Ou&tput (only filesystem)");
+    asLangTexts[iszTextMenuOutputReg].lpszText          = TEXT("Ou&tput (only registry)");
 
-    asLangTexts[iszTextLoadedFromFile].lpszText    = TEXT("Loaded from file");
+    asLangTexts[iszTextLoadedFromFile].lpszText         = TEXT("Loaded from file");
 
-    asLangTexts[iszTextWarning].lpszText           = TEXT("Warning");
-    asLangTexts[iszTextChronology].lpszText        = TEXT("Chronology");
-    asLangTexts[iszTextShotsNotChronological].lpszText = TEXT("Shots not in chronological order.");
-    asLangTexts[iszTextQuestionSwapShots].lpszText     = TEXT("Do you want to swap?");
+    asLangTexts[iszTextWarning].lpszText                = TEXT("Warning");
+    asLangTexts[iszTextChronology].lpszText             = TEXT("Chronology");
+    asLangTexts[iszTextShotsNotChronological].lpszText  = TEXT("Shots not in chronological order.");
+    asLangTexts[iszTextQuestionSwapShots].lpszText      = TEXT("Do you want to swap?");
 
-    asLangTexts[iszTextGroupboxTitle].lpszText     = TEXT("Title/Subdirectory");
-    asLangTexts[iszTextGroupboxTitle].nIDDlgItem   = IDC_STATIC_TITLE;
-    asLangTexts[iszTextGroupboxRegs].lpszText      = TEXT("Registry-Rootkeys");
-    asLangTexts[iszTextGroupboxRegs].nIDDlgItem    = IDC_STATIC_REGS;
-    asLangTexts[iszTextGroupboxDirs].lpszText      = TEXT("Directories");
-    asLangTexts[iszTextGroupboxDirs].nIDDlgItem    = IDC_STATIC_DIRS;
-    asLangTexts[iszTextRadioUNL].lpszText          = TEXT("UNL");
-    asLangTexts[iszTextRadioUNL].nIDDlgItem        = IDC_CHECK_UNL;
-    asLangTexts[iszTextCheckboxRegIns].lpszText    = TEXT("REG-File(Install)");
-    asLangTexts[iszTextCheckboxRegIns].nIDDlgItem  = IDC_CHECK_REGINS;
-    asLangTexts[iszTextCheckboxRegDel].lpszText    = TEXT("REG-File(Delete)");
-    asLangTexts[iszTextCheckboxRegDel].nIDDlgItem  = IDC_CHECK_REGDEL;
+    asLangTexts[iszTextGroupboxTitle].lpszText          = TEXT("Title/Subdirectory");
+    asLangTexts[iszTextGroupboxTitle].nIDDialog         = DLG_MAIN;
+    asLangTexts[iszTextGroupboxTitle].nIDDlgItem        = IDC_STATIC_TITLE;
+    asLangTexts[iszTextGroupboxRegs].lpszText           = TEXT("Registry-Rootkeys");
+    asLangTexts[iszTextGroupboxRegs].nIDDialog          = DLG_MAIN;
+    asLangTexts[iszTextGroupboxRegs].nIDDlgItem         = IDC_STATIC_REGS;
+    asLangTexts[iszTextGroupboxDirs].lpszText           = TEXT("Directories");
+    asLangTexts[iszTextGroupboxDirs].nIDDialog          = DLG_MAIN;
+    asLangTexts[iszTextGroupboxDirs].nIDDlgItem         = IDC_STATIC_DIRS;
+    asLangTexts[iszTextRadioUNL].lpszText               = TEXT("UNL");
+    asLangTexts[iszTextRadioUNL].nIDDialog              = DLG_MAIN;
+    asLangTexts[iszTextRadioUNL].nIDDlgItem             = IDC_CHECK_UNL;
+    asLangTexts[iszTextCheckboxRegIns].lpszText         = TEXT("REG-File(Install)");
+    asLangTexts[iszTextCheckboxRegIns].nIDDialog        = DLG_MAIN;
+    asLangTexts[iszTextCheckboxRegIns].nIDDlgItem       = IDC_CHECK_REGINS;
+    asLangTexts[iszTextCheckboxRegDel].lpszText         = TEXT("REG-File(Delete)");
+    asLangTexts[iszTextCheckboxRegDel].nIDDialog        = DLG_MAIN;
+    asLangTexts[iszTextCheckboxRegDel].nIDDlgItem       = IDC_CHECK_REGDEL;
+    asLangTexts[iszTextCheckOnlyAddedParts].lpszText    = TEXT("Log only added parts");
+    asLangTexts[iszTextCheckOnlyAddedParts].nIDDialog   = DLG_MAIN;
+    asLangTexts[iszTextCheckOnlyAddedParts].nIDDlgItem  = IDC_CHECK_ONLYADDED;
+    asLangTexts[iszTextCheckNoFilters].lpszText         = TEXT("(*) Next comparison w/o filter");
+    asLangTexts[iszTextCheckNoFilters].nIDDialog        = DLG_MAIN;
+    asLangTexts[iszTextCheckNoFilters].nIDDlgItem       = IDC_CHECK_NOFILTERS;
+    asLangTexts[iszTextCheckResult].lpszText            = TEXT("Check result before output");
+    asLangTexts[iszTextCheckResult].nIDDialog           = DLG_MAIN;
+    asLangTexts[iszTextCheckResult].nIDDlgItem          = IDC_CHECK_RESULT;
+    asLangTexts[iszTextCheckResetFilters].lpszText      = TEXT("(*) Reset adhoc filters");
+    asLangTexts[iszTextCheckResetFilters].nIDDialog     = DLG_MAIN;
+    asLangTexts[iszTextCheckResetFilters].nIDDlgItem    = IDC_CHECK_RESETADHOC;
+    asLangTexts[iszTextCheckDeleteShots].lpszText       = TEXT("(*) Delete shot files");
+    asLangTexts[iszTextCheckDeleteShots].nIDDialog      = DLG_MAIN;
+    asLangTexts[iszTextCheckDeleteShots].nIDDlgItem     = IDC_CHECK_DELSHOTS;
+    asLangTexts[iszTextCheckDefaultActions].lpszText    = TEXT("Default actions");
+    asLangTexts[iszTextCheckDefaultActions].nIDDialog   = DLG_MAIN;
+    asLangTexts[iszTextCheckDefaultActions].nIDDlgItem  = IDC_CHECK_DEFAULTS;
+    asLangTexts[iszTextCheckAutocompare].lpszText       = TEXT("Automatic compares");
+    asLangTexts[iszTextCheckAutocompare].nIDDialog      = DLG_MAIN;
+    asLangTexts[iszTextCheckAutocompare].nIDDlgItem     = IDC_CHECK_AUTOCOMPARE;
+    asLangTexts[iszTextCheckNoVals].lpszText            = TEXT("Don't log registry data");
+    asLangTexts[iszTextCheckNoVals].nIDDialog           = DLG_MAIN;
+    asLangTexts[iszTextCheckNoVals].nIDDlgItem          = IDC_CHECK_NOVALS;
+    asLangTexts[iszTextCheckUNLOrder].lpszText          = TEXT("Log with old \"unl order\"");
+    asLangTexts[iszTextCheckUNLOrder].nIDDialog         = DLG_MAIN;
+    asLangTexts[iszTextCheckUNLOrder].nIDDlgItem        = IDC_CHECK_UNLORDER;
+    asLangTexts[iszTextCheckOpenEditor].lpszText        = TEXT("Open result in default editor");
+    asLangTexts[iszTextCheckOpenEditor].nIDDialog       = DLG_MAIN;
+    asLangTexts[iszTextCheckOpenEditor].nIDDlgItem      = IDC_CHECK_OPENEDITOR;
+    asLangTexts[iszTextNotSaved].lpszText               = TEXT("(*) Not saved to ini");
+    asLangTexts[iszTextNotSaved].nIDDialog              = DLG_MAIN;
+    asLangTexts[iszTextNotSaved].nIDDlgItem             = IDC_TEXT_REMARK;
+    asLangTexts[iszTextMaxOutputLines].lpszText         = TEXT("Maximum output lines per value");
+    asLangTexts[iszTextMaxOutputLines].nIDDialog        = DLG_MAIN;
+    asLangTexts[iszTextMaxOutputLines].nIDDlgItem       = IDC_STATIC_OUTPUTLINES;
     
-    asLangTexts[iszTextMenuFile].lpszText          = TEXT("File");
-    asLangTexts[iszTextMenuOptions].lpszText       = TEXT("Options");
-    asLangTexts[iszTextMenuHelp].lpszText          = TEXT("Help");
-    asLangTexts[iszTextMenuOpen].lpszText          = TEXT("Open");
-    asLangTexts[iszTextButtonStop].lpszText          = TEXT("Stop");
+    asLangTexts[iszTextButtonLogs].lpszText             = TEXT("Logs");
+    asLangTexts[iszTextButtonLogs].nIDDialog            = DLG_MAIN;
+    asLangTexts[iszTextButtonLogs].nIDDlgItem           = IDC_PROP_LOGS;
+    asLangTexts[iszTextButtonDirs].lpszText             = TEXT("Dirs");
+    asLangTexts[iszTextButtonDirs].nIDDialog            = DLG_MAIN;
+    asLangTexts[iszTextButtonDirs].nIDDlgItem           = IDC_PROP_DIRS;
+    asLangTexts[iszTextButtonRegs].lpszText             = TEXT("Regs");
+    asLangTexts[iszTextButtonRegs].nIDDialog            = DLG_MAIN;
+    asLangTexts[iszTextButtonRegs].nIDDlgItem           = IDC_PROP_REGS;
+    asLangTexts[iszTextButtonScans].lpszText            = TEXT("Scans");
+    asLangTexts[iszTextButtonScans].nIDDialog           = DLG_MAIN;
+    asLangTexts[iszTextButtonScans].nIDDlgItem          = IDC_PROP_SCANS;
+    asLangTexts[iszTextButtonLoadIni].lpszText          = TEXT("Load");
+    asLangTexts[iszTextButtonLoadIni].nIDDialog         = DLG_MAIN;
+    asLangTexts[iszTextButtonLoadIni].nIDDlgItem        = IDC_LOAD_INI;
+    asLangTexts[iszTextButtonSaveIni].lpszText          = TEXT("Save");
+    asLangTexts[iszTextButtonSaveIni].nIDDialog         = DLG_MAIN;
+    asLangTexts[iszTextButtonSaveIni].nIDDlgItem        = IDC_SAVE_INI;
+    asLangTexts[iszTextButtonClear1].lpszText           = TEXT("Clear1");
+    asLangTexts[iszTextButtonClear1].nIDDialog          = DLG_MAIN;
+    asLangTexts[iszTextButtonClear1].nIDDlgItem         = IDC_PROP_CLEAR1;
+    asLangTexts[iszTextButtonClear2].lpszText           = TEXT("Clear2");
+    asLangTexts[iszTextButtonClear2].nIDDialog          = DLG_MAIN;
+    asLangTexts[iszTextButtonClear2].nIDDlgItem         = IDC_PROP_CLEAR2;
+    
+    asLangTexts[iszTextMenuFile].lpszText               = TEXT("File");
+    asLangTexts[iszTextMenuOpen].lpszText               = TEXT("Open");
+    asLangTexts[iszTextMenuShot].lpszText               = TEXT("&Shot");
+    asLangTexts[iszTextMenuOptions].lpszText            = TEXT("Options");
+    asLangTexts[iszTextMenuHelp].lpszText               = TEXT("Help");
+    asLangTexts[iszTextButtonStop].lpszText             = TEXT("Stop");
+    asLangTexts[iszTextMenuOptions].lpszText            = TEXT("Options");
     
     // Set language and "translator"
     _tcscpy(lpszLanguage, lpszDefaultLanguage);
@@ -224,14 +306,6 @@ VOID LoadLanguageFromIni()
     if (0 >= cchLanguageName) {  // not found or empty in regshot ini, therefore try old (<1.9.0) setting in language ini
         cchLanguageName = GetPrivateProfileString(lpszSectionCurrent, lpszSectionCurrent, NULL, lpszSelectedLanguage, (DWORD)(cchMaxLanguageNameLen), lpszLanguageIni);  // length incl. NULL character
     }
-    //if (0 < cchLanguageName && !bFirstRun) {
-    //    nResult = SendDlgItemMessage(hDlg, IDC_COMBOLANGUAGE, CB_FINDSTRINGEXACT, (WPARAM)0, (LPARAM)lpszSelectedLanguage);
-    //    if (CB_ERR != nResult) {
-    //        SendDlgItemMessage(hDlg, IDC_COMBOLANGUAGE, CB_SETCURSEL, (WPARAM)nResult, (LPARAM)0);
-    //        MYFREE(lpszSelectedLanguage);
-    //        return TRUE;
-    //    }
-    //}
 
     if (lpszSelectedLanguage != NULL) {
         _tcscpy(lpszLanguage, lpszSelectedLanguage);
@@ -297,9 +371,9 @@ VOID SetTextsToSelectedLanguage(HWND hDlg, BOOL bGetComboboxSelection)
         }
 
         // Update gui text with language string if id provided
-        if (0 != asLangTexts[i].nIDDlgItem) {
-//            SetDlgItemText((bFirstRun ? hDlg : hMainWnd), asLangTexts[i].nIDDlgItem, asLangTexts[i].lpszText);
-            SetDlgItemText(hMainWnd, asLangTexts[i].nIDDlgItem, asLangTexts[i].lpszText);
+        if ((0 != asLangTexts[i].nIDDlgItem)) {
+            if (asLangTexts[i].nIDDialog == DLG_MAIN)
+                SetDlgItemText(hMainWnd, asLangTexts[i].nIDDlgItem, asLangTexts[i].lpszText);
         }
     }
     lpszStop = asLangTexts[iszTextButtonStop].lpszText;
@@ -315,18 +389,20 @@ VOID SetTextsToSelectedLanguage(HWND hDlg, BOOL bGetComboboxSelection)
         }
     }
 
-    MENUITEMINFO mii;
 
     ModifyMenu(hMainMenu, 0, MF_STRING | MF_BYPOSITION, 0, asLangTexts[iszTextMenuFile].lpszText);
     ModifyMenu(hMainMenu, 1, MF_STRING | MF_BYPOSITION, 1, asLangTexts[iszTextButtonShot1].lpszText);
     ModifyMenu(hMainMenu, 2, MF_STRING | MF_BYPOSITION, 2, asLangTexts[iszTextButtonShot2].lpszText);
     ModifyMenu(hMainMenu, 3, MF_STRING | MF_BYPOSITION, 3, asLangTexts[iszTextButtonCompare].lpszText);
+    ModifyMenu(hMainMenu, ID_SETTINGS, MF_STRING | MF_BYCOMMAND, ID_SETTINGS, asLangTexts[iszTextMenuOptions].lpszText);
+    MENUITEMINFO mii;
     mii.cbSize = sizeof(MENUITEMINFO);
     GetMenuItemInfo(hMainMenu, 5, TRUE, &mii);
     mii.fMask = MIIM_TYPE;
     mii.dwTypeData = asLangTexts[iszTextMenuHelp].lpszText;
     mii.fType = MFT_STRING | MFT_RIGHTJUSTIFY;
     SetMenuItemInfo(hMainMenu, 5, TRUE, &mii);
+
 
     ModifyMenu(hMainMenu, ID_FILE_OPEN, MF_STRING | MF_BYCOMMAND, ID_FILE_OPEN, asLangTexts[iszTextMenuOpen].lpszText);
     ModifyMenu(hMainMenu, ID_FILE_OPTIONS, MF_STRING | MF_BYCOMMAND, ID_FILE_OPTIONS, asLangTexts[iszTextMenuOptions].lpszText);
@@ -342,6 +418,7 @@ VOID SetTextsToSelectedLanguage(HWND hDlg, BOOL bGetComboboxSelection)
     ModifyMenu(hMainMenu, ID_1_SWAP, MF_STRING | MF_BYCOMMAND, ID_1_SWAP, asLangTexts[iszTextMenuSwap].lpszText);
     
     ModifyMenu(hMainMenu, ID_2_SHOTCOMPAREOUTPUT, MF_STRING | MF_BYCOMMAND, ID_2_SHOTCOMPAREOUTPUT, asLangTexts[iszTextMenuShotCompareOutput].lpszText);
+    ModifyMenu(hMainMenu, ID_2_SHOTCOMPAREOUTPUT, MF_STRING | MF_BYCOMMAND, ID_2_SHOTCOMPAREOUTPUT, asLangTexts[iszTextMenuShotCompareOutput].lpszText);
     ModifyMenu(hMainMenu, ID_2_SHOT, MF_STRING | MF_BYCOMMAND, ID_2_SHOT, asLangTexts[iszTextMenuShot].lpszText);
     ModifyMenu(hMainMenu, ID_2_SHOTANDSAVE, MF_STRING | MF_BYCOMMAND, ID_2_SHOTANDSAVE, asLangTexts[iszTextMenuShotSave].lpszText);
     ModifyMenu(hMainMenu, ID_2_LOAD, MF_STRING | MF_BYCOMMAND, ID_2_LOAD, asLangTexts[iszTextMenuLoad].lpszText);
@@ -352,6 +429,8 @@ VOID SetTextsToSelectedLanguage(HWND hDlg, BOOL bGetComboboxSelection)
 
     ModifyMenu(hMainMenu, ID_COMPARE_COMPARE, MF_STRING | MF_BYCOMMAND, ID_COMPARE_COMPARE, asLangTexts[iszTextButtonCompare].lpszText);
     ModifyMenu(hMainMenu, ID_COMPARE_COMPAREANDOUTPUT, MF_STRING | MF_BYCOMMAND, ID_COMPARE_COMPAREANDOUTPUT, asLangTexts[iszTextMenuCompareOutput].lpszText);
+    ModifyMenu(hMainMenu, ID_COMPARE_COMPAREANDOUTPUT_FS, MF_STRING | MF_BYCOMMAND, ID_COMPARE_COMPAREANDOUTPUT_FS, asLangTexts[iszTextMenuCompareCompareOutputFS].lpszText);
+    ModifyMenu(hMainMenu, ID_COMPARE_COMPAREANDOUTPUT_REG, MF_STRING | MF_BYCOMMAND, ID_COMPARE_COMPAREANDOUTPUT_REG, asLangTexts[iszTextMenuCompareCompareOutputReg].lpszText);
     ModifyMenu(hMainMenu, ID_COMPARE_OUTPUT, MF_STRING | MF_BYCOMMAND, ID_COMPARE_OUTPUT, asLangTexts[iszTextMenuOutput].lpszText);
     ModifyMenu(hMainMenu, ID_COMPARE_OUTPUT_FS, MF_STRING | MF_BYCOMMAND, ID_COMPARE_OUTPUT_FS, asLangTexts[iszTextMenuOutputFS].lpszText);
     ModifyMenu(hMainMenu, ID_COMPARE_OUTPUT_REG, MF_STRING | MF_BYCOMMAND, ID_COMPARE_OUTPUT_REG, asLangTexts[iszTextMenuOutputReg].lpszText);

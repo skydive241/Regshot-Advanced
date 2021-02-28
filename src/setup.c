@@ -184,7 +184,6 @@ BOOL LoadSettingsFromIni(HWND hDlg) // tfx get ini info
 // Section [SkipRegKey]
     MYFREE(lpgrszRegSkipStrings);
     MYFREE(pRegSkipList);
-    DWORD test = sizeof(SKIPLIST);
     pRegSkipList = MYALLOC0(sizeof(SKIPLIST));
     lpgrszRegSkipStrings = MYALLOC0(MAX_INI_SECTION_CHARS * sizeof(TCHAR));
     pRegSkipList = FillSkipList(pRegSkipList, lpszIniSkipRegKey, lpgrszRegSkipStrings, REGSKIP);
@@ -265,7 +264,7 @@ BOOL LoadSettingsFromIni(HWND hDlg) // tfx get ini info
     SendMessage(GetDlgItem(hDlg, IDC_CHECK_HTML), BM_SETCHECK, (WPARAM)((nFlag & 0x02) >> 1), (LPARAM)0);   // HTML output
     SendMessage(GetDlgItem(hDlg, IDC_CHECK_UNL), BM_SETCHECK, (WPARAM)((nFlag & 0x04) >> 2), (LPARAM)0);    // UNL output
     SendMessage(GetDlgItem(hDlg, IDC_CHECKDIR), BM_SETCHECK, (WPARAM)((nFlag & 0x08) >> 3), (LPARAM)0);
-    EnableWindow(GetDlgItem(hDlg, IDC_BROWSE1), ((nFlag & 0x08) >> 3));
+    EnableWindow(GetDlgItem(hDlg, IDC_PROP_SCANS), ((nFlag & 0x08) >> 3));
 
     fOpenEditor = (BOOL)GetPrivateProfileInt(lpszIniOutput, lpszIniOpenEditor, 1, lpszRegshotIni);
     SendMessage(GetDlgItem(hDlg, IDC_CHECK_OPENEDITOR), BM_SETCHECK, fOpenEditor, (LPARAM)0);
@@ -803,7 +802,6 @@ SKIPLIST * EvaluateAndSkipSID(SKIPLIST * pList)
     BYTE bSID[SECURITY_MAX_SID_SIZE];
     BOOL bRVal;
     DWORD dwSidSize = SECURITY_MAX_SID_SIZE;
-//    LPTSTR szSID = NULL;
 
     LPTSTR szUserName;
     DWORD dwUserSize = 256;
@@ -872,9 +870,6 @@ SKIPLIST * EvaluateAndSkipSID(SKIPLIST * pList)
             pList = pListTemp;
             pList[iRowsCount].lpSkipString = NULL;
         }
-
-        //LocalFree(szSID);
-        //szSID = NULL;
     }
     return pList;
 }
@@ -906,24 +901,53 @@ BOOL ResetOutputOptions(VOID)
 //-------------------------------------------------------------
 // Speicher der settings freigeben
 //-------------------------------------------------------------
-BOOL CleanUpGlobalMemory(VOID) // tfx save settings to ini
+BOOL CleanUpGlobalMemory(VOID) 
 {
-    MYFREE(lpszRegshotIni);
     MYFREE(szSID);
+    MYFREE(lpszRegshotIni);
+    MYFREE(lpszLanguage);
+    MYFREE(lpszExtDir);
+    MYFREE(lpszTitle);
+    MYFREE(lpszLanguageIni);
+    MYFREE(lpszMessage);
+    MYFREE(lpszWindowsDirName);
+    MYFREE(lpszTempPath);
+    MYFREE(lpszOutputPath);
+    MYFREE(lpszEditor);
+    MYFREE(lpszISSOutputFolder);
+    MYFREE(lpszISSEditor);
+    MYFREE(lpszNSIOutputFolder);
+    MYFREE(lpszNSIEditor);
 
     /* Clean up global memory and from LoadSettingsFromIni() plus SetTextsToSelectedLanguage()*/
     if (NULL != lpgrszRegSkipStrings) {
         MYFREE(lpgrszRegSkipStrings);
     }
-    //if (NULL != lpgrszFileSkipStrings) {
-    //    MYFREE(lpgrszFileSkipStrings);
-    //}
-    //if (NULL != lpgrszDirScanStrings) {
-    //    MYFREE(lpgrszDirScanStrings);
-    //}
+    if (NULL != lpgrszRegWhitelistStrings) {
+        MYFREE(lpgrszRegWhitelistStrings);
+    }
     if (NULL != lpgrszLangSection) {
         MYFREE(lpgrszLangSection);
     }
+    
+    int iRowsCount = 0;
+    if (pFileSkipList != NULL) {
+        for (iRowsCount = 0; pFileSkipList[iRowsCount].lpSkipString != NULL; iRowsCount++) {
+            MYFREE(pFileSkipList[iRowsCount].lpSkipString);
+            pFileSkipList[iRowsCount].lpSkipString = NULL;
+        }
+    }
+    MYFREE(pFileSkipList);
+    MYFREE(pRegSkipList);
+    MYFREE(pRegWhiteList);
+
+    if (pDirScanList != NULL) {
+        for (iRowsCount = 0; pDirScanList[iRowsCount].lpSkipString != NULL; iRowsCount++) {
+            MYFREE(pDirScanList[iRowsCount].lpSkipString);
+            pDirScanList[iRowsCount].lpSkipString = NULL;
+        }
+    }
+    MYFREE(pDirScanList);
 
     return TRUE;
 }

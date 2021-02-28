@@ -45,7 +45,7 @@ LPTSTR lpszBATValDelete         = TEXT("REG DELETE");
 LPTSTR lpszBATFileDelete        = TEXT("DEL");
 LPTSTR lpszBATDirDelete         = TEXT("RMDIR");
 
-// Some strings used to write to ISS file
+// Some strings used to write to REG file
 LPTSTR lpszREGKeySeparator      = TEXT("\r\n");
 LPTSTR lpszREGKeyEnclosingLeft  = TEXT("[");
 LPTSTR lpszREGKeyEnclosingRight = TEXT("]\r\n");
@@ -54,6 +54,8 @@ LPTSTR lpszREGVal4Default       = TEXT("");
 LPTSTR lpszREGVal5Default       = TEXT("");
 LPTSTR lpszREGValDelete         = TEXT("=-");
 LPTSTR lpszREGPartsDivider      = TEXT("=");
+LPTSTR lpszREGValueTypeHex      = TEXT("hex");
+LPTSTR lpszREGValueTypeDWORD    = TEXT("dword");
 
 // Some strings used to write to ISS file
 LPTSTR lpszISSEnclosing         = TEXT("\"");
@@ -85,6 +87,7 @@ LPTSTR lpszISSFileOrDirDelete   = TEXT("Type: filesandordirs; Name: ");
 LPTSTR lpszISSComponentRegistry = TEXT("; Components: registry ");
 LPTSTR lpszISSComponentFilesystem = TEXT("; Components: filesystem ");
 
+// Some strings used to write to NSI file
 LPTSTR lpszNSIPartsDivider      = TEXT(" ");
 LPTSTR lpszNSIEnclosing         = TEXT("\"");
 LPTSTR lpszNSIValDefault        = TEXT("");
@@ -102,6 +105,7 @@ LPTSTR lpszNSIFileAdd           = TEXT("  File \"/oname=");
 LPTSTR lpszNSIFileDelete        = TEXT("  Delete ");
 LPTSTR lpszNSIDirAdd            = TEXT("  CreateDirectory ");
 LPTSTR lpszNSIDirDelete         = TEXT("  RMDir ");
+
 // ----------------------------------------------------------------------
 // Several routines to write to an output file
 // ----------------------------------------------------------------------
@@ -131,9 +135,18 @@ LPTSTR CorrectISSOutputString(LPTSTR lpszText)
             }
         }
         MYFREE(lpszText);
-        return lpszOutputStringCorrected;
+        lpszText = lpszOutputStringCorrected;
     }
 
+    // nsis macro replacements
+    if (lpszText != NULL)
+        pos = _tcsstr(lpszText, TEXT("}break}"));
+    while (pos) {
+        _tcsncpy(pos, TEXT("{"), 1);
+        pos++;
+        pos = _tcsstr(lpszText, TEXT("}break}"));
+    }
+    
     return lpszText;
 }
 
@@ -144,7 +157,7 @@ LPTSTR BuildNSIOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType, 
 {
     LPTSTR lpszOutputString = NULL;
     LPTSTR lpszTempString;
-    size_t cchStringLen = 1;    // terminating \0
+    size_t cchStringLen = 1;
     LPTSTR pos = NULL;
 
     if ((nActionType == VALADD) || (nActionType == VALDEL) || (nActionType == VALMODI)) {
@@ -254,7 +267,6 @@ LPTSTR BuildNSIOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType, 
         // Add key
         if ((!bDeInstall && (nActionType == KEYADD)) || (bDeInstall && (nActionType == KEYDEL))) {
             cchStringLen += _tcslen(lpszNSIValueTypeNone) + _tcslen(lpszNSIPartsDivider) + 2 * _tcslen(lpszNSIEnclosing);
-//            cchStringLen += _tcslen(lpszNSIAddkeyStr) + 2 * _tcslen(lpszNSIPartsDivider) + 4 * _tcslen(lpszNSIEnclosing);
         }
         // Delete key
         else {
@@ -266,7 +278,6 @@ LPTSTR BuildNSIOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType, 
         // Add key
             if ((!bDeInstall && (nActionType == KEYADD)) || (bDeInstall && (nActionType == KEYDEL))) 
                 _tcscpy(lpszOutputString, lpszNSIValueTypeNone);
-//                _tcscpy(lpszOutputString, lpszNSIAddkeyStr);
             else 
             // Delete key
                 _tcscpy(lpszOutputString, lpszNSIDeletekey);
@@ -281,9 +292,6 @@ LPTSTR BuildNSIOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType, 
                 _tcscat(lpszOutputString, lpszNSIPartsDivider);
                 _tcscat(lpszOutputString, lpszNSIEnclosing);
                 _tcscat(lpszOutputString, lpszNSIEnclosing);
-                //_tcscat(lpszOutputString, lpszNSIPartsDivider);
-                //_tcscat(lpszOutputString, lpszNSIEnclosing);
-                //_tcscat(lpszOutputString, lpszNSIEnclosing);
             }
         }
     }
@@ -352,8 +360,6 @@ LPTSTR BuildNSIOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType, 
         MYFREE(lpszTempString);
     }
 
-//    lpszOutputString = CorrectISSOutputString(lpszOutputString);
-
     return lpszOutputString;
 }
 
@@ -366,9 +372,6 @@ LPTSTR BuildISSOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType, 
     LPTSTR lpszTempString;
     size_t cchStringLen = 1;    // terminating \0
     LPTSTR pos = NULL;
-
-//    LPTSTR lpszISSComponentRegistry = TEXT("; Components: registry ");
-//    LPTSTR lpszISSComponentFilesystem = TEXT("; Components: filesystem ");
 
     if ((nActionType == VALADD) || (nActionType == VALDEL) || (nActionType == VALMODI)) {
         pos = _tcschr(lpszText, _T('\\'));
@@ -589,30 +592,6 @@ LPTSTR BuildISSOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType, 
 
     lpszOutputString = CorrectISSOutputString(lpszOutputString);
 
-    //if (lpszOutputString != NULL)
-    //    pos = _tcschr(lpszOutputString, _T('{'));
-    //int i = 0;
-    //while (pos) {
-    //    i++;
-    //    pos = _tcschr(++pos, _T('{'));
-    //}
-    //if (i > 0) {
-    //    LPTSTR lpszOutputStringCorrected = MYALLOC0((_tcslen(lpszOutputString) + i + 1) * sizeof(TCHAR));
-    //    i = 0;
-    //    
-    //    for (int j = 0; j <= _tcslen(lpszOutputString); j++) {
-    //        if (lpszOutputStringCorrected + j + i != NULL)
-    //            _tcsncpy(lpszOutputStringCorrected + j + i, lpszOutputString+j, 1);
-    //        if (_tcsncmp(lpszOutputString + j, _TEXT("{"), 1) == 0) {
-    //            if (lpszOutputStringCorrected + j + i + 1 != NULL)
-    //                _tcsncpy(lpszOutputStringCorrected + j + i + 1, _TEXT("{"), 1);
-    //            i++;
-    //        }
-    //    }
-    //    MYFREE(lpszOutputString);
-    //    return lpszOutputStringCorrected;
-    //}
-    
     return lpszOutputString;
 }
 
@@ -622,17 +601,15 @@ LPTSTR BuildISSOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType, 
 LPTSTR BuildREGOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType, BOOL bSuppressKey, BOOL bDeInstall)
 {
     LPTSTR lpszOutputString = NULL;
-    //LPTSTR lpszTempString;
-    size_t cchStringLen = 1;    // terminating \0
-    //LPTSTR pos = NULL;
-// TODO: Längenberechnung!!!
+    size_t cchStringLen = 1;
+
     if ((nActionType == VALADD) || (nActionType == VALDEL) || (nActionType == VALMODI)) {
-//Root: "HKLM"; Subkey: "xxx"; ValueName: "aaaaa"; Flags: deletevalue
+//[HKEY_CURRENT_USER\]
         if (!bSuppressKey) {
-            cchStringLen += _tcslen(lpszREGKeySeparator) + _tcslen(lpszREGKeyEnclosingLeft) + _tcslen(lpszText) +
-                _tcslen(lpszREGKeyEnclosingRight);
+            cchStringLen += _tcslen(lpszREGKeyEnclosingLeft) + _tcslen(lpszText) +
+                _tcslen(lpszREGKeyEnclosingRight) + _tcslen(lpszREGKeySeparator);
         } 
-        cchStringLen += 2 * _tcslen(lpszREGValueEnclosing);
+        cchStringLen += 2 * _tcslen(lpszREGValueEnclosing) + _tcslen(lpszREGPartsDivider);
         
         if (((LPVALUECONTENT)lpContent)->lpszValueName != NULL)
             cchStringLen += _tcslen(((LPVALUECONTENT)lpContent)->lpszValueName);
@@ -646,26 +623,42 @@ LPTSTR BuildREGOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType, 
             
             switch (((LPVALUECONTENT)lpContent)->nTypeCode) {
             case REG_SZ:
-                cchStringLen += _tcslen(lpszISSValueTypeString);
+                //"RegShot"="Test"
+//                cchStringLen += 2 * _tcslen(lpszREGValueEnclosing) + 1;
                 break;
             case REG_EXPAND_SZ:
-                cchStringLen += _tcslen(lpszISSValueTypeExpandsz);
+                //"REG_EXPAND_SZ_EMPTY"=hex(2):00,00
+//                cchStringLen += _tcslen(lpszREGValueTypeHex) + 3 + 2 * _tcslen(lpszREGPartsDivider);
+//                cchStringLen += _tcslen(lpszREGPartsDivider);
                 break;
             case REG_MULTI_SZ:
-                cchStringLen += _tcslen(lpszISSValueTypeMultisz);
+                //"REG_MULTI_SZ_EMPTY"=hex(7):00,00
+//                cchStringLen += _tcslen(lpszREGValueTypeHex) + 3 + 2 * _tcslen(lpszREGPartsDivider);
+//                cchStringLen += _tcslen(lpszREGPartsDivider);
                 break;
             case REG_DWORD_LITTLE_ENDIAN:
+                //"REG_DWORD_LITTLE_ENDIAN_EMPTY"=dword:00000000
+//                cchStringLen += _tcslen(lpszISSValueTypeDWORD) + 2 * _tcslen(lpszREGPartsDivider);
+//                cchStringLen += _tcslen(lpszREGPartsDivider);
+                break;
             case REG_DWORD_BIG_ENDIAN:
-                cchStringLen += _tcslen(lpszISSValueTypeDword);
+                //"REG_DWORD_BIG_ENDIAN_EMPTY"=hex(5):00,00,00,00
+//                cchStringLen += _tcslen(lpszREGValueTypeHex) + 3 + 2 * _tcslen(lpszREGPartsDivider);
+//                cchStringLen += _tcslen(lpszREGPartsDivider);
                 break;
             case REG_QWORD_LITTLE_ENDIAN:
-                cchStringLen += _tcslen(lpszISSValueTypeQword);
+                //"REG_QWORD_EMPTY"=hex(b):00,00,00,00,00,00,00,00
+//                cchStringLen += _tcslen(lpszREGValueTypeHex) + 3 + 2 * _tcslen(lpszREGPartsDivider);
+//                cchStringLen += _tcslen(lpszREGPartsDivider);
                 break;
             case REG_NONE:
-                cchStringLen += _tcslen(lpszISSValueTypeNone);
+                //"REG_NONE_EMPTY"=hex(0):00,00
+//                cchStringLen += _tcslen(lpszREGValueTypeHex) + 3 + 2 * _tcslen(lpszREGPartsDivider);
+//                cchStringLen += _tcslen(lpszREGPartsDivider);
                 break;
             default:
-                cchStringLen += _tcslen(lpszISSValueTypeBinary);
+//                cchStringLen += _tcslen(lpszREGValueTypeHex) + 3 + 2 * _tcslen(lpszREGPartsDivider);
+//                cchStringLen += _tcslen(lpszREGPartsDivider);
                 break;
             }
         }
@@ -687,7 +680,6 @@ LPTSTR BuildREGOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType, 
             if ((bDeInstall && (nActionType == VALADD)) || (!bDeInstall && (nActionType == VALDEL))) {
                 _tcscat(lpszOutputString, lpszREGValDelete);
             }
-            //Root: "HKCU"; Subkey: "RegTypes"; ValueType: dword; ValueName: """REG_DWORD_BIG_ENDIAN_EMPTY"""; ValueData: "hex(5):0x00000000"
             if ((bDeInstall && (nActionType == VALDEL)) || (!bDeInstall && (nActionType == VALADD)) || (nActionType == VALMODI)) {
             }
         }
@@ -710,8 +702,6 @@ LPTSTR BuildREGOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType, 
             _tcscat(lpszOutputString, lpszREGKeyEnclosingRight);
         }
     }
-
-//    lpszOutputString = CorrectISSOutputString(lpszOutputString);
 
     return lpszOutputString;
 }

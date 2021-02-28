@@ -51,7 +51,7 @@
 #define IDC_TEXTCOUNT1                  1028
 #define IDC_TEXTCOUNT2                  1029
 #define IDC_TEXTCOUNT3                  1030
-#define IDC_BROWSE1                     1031
+#define IDC_PROP_SCANS                  1031
 #define IDC_BROWSE2                     1032
 #define IDC_COMBOLANGUAGE               1033
 #define IDC_RegOpenKey                  1034
@@ -117,7 +117,7 @@
 #define IDC_CHECK_OPT_DONTDISPLAYINFO   1084
 #define IDC_CHECK_NOFILTERS             1084
 #define IDC_CHECK_OPT_DONTDISPLAYRESULT 1085
-#define IDC_OUTPUT_RESET                1085
+#define IDC_PROP_LOGS					1085
 #define IDC_STATIC_REG                  1086
 #define IDC_PROP_CLEAR2                 1086
 #define IDC_STATIC_INF                  1087
@@ -170,6 +170,8 @@
 #define IDM_OUTPUT_REG                  1125
 #define IDC_CHECK1                      1126
 #define IDC_CHECK_SUPPRESS              1126
+#define IDM_COMPAREOUTPUT_FS            1127
+#define IDM_COMPAREOUTPUT_REG           1128
 #define ID_FILE                         40007
 #define ID_HELP_ABOUT                   40010
 #define ID_FILE_QUIT                    40011
@@ -206,6 +208,10 @@
 #define ID_COMPARE_OUTPUT40042          40042
 #define ID_COMPARE_OUTPUT_FS            40043
 #define ID_COMPARE_OUTPUT_REG           40044
+#define ID_COMPARE_COMPAREANDOUTPUT40045 40045
+#define ID_COMPARE_COMPAREANDOUTPUT_FS  40046
+#define ID_COMPARE_COMPAREANDOUTPUT40047 40047
+#define ID_COMPARE_COMPAREANDOUTPUT_REG 40048
 #define IDC_STATIC_SKIPDIR_COMMENT      -1
 #define IDC_STATIC_SKIP_COMMENT         -1
 #define IDC_STATIC_UNL                  -1
@@ -216,8 +222,8 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        138
-#define _APS_NEXT_COMMAND_VALUE         40045
-#define _APS_NEXT_CONTROL_VALUE         1127
+#define _APS_NEXT_COMMAND_VALUE         40049
+#define _APS_NEXT_CONTROL_VALUE         1129
 #define _APS_NEXT_SYMED_VALUE           102
 #endif
 #endif

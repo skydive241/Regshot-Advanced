@@ -511,7 +511,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_OUTPUT, (LPARAM)0);
                     bCompareReg = TRUE;
                     return(TRUE);
-               
+
                 case IDM_OUTPUT_REG:
                 case ID_COMPARE_OUTPUT_REG:
                     bCompareFS = FALSE;
@@ -519,8 +519,22 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     bCompareFS = TRUE;
                     return(TRUE);
                 
+                case IDM_COMPAREOUTPUT_FS:
+                    bCompareReg = FALSE;
+                    SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_COMPAREOUTPUT, (LPARAM)0);
+                    bCompareReg = TRUE;
+                    return(TRUE);
+
+                case IDM_COMPAREOUTPUT_REG:
+                    bCompareFS = FALSE;
+                    SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_COMPAREOUTPUT, (LPARAM)0);
+                    bCompareFS = TRUE;
+                    return(TRUE);
+
                 case ID_COMPARE_COMPARE:  
                 case ID_COMPARE_COMPAREANDOUTPUT:
+                case ID_COMPARE_COMPAREANDOUTPUT_FS:
+                case ID_COMPARE_COMPAREANDOUTPUT_REG:
                 case ID_COMPARE_OUTPUT:
                 case ID_COMPARE_CLEAR: 
                 case ID_COMPARE_INFO:  
@@ -529,6 +543,10 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                         SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_COMPARE, (LPARAM)0);
                     else if (LOWORD(wParam) == ID_COMPARE_COMPAREANDOUTPUT)
                         SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_COMPAREOUTPUT, (LPARAM)0);
+                    else if (LOWORD(wParam) == ID_COMPARE_COMPAREANDOUTPUT_FS)
+                        SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_COMPAREOUTPUT_FS, (LPARAM)0);
+                    else if (LOWORD(wParam) == ID_COMPARE_COMPAREANDOUTPUT_REG)
+                        SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_COMPAREOUTPUT_REG, (LPARAM)0);
                     else if (LOWORD(wParam) == ID_COMPARE_OUTPUT)
                         SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_OUTPUT, (LPARAM)0);
                     else if (LOWORD(wParam) == ID_COMPARE_CLEAR)
@@ -641,10 +659,10 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     UI_InitProgressBar();
                     if (NULL != lpMenuShot) {
                         FreeShot(lpMenuShot);
+                        bRegSkipAdded = FALSE;
+                        bRegWhitelistAdded = FALSE;
+                        bFileSkipAdded = FALSE;
                     }
-                    bRegSkipAdded = FALSE;
-                    bRegWhitelistAdded = FALSE;
-                    bFileSkipAdded = FALSE;
                     FreeCompareResult();
                     if (0 != cEnd) {
                         nCurrentTime = GetTickCount64();
@@ -673,10 +691,10 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                 case IDC_CHECKDIR:
                     if (SendMessage(GetDlgItem(hDlg, IDC_CHECKDIR), BM_GETCHECK, (WPARAM)0, (LPARAM)0) == 1) {
 //                        EnableWindow(GetDlgItem(hDlg, IDC_EDITDIR), TRUE);
-                        EnableWindow(GetDlgItem(hDlg, IDC_BROWSE1), TRUE);
+                        EnableWindow(GetDlgItem(hDlg, IDC_PROP_SCANS), TRUE);
                     } else {
                         EnableWindow(GetDlgItem(hDlg, IDC_EDITDIR), FALSE);
-                        EnableWindow(GetDlgItem(hDlg, IDC_BROWSE1), FALSE);
+                        EnableWindow(GetDlgItem(hDlg, IDC_PROP_SCANS), FALSE);
                     }
                     return(TRUE);
 
@@ -709,7 +727,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     LoadSettingsFromIni(hDlg);
                     return(TRUE);
 
-                case ID_FILE_QUIT:  // Button: Quit
+                case ID_FILE_QUIT:  
                 case IDC_QUIT:  
                 case IDCANCEL: {    // Button: Window Close
                     if (bRunning) {
@@ -729,57 +747,6 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     PostQuitMessage(0);
                     return(TRUE);
                 }
-
-                case IDC_BROWSE1: {  // Button: Scan dirs
-                    DoPropertySheet(hMainWnd, PROP_SCANS);
-
-/*                    LPITEMIDLIST lpidlist;
-                    size_t nLenExtDir;
-
-                    BrowseInfo1.hwndOwner = hDlg;
-                    BrowseInfo1.pszDisplayName = MYALLOC0(MAX_PATH * sizeof(TCHAR));
-                    //BrowseInfo1.lpszTitle = TEXT("Select:");
-                    BrowseInfo1.ulFlags = 0;     // 3 lines added in 1.8.2
-                    BrowseInfo1.lpfn = NULL;
-                    BrowseInfo1.lParam = 0;
-
-                    // remove trailing semicolons
-                    nLenExtDir = GetDlgItemText(hDlg, IDC_EDITDIR, lpszExtDir, EXTDIRLEN);  // length incl. NULL character
-                    while ((0 < nLenExtDir) && ((TCHAR)';' == lpszExtDir[nLenExtDir - 1])) {
-                        nLenExtDir--;
-                    }
-                    lpszExtDir[nLenExtDir] = (TCHAR)'\0';
-
-                    lpidlist = SHBrowseForFolder(&BrowseInfo1);
-                    if (NULL != lpidlist) {
-                        SHGetPathFromIDList(lpidlist, BrowseInfo1.pszDisplayName);
-                        nLen = _tcslen(BrowseInfo1.pszDisplayName);
-                        if (0 < nLen) {
-                            size_t nWholeLen;
-                            BOOL fSemicolon;
-
-                            fSemicolon = FALSE;
-                            nWholeLen = nLenExtDir + nLen;
-                            if (0 < nLenExtDir) {
-                                fSemicolon = TRUE;
-                                nWholeLen++;
-                            }
-
-                            if (EXTDIRLEN > nWholeLen) {
-                                if (fSemicolon) {
-                                    _tcscat(lpszExtDir, TEXT(";"));
-                                }
-                                _tcscat(lpszExtDir, BrowseInfo1.pszDisplayName);
-                            }
-                        }
-                        MYFREE(lpidlist);
-                    }
-                    MYFREE(BrowseInfo1.pszDisplayName);
-
-                    SetDlgItemText(hDlg, IDC_EDITDIR, lpszExtDir);
-*/
-                }
-                return(TRUE);
 
                 case IDC_BROWSE2: {  // Button: Output path
                     LPITEMIDLIST lpidlist;
@@ -839,6 +806,10 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     return(TRUE);
                 }
                 
+                case IDC_PROP_SCANS:
+                    DoPropertySheet(hMainWnd, PROP_SCANS);
+                    break;
+
                 case IDC_PROP_REGS:
                     DoPropertySheet(hMainWnd, PROP_REGS);
                     break;
@@ -847,10 +818,10 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     DoPropertySheet(hMainWnd, PROP_DIRS);
                     break;
                 
-                case IDC_OUTPUT_RESET:
+                case IDC_PROP_LOGS:
                     DoPropertySheet(hMainWnd, PROP_COMMON_2);
                     // ResetOutputOptions();
-                    return(TRUE);
+                    break;
 
                 case ID_FILE_OPTIONS:
                 case ID_SETTINGS:

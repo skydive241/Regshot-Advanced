@@ -205,7 +205,7 @@ BOOL CALLBACK DlgSkipProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         }
         else if (iPropertyPage == PROP_WLREGS) {
             pSkipList = pRegWhiteList;
-            lvSkipCol.pszText = TEXT("Adhoc registry whitelist");
+            lvSkipCol.pszText = TEXT("Registry whitelist items");
         }
         ListView_InsertColumn(hWndListViewSkip, 0, &lvSkipCol);
 
@@ -333,7 +333,7 @@ BOOL CALLBACK DlgSkipProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                         pSkipList = pListTemp;
                     if (iPropertyPage == PROP_REGS)
                         pRegSkipList = pSkipList;
-                    if (iPropertyPage == PROP_WLREGS)
+                    else if (iPropertyPage == PROP_WLREGS)
                         pRegWhiteList = pSkipList;
                     else if (iPropertyPage == PROP_SCANS)
                         pDirScanList = pSkipList;
@@ -447,12 +447,32 @@ BOOL CALLBACK DlgSkipProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             BOOL bNewEntry = FALSE;
             if (lpszValue != NULL)
                 bNewEntry = (GetDlgItemText(hDlg, IDC_EDIT_ADDSKIPSTRING, lpszValue, EXTDIRLEN) != 0 ? TRUE : FALSE);
-            // TODO: Prüfung auf HK nur bei iPropertyPage = PROP_REGS
             lpszValue[EXTDIRLEN - 1] = (TCHAR)'\0';  // safety NULL char
             if ((iPropertyPage == PROP_REGS) || (iPropertyPage == PROP_WLREGS)) {
                 bNewEntry = FALSE;
-                if (lpszValue == _tcsstr(lpszValue, TEXT("HK")))
+                if (lpszValue == _tcsstr(lpszValue, TEXT("HK"))) {
                     bNewEntry = TRUE;
+                    LPTSTR pos = _tcschr(lpszValue, _T('\\'));
+                    _tcscpy(pos++, TEXT("\0"));
+                    if (_tcscmp(lpszValue, TEXT("HKEY_LOCAL_MACHINE")) == 0) {
+                        _tcscpy(lpszValue, TEXT("HKLM\\"));
+                        _tcscat(lpszValue, pos);
+                    }
+                    else if (_tcscmp(lpszValue, TEXT("HKEY_USERS")) == 0) {
+                        _tcscpy(lpszValue, TEXT("HKU\\"));
+                        _tcscat(lpszValue, pos);
+                    }
+                    else if (_tcscmp(lpszValue, TEXT("HKEY_CURRENT_USER")) == 0) {
+                        _tcscpy(lpszValue, TEXT("HKCU\\"));
+                        _tcscat(lpszValue, pos);
+                    }
+                    else if ((_tcscmp(lpszValue, TEXT("HKLM")) != 0) &&
+                             (_tcscmp(lpszValue, TEXT("HKU")) != 0) &&
+                             (_tcscmp(lpszValue, TEXT("HKCU")) != 0)) 
+                        bNewEntry = FALSE;
+                    else
+                        _tcsncpy(--pos, _T("\\"), 1);
+                }
             }
             else {
                 lpszBuffer = MYALLOC0(MAX_PATH * sizeof(TCHAR));
@@ -794,6 +814,7 @@ BOOL CALLBACK DlgOptionsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
                     SetDlgItemText(hDlg, IDC_COMMON_EDIT_ISSEDITOR, opfn.lpstrFile);
                 else if (LOWORD(wParam) == IDC_COMMON_BROWSENSIEDITOR)
                     SetDlgItemText(hDlg, IDC_COMMON_EDIT_NSIEDITOR, opfn.lpstrFile);
+
                 break;
             
             case IDC_COMMON_BROWSENSIOUTPUT:

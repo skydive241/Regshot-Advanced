@@ -206,7 +206,6 @@ VOID WritePart(HANDLE hFile, DWORD nActionType, LPCOMPRESULT lpStartCR, int iOut
     DWORD cbCRLF;
     size_t i;
     size_t iLinesWrittenOldPart = 0;
-//    LPTSTR rgszResultStrings[MAX_RESULT_STRINGS];
     LPTSTR* rgszResultStrings = MYALLOC0(2 * nOutMaxResultLines * sizeof(LPTSTR));
     size_t iResultStringsMac;
 
@@ -258,7 +257,6 @@ VOID WritePart(HANDLE hFile, DWORD nActionType, LPCOMPRESULT lpStartCR, int iOut
                         MYFREE(lpszFullName);
                         continue;
                     }
-                    // TODO: MEMORY
                     if (IsInSkipList(lpszFullName, pRegSkipList, (bRegSkipAdded ? TRUE : FALSE))) {
                         MYFREE(lpszFullName);
                         continue;
@@ -266,7 +264,8 @@ VOID WritePart(HANDLE hFile, DWORD nActionType, LPCOMPRESULT lpStartCR, int iOut
                     MYFREE(lpszFullName);
                 }
 
-                if (((VALDEL == nActionType) || (VALADD == nActionType) || (VALMODI == nActionType)) && (iOutputType == OUT_REG_DEINSTALL)) {
+                if (((VALDEL == nActionType) || (VALADD == nActionType) || (VALMODI == nActionType)) && 
+                    ((iOutputType == OUT_REG_DEINSTALL) || (iOutputType == OUT_REG_INSTALL))) {
                     lpszActualKeyName = GetWholeKeyName(((LPVALUECONTENT)(lpCR->lpContentOld))->lpFatherKC, FALSE);
                     if (0 == _tcscmp(lpszActualKeyName, lpszPreviousKeyName)) {
                         bSuppressKey = TRUE;
@@ -310,7 +309,6 @@ VOID WritePart(HANDLE hFile, DWORD nActionType, LPCOMPRESULT lpStartCR, int iOut
                         MYFREE(lpszFullName);
                         continue;
                     }
-                    // TODO: MEMORY
                     if (IsInSkipList(lpszFullName, pRegSkipList, (bRegSkipAdded ? TRUE : FALSE))) {
                         MYFREE(lpszFullName);
                         continue;
@@ -318,7 +316,7 @@ VOID WritePart(HANDLE hFile, DWORD nActionType, LPCOMPRESULT lpStartCR, int iOut
                     MYFREE(lpszFullName);
                 }
                 
-                if (((VALDEL == nActionType) || (VALADD == nActionType) || (VALMODI == nActionType)) && (iOutputType == OUT_REG_INSTALL)) {
+                if (((VALDEL == nActionType) || (VALADD == nActionType) || (VALMODI == nActionType)) && ((iOutputType == OUT_REG_DEINSTALL) || (iOutputType == OUT_REG_INSTALL))) {
                     lpszActualKeyName = GetWholeKeyName(((LPVALUECONTENT)(lpCR->lpContentNew))->lpFatherKC, FALSE);
                     if (0 == _tcscmp(lpszActualKeyName, lpszPreviousKeyName)) {
                         bSuppressKey = TRUE;

@@ -77,7 +77,7 @@ LPTSTR GetWholeFileName(LPFILECONTENT lpStartFC, size_t cchExtra, BOOL fForOutpu
     }
 
     if (fForOutput && fLogEnvironmentStrings) {
-        lpszBuffer = MYALLOC0(nBufferSize * sizeof(TCHAR));             // nBufferSize must > commentlength + 10 .txt 0000
+        lpszBuffer = MYALLOC0((MAX_PATH + 1) * sizeof(TCHAR));             // nBufferSize must > commentlength + 10 .txt 0000
         if ((lpszBuffer != NULL) && (lpszName != NULL)) {
             if (PathUnExpandEnvStrings(lpszName, lpszBuffer, nBufferSize)) {
                 MYFREE(lpszName);

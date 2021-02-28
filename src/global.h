@@ -87,30 +87,12 @@ extern HANDLE hHeap;
 // MSDN doc say use HEAP_NO_SERIALIZE is not good for process heap :( so change fromm 1 to 0 20111216, slower than using 1
 #define MYALLOC(x)  HeapAlloc(hHeap,0,x)
 #define MYALLOC0(x) HeapAlloc(hHeap,8,x) // (HEAP_NO_SERIALIZE|) HEAP_ZERO_MEMORY ,1|8
-#define MYFREE(x)   HeapFree(hHeap,0,x)
-//HeapAlloc(
-//    _In_ HANDLE hHeap,
-//    _In_ DWORD dwFlags,
-//    _In_ SIZE_T dwBytes
-//);
+#define MYFREE(x)   \
+if (x != NULL)\
+   HeapFree(hHeap,0,x)
 #define MYREALLOC0(x,lpMem) HeapReAlloc(hHeap,8,lpMem,x) // (HEAP_NO_SERIALIZE|) HEAP_ZERO_MEMORY ,1|8
-//HeapReAlloc(
-//    _Inout_ HANDLE hHeap,
-//    _In_ DWORD dwFlags,
-//    _Frees_ptr_opt_ LPVOID lpMem,
-//    _In_ SIZE_T dwBytes
-//);
 
 #else
-//GlobalReAlloc(
-//    _Frees_ptr_ HGLOBAL hMem,
-//    _In_ SIZE_T dwBytes,
-//    _In_ UINT uFlags
-//);
-//GlobalAlloc(
-//    _In_ UINT uFlags,
-//    _In_ SIZE_T dwBytes
-//);
 
 #define MYALLOC(x)  GlobalAlloc(GMEM_FIXED,x) // GMEM_FIXED, 0
 #define MYALLOC0(x) GlobalAlloc(GPTR,x) // Combines GMEM_FIXED and GMEM_ZEROINIT GPTR, 0|0x0040
@@ -765,8 +747,14 @@ enum eOutputFiles
     OUT_INF_DEINSTALL,
     OUT_NSI_DEINSTALL,
     OUT_NSI_INSTALL,
-    // ATTENTION: add new language strings before this line, the last line is used to determine the count
+    // ATTENTION: add new output types before this line, the last line is used to determine the count
     OUTPUTTYPES
+};
+
+enum eDialogs {
+    DLG_MAIN = 0,
+    DLG_COMMON_1,
+    DLG_COMMON_2
 };
 
 // List of all language strings
@@ -850,12 +838,35 @@ enum eLangTexts {
     iszTextFilesystemModi,
     iszTextMenuOutputFS,
     iszTextMenuOutputReg,
+    iszTextCheckOnlyAddedParts,
+    iszTextCheckNoFilters,
+    iszTextCheckResult,
+    iszTextCheckResetFilters,
+    iszTextCheckDeleteShots,
+    iszTextCheckDefaultActions,
+    iszTextCheckAutocompare,
+    iszTextCheckNoVals,
+    iszTextCheckUNLOrder,
+    iszTextCheckOpenEditor,
+    iszTextNotSaved,
+    iszTextMaxOutputLines,
+    iszTextMenuCompareCompareOutputFS,
+    iszTextMenuCompareCompareOutputReg,
+    iszTextButtonLogs,
+    iszTextButtonDirs,
+    iszTextButtonRegs,
+    iszTextButtonLoadIni,
+    iszTextButtonSaveIni,
+    iszTextButtonClear1,
+    iszTextButtonClear2,
+    iszTextButtonScans,
     // ATTENTION: add new language strings before this line, the last line is used to determine the count
     cLangStrings
 };
 
 struct _LANGUAGETEXT {
     LPTSTR lpszText;
+    int nIDDialog;
     int nIDDlgItem;
 };
 typedef struct _LANGUAGETEXT LANGUAGETEXT, FAR *LPLANGUAGETEXT;
