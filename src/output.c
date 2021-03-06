@@ -939,8 +939,12 @@ VOID WriteNSISetupKeys(HANDLE hFile, BOOL bInstall)
     _tcscat(_Notnull_ lpszBuffer, lpszCRLF);
     WriteFileCP(hFile, nCodePage, lpszBuffer, (DWORD)(_tcslen(lpszBuffer) * sizeof(TCHAR)), &NBW, NULL);
     
-    //OutFile "C:\Temp\Example2.exe"
     _tcscpy(lpszBuffer, TEXT("OutFile \""));
+    if (fUseDifferentNSIOutputFolder) {
+        _tcscat(lpszBuffer, lpszNSIOutputFolder);
+        if (_tcsrchr(lpszBuffer, _T('\\')) != lpszBuffer + _tcslen(lpszBuffer) - 1)
+            _tcscat(_Notnull_ lpszBuffer, TEXT("\\"));
+    }
     _tcscat(_Notnull_ lpszBuffer, lpszTitle);
     if (bInstall)
         _tcscat(lpszBuffer, TEXT("-installer.exe"));

@@ -569,14 +569,21 @@ extern BOOL      bRunning;
 extern BOOL      fNoVals;
 extern BOOL      fOnlyNewEntries;
 extern BOOL      fLogEnvironmentStrings;
+extern BOOL      fSuppressLogs;
 extern BOOL      fLogUNLOrder;
 extern BOOL      fStoreOnQuit;
 extern BOOL      fStoreOnlyUncompared;
 extern BOOL      fSaveSettingsOnExit;
 extern BOOL      fNoFiltersWhenLoading;
 extern BOOL      fShowSIDFilterRules;
+extern UINT      nExpandLevels;
+extern UINT      nMaxNodes;
+extern UINT      nMaxLines;
 extern BOOL      fOpenEditor;
 extern BOOL      fOutputTXTfile;
+extern BOOL      fOutputUNLfile;
+extern BOOL      fOutputBATfile;
+extern BOOL      fOutputHTMfile;
 extern BOOL      fISSInstallFile;
 extern BOOL      fISSDeinstallFile;
 extern BOOL      fNSIInstallFile;
@@ -669,14 +676,15 @@ BOOL    SearchTVDown(HWND hwndTV, HTREEITEM hItem, int iPropertyPage);
 BOOL    BuildSkipString(HWND hwndTV, HTREEITEM hItem, int iPropertyPage);
 BOOL    ResetAdhocFilters(VOID);
 BOOL    InsertRootItems(HWND hwndTV, int iPropertyPage);
-HTREEITEM FindOrCreateTreeItem(HWND hwndTV, HTREEITEM hParent, HTREEITEM hItem, int nLevel, LPTSTR lpszNodeText, int iPropertyPage, BOOL bKey);
+HTREEITEM FindOrCreateTreeItem(HWND hwndTV, HTREEITEM hParent, HTREEITEM hItem, UINT nLevel, LPTSTR lpszNodeText, int iPropertyPage, BOOL bKey, LPCOMPRESULTNEW lpCR);
 BOOL    InitTreeViewItems(HWND hwndTV, int iPropertyPage);
 BOOL    InitTreeViewImageLists(HWND hwndTV);
 BOOL    CheckFilters(LPVOID lpContent, LPTSTR lpszKeyName, LPTSTR* lpszValueName, DWORD nActionType, BOOL* pbKey);
 
 
 
-LPTSTR CorrectISSOutputString(LPTSTR lpszText);
+LPTSTR EscapeSpecialCharacters(LPTSTR lpszText, TCHAR c, LPTSTR lpEscape);
+LPTSTR ReplaceISSMacros(LPTSTR lpszText);
 
 VOID    CreateNewResult(DWORD nActionType, LPVOID lpContentOld, LPVOID lpContentNew);
 size_t  ResultToString(LPTSTR rgszResultStrings[], size_t iResultStringsMac, size_t iLinesWrittenOldPart, DWORD nActionType, LPVOID lpContent, BOOL fNewContent, BOOL bSuppressKey, int iOutputType);

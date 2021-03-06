@@ -109,36 +109,11 @@ LPTSTR lpszNSIDirDelete         = TEXT("  RMDir ");
 // ----------------------------------------------------------------------
 // Several routines to write to an output file
 // ----------------------------------------------------------------------
-LPTSTR CorrectISSOutputString(LPTSTR lpszText)
+LPTSTR ReplaceISSMacros(LPTSTR lpszText)
 {
     LPTSTR pos = NULL;
-    int i = 0;
-
-    if (lpszText != NULL)
-        pos = _tcschr(lpszText, _T('{'));
-    while (pos) {
-        i++;
-        pos = _tcschr(++pos, _T('{'));
-    }
-
-    if (i > 0) {
-        LPTSTR lpszOutputStringCorrected = MYALLOC0((_tcslen(lpszText) + i + 1) * sizeof(TCHAR));
-        i = 0;
-
-        for (int j = 0; j <= _tcslen(lpszText); j++) {
-            if (lpszOutputStringCorrected + j + i != NULL)
-                _tcsncpy(lpszOutputStringCorrected + j + i, lpszText + j, 1);
-            if (_tcsncmp(lpszText + j, _TEXT("{"), 1) == 0) {
-                if (lpszOutputStringCorrected + j + i + 1 != NULL)
-                    _tcsncpy(lpszOutputStringCorrected + j + i + 1, _TEXT("{"), 1);
-                i++;
-            }
-        }
-        MYFREE(lpszText);
-        lpszText = lpszOutputStringCorrected;
-    }
-
-    // nsis macro replacements
+    // iss macro replacements
+    
     if (lpszText != NULL)
         pos = _tcsstr(lpszText, TEXT("}break}"));
     while (pos) {
@@ -146,7 +121,61 @@ LPTSTR CorrectISSOutputString(LPTSTR lpszText)
         pos++;
         pos = _tcsstr(lpszText, TEXT("}break}"));
     }
-    
+
+    return lpszText;
+}
+
+// ----------------------------------------------------------------------
+// Several routines to write to an output file
+// ----------------------------------------------------------------------
+LPTSTR EscapeSpecialCharacters(LPTSTR lpszText, TCHAR c, LPTSTR lpEscape)
+{
+    LPTSTR pos = NULL;
+    size_t i = 0;
+
+    if (lpszText != NULL)
+        pos = _tcschr(lpszText, c);
+    while (pos) {
+        i++;
+        pos = _tcschr(++pos, c);
+    }
+
+    /*
+    if (i > 0) {
+        LPTSTR lpszOutputStringCorrected = MYALLOC0((_tcslen(lpszText) + i + 1) * sizeof(TCHAR));
+        i = 0;
+
+        for (int j = 0; j <= _tcslen(lpszText); j++) {
+            if (lpszOutputStringCorrected + j + i != NULL)
+                _tcsncpy(lpszOutputStringCorrected + j + i, lpszText + j, 1);
+            if (_tcsncmp(lpszText + j, &c, 1) == 0) {
+                if (lpszOutputStringCorrected + j + i + 1 != NULL)
+                    _tcsncpy(lpszOutputStringCorrected + j + i + 1, &c, 1);
+                i++;
+            }
+        }
+        MYFREE(lpszText);
+        lpszText = lpszOutputStringCorrected;
+    }
+    */
+    if (i > 0) {
+        LPTSTR lpszOutputStringCorrected = MYALLOC0((_tcslen(lpszText) + i * _tcslen(lpEscape) + 1) * sizeof(TCHAR));
+        
+        i = 0;
+        for (int j = 0; j <= _tcslen(lpszText); j++) {
+            if (lpszOutputStringCorrected + j + i != NULL) {
+                if (_tcsncmp(lpszText + j, &c, 1) == 0) {
+                    _tcsncpy(lpszOutputStringCorrected + j + i, lpEscape, _tcslen(lpEscape));
+                    i = i + _tcslen(lpEscape);
+                }
+                if (lpszOutputStringCorrected + j + i != NULL) 
+                    _tcsncpy(lpszOutputStringCorrected + j + i, lpszText + j, 1);
+            }
+        }
+        MYFREE(lpszText);
+        return lpszOutputStringCorrected;
+    }
+
     return lpszText;
 }
 
@@ -373,6 +402,8 @@ LPTSTR BuildISSOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType, 
     size_t cchStringLen = 1;    // terminating \0
     LPTSTR pos = NULL;
 
+    // TODO: ISS-String-Korrekturen
+    //lpszText = EscapeSpecialCharacters(lpszText, _T('{'), lpEscape);
     if ((nActionType == VALADD) || (nActionType == VALDEL) || (nActionType == VALMODI)) {
         pos = _tcschr(lpszText, _T('\\'));
         if (pos != NULL)
@@ -590,7 +621,11 @@ LPTSTR BuildISSOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType, 
         MYFREE(lpszTempString);
     }
 
-    lpszOutputString = CorrectISSOutputString(lpszOutputString);
+    // TODO: Escape ISS special characters:
+    // hier kommt der komplette String OHNE Value-Data an 
+    // hier kann also nur max. die { ersetzt werden
+    lpszOutputString = EscapeSpecialCharacters(lpszOutputString, _T('{'), TEXT("{"));
+//    lpszOutputString = EscapeSpecialCharacters(lpszOutputString, _T('"'), TEXT("\""));
 
     return lpszOutputString;
 }

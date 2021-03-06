@@ -22,9 +22,6 @@
 */
 
 // TODO: handle environment variables
-// TODO: UNL-/REG-Output
-// TODO: SSC-File vs. INI
-// TODO: HKU-SID ausschließen
 // TODO: "gespiegelte" Reg-Pfade prüfen und ausschließen
 
 #include "global.h"
@@ -33,21 +30,21 @@
 /*
     Define window title for main with version, revision, etc. (see version.rc.h for title structure)
 */
-LPTSTR lpszProgramName = REGSHOT_TITLE;  // tfx  add program titile
-LPTSTR lpszAboutRegshot = TEXT("Regshot Advanced is a free and open source registry and filesystem compare utility.\n\n")
-                          TEXT("Version:") REGSHOT_VERSION_NUM_DOTS2 REGSHOT_VERSION_NAME4 TEXT("\n")
-                          TEXT("Revision: ") REGSHOT_REVISION_NUM2 REGSHOT_REVISION_NUM_SUFFIX2 TEXT("\n")
-                          TEXT("Architecture: ") REGSHOT_VERSION_PLATFORM TEXT("\n")
-                          TEXT("Codepage: ") REGSHOT_CODEPAGE TEXT("\n")
-                          TEXT("Compiler: ") REGSHOT_VERSION_COMPILER TEXT("\n")
-#ifdef REGSHOT_BUILDTYPE
-                          TEXT("Build: ") REGSHOT_BUILDTYPE TEXT("\n")
+LPTSTR lpszProgramName      = REGSHOT_TITLE;  // tfx  add program titile
+LPTSTR lpszAboutRegshot     = TEXT("Regshot Advanced is a free and open source registry and filesystem compare utility.\n\n")
+                              TEXT("Version:") REGSHOT_VERSION_NUM_DOTS2 REGSHOT_VERSION_NAME4 TEXT("\n")
+                              TEXT("Revision: ") REGSHOT_REVISION_NUM2 REGSHOT_REVISION_NUM_SUFFIX2 TEXT("\n")
+                              TEXT("Architecture: ") REGSHOT_VERSION_PLATFORM TEXT("\n")
+                              TEXT("Codepage: ") REGSHOT_CODEPAGE TEXT("\n")
+                              TEXT("Compiler: ") REGSHOT_VERSION_COMPILER TEXT("\n")
+#ifdef REGSHOT_BUILDTYPE    
+                              TEXT("Build: ") REGSHOT_BUILDTYPE TEXT("\n")
 #endif
-                          TEXT("\n")
-                          REGSHOT_URL TEXT("\n")
-                          TEXT("\n")
-                          REGSHOT_VERSION_COPYRIGHT TEXT("\n")
-                          TEXT("\n");
+                              TEXT("\n")
+                              REGSHOT_URL TEXT("\n")
+                              TEXT("\n")
+                              REGSHOT_VERSION_COPYRIGHT TEXT("\n")
+                              TEXT("\n");
 
 LPTSTR lpszIniFileName      = TEXT("regshot.ini"); // tfx
 LPTSTR lpszLanguageFileName = TEXT("language.ini");
@@ -69,15 +66,15 @@ LPTSTR lpszISSEditor;
 LPTSTR lpszNSIOutputFolder;
 LPTSTR lpszNSIEditor;
 
-MSG        msg;          // Windows MSG struct
-HWND       hMainWnd;     // The handle of REGSHOT
+MSG        msg;                 // Windows MSG struct
+HWND       hMainWnd;            // The handle of REGSHOT
 HINSTANCE  hInst;
-HMENU      hMainMenu;     // Handle of dialog menu
+HMENU      hMainMenu;           // Handle of dialog menu
 HMENU      hButtonsMenu;        // Handle of popup menu
-LPREGSHOT  lpMenuShot;   // Pointer to current Shot for popup menus and alike
-RECT       rect;         // Window RECT
+LPREGSHOT  lpMenuShot;          // Pointer to current Shot for popup menus and alike
+RECT       rect;                // Window RECT
 BOOL       bRunning;
-BROWSEINFO BrowseInfo1;  // BrowseINFO struct
+BROWSEINFO BrowseInfo1;         // BrowseINFO struct
 HICON ico_green, ico_red;
 BOOL bRegSkipAdded;
 BOOL bRegWhitelistAdded;
@@ -138,11 +135,14 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             hMainWnd = hDlg;
             hMainMenu = GetMenu(hDlg);
             bRegSkipAdded = FALSE;                                         // flag to show whether there are reg exclusions ADDED after shots (to be used for comarison)
-            bRegWhitelistAdded = FALSE;                                         // flag to show whether there are reg exclusions ADDED after shots (to be used for comarison)
+            bRegWhitelistAdded = FALSE;                                    // flag to show whether there are reg exclusions ADDED after shots (to be used for comarison)
             bFileSkipAdded = FALSE;                                        // flag to show whether there are reg exclusions ADDED after shots (to be used for comarison)
             
             //SetWindowSubclass(GetDlgItem(hMainWnd, IDC_1STSHOT), OwnerDrawButtonProc, 0, 0);
-            
+//#define _CRTDBG_MAP_ALLOC
+//#include <stdlib.h>
+//#include <crtdbg.h>
+//_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
             SendDlgItemMessage(hDlg, IDC_EDITCOMMENT, EM_SETLIMITTEXT, (WPARAM)(COMMENTLENGTH - 1), (LPARAM)0);
             SendDlgItemMessage(hDlg, IDC_EDITPATH, EM_SETLIMITTEXT, (WPARAM)(MAX_PATH - 1), (LPARAM)0);
             SendDlgItemMessage(hDlg, IDC_EDITDIR, EM_SETLIMITTEXT, (WPARAM)(EXTDIRLEN - 1), (LPARAM)0);
@@ -153,9 +153,9 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             lpszLanguage        = NULL;
             lpszExtDir          = MYALLOC0(EXTDIRLEN * sizeof(TCHAR));      // EXTDIRLEN is actually MAX_PATH * 4
             lpszTitle           = MYALLOC0(EXTDIRLEN * sizeof(TCHAR));      // TITLELEN is actually MAX_PATH * 4
-            lpszLanguageIni     = MYALLOC0((MAX_PATH + 1 + _tcslen(lpszLanguageFileName)) * sizeof(TCHAR));   // for language.ini
-            lpszRegshotIni      = MYALLOC0((MAX_PATH + 1 + _tcslen(lpszIniFileName)) * sizeof(TCHAR));   // for regshot.ini
-            lpszMessage         = MYALLOC0(REGSHOT_MESSAGE_LENGTH * sizeof(TCHAR));  // For status bar text message store
+            lpszLanguageIni     = MYALLOC0((MAX_PATH + 1 + _tcslen(lpszLanguageFileName)) * sizeof(TCHAR));     // for language.ini
+            lpszRegshotIni      = MYALLOC0((MAX_PATH + 1 + _tcslen(lpszIniFileName)) * sizeof(TCHAR));          // for regshot.ini
+            lpszMessage         = MYALLOC0(REGSHOT_MESSAGE_LENGTH * sizeof(TCHAR));                             // For status bar text message store
             lpszWindowsDirName  = MYALLOC0((MAX_PATH + 1) * sizeof(TCHAR));
             lpszTempPath        = MYALLOC0((MAX_PATH + 1) * sizeof(TCHAR));
             lpszStartDir        = MYALLOC0((MAX_PATH + 1) * sizeof(TCHAR));
@@ -237,6 +237,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             SendMessage(hDlg, WM_COMMAND, (WPARAM)IDC_CHECKDIR, (LPARAM)0);
 
             LoadSettingsFromIni(hDlg); // tfx
+            EnableWindow(GetDlgItem(hDlg, IDC_CHECK_SUPPRESS_LOGS), (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_RESULT), BM_GETCHECK, (WPARAM)0, (LPARAM)0));
 
 // TODO: Subdirectory TITLE
             nLen = _tcslen(lpszOutputPath);
@@ -258,9 +259,9 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             lpszLastOpenDir = lpszOutputPath;
             bRunning = FALSE;
 
-            return TRUE;
+            break;
 
-    case WM_COMMAND:
+        case WM_COMMAND:
             switch (LOWORD(wParam)) {
                 case IDC_1STSHOT:  // Button: "1st Shot"
                     lpMenuShot = &Shot1;  // Popup window messages are for 1st Shot
@@ -281,7 +282,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     GetWindowRect(GetDlgItem(hDlg, IDC_1STSHOT), &rect);
                     TrackPopupMenu(hButtonsMenu, TPM_LEFTALIGN | TPM_LEFTBUTTON, rect.left + 10, rect.top + 10, 0, hDlg, NULL);
                     DestroyMenu(hButtonsMenu);
-                    return(TRUE);
+                    break;
 
                 case IDC_2NDSHOT:  // Button: "2nd Shot"
                     lpMenuShot = &Shot2;  // Popup window messages are for 2nd Shot
@@ -299,7 +300,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     GetWindowRect(GetDlgItem(hDlg, IDC_2NDSHOT), &rect);
                     TrackPopupMenu(hButtonsMenu, TPM_LEFTALIGN | TPM_LEFTBUTTON, rect.left + 10, rect.top + 10, 0, hDlg, NULL);
                     DestroyMenu(hButtonsMenu);
-                    return(TRUE);
+                    break;
 
                 case ID_1_SHOT:         
                 case ID_1_SHOTANDSAVE:  
@@ -327,7 +328,8 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                         SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_INFO, (LPARAM)0);
                     else if (LOWORD(wParam) == ID_1_SWAP)
                         SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_SWAP, (LPARAM)0);
-                    return(TRUE);
+                    break;
+
                 case ID_2_SHOT:         
                 case ID_2_SHOTCOMPAREOUTPUT: 
                 case ID_2_SHOTANDSAVE:  
@@ -357,7 +359,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                         SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_INFO, (LPARAM)0);
                     else if (LOWORD(wParam) == ID_2_SWAP)
                         SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_SWAP, (LPARAM)0);
-                    return(TRUE);
+                    break;
 
                 case IDM_SHOTONLY:  
                     bRunning = TRUE;
@@ -381,7 +383,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     if (CheckShotsChronology(hDlg)) {
                         UI_EnableMainButtons();
                     }
-                    return(TRUE);
+                    break;
 
                 case IDM_SHOTCOMPAREOUTPUT:  
                     bRunning = TRUE;
@@ -420,7 +422,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     if (!fDontDisplayInfoAfterComparison) {
                         DisplayResultInfo(hDlg);
                     }
-                    return(TRUE);
+                    break;
 
                 case IDM_SHOTSAVE:  // Shot Popup Menu: "Shot and Save..."
                     bRunning = TRUE;
@@ -429,7 +431,8 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     UI_GetShotDialogSettings();
                     Shot(lpMenuShot);
                     MessageBeep(0xffffffff);
-                    SaveShot(lpMenuShot);
+                    if (bRunning)
+                        SaveShot(lpMenuShot);
                     UI_RemoveHourGlassCursor();
                     if (!bRunning) {
                         SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_CLEAR, (LPARAM)0);
@@ -444,7 +447,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     if (CheckShotsChronology(hDlg)) {
                         UI_EnableMainButtons();
                     }
-                    return(TRUE);
+                    break;
 
                 case IDM_LOAD:  // Shot Popup Menu: "Load..."
                     bRunning = TRUE;
@@ -465,7 +468,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     if (CheckShotsChronology(hDlg)) {
                         UI_EnableMainButtons();
                     }
-                    return(TRUE);
+                    break;
 
                 case IDM_SAVE:  // Shot Popup Menu: "Save..."
                     bRunning = TRUE;
@@ -476,7 +479,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     UI_RemoveHourGlassCursor();
                     UI_EnableMainButtons();
                     MessageBeep(0xffffffff);
-                    return(TRUE);
+                    break;
 
                 case IDM_SWAP:  // Shot Popup Menu: "Swap"
                     bRunning = TRUE;
@@ -503,33 +506,33 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     if (CheckShotsChronology(hDlg)) {
                         UI_EnableMainButtons();
                     }
-                    return(TRUE);
+                    break;
 
                 case IDM_OUTPUT_FS:
                 case ID_COMPARE_OUTPUT_FS:
                     bCompareReg = FALSE;
                     SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_OUTPUT, (LPARAM)0);
                     bCompareReg = TRUE;
-                    return(TRUE);
+                    break;
 
                 case IDM_OUTPUT_REG:
                 case ID_COMPARE_OUTPUT_REG:
                     bCompareFS = FALSE;
                     SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_OUTPUT, (LPARAM)0);
                     bCompareFS = TRUE;
-                    return(TRUE);
-                
+                    break;
+
                 case IDM_COMPAREOUTPUT_FS:
                     bCompareReg = FALSE;
                     SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_COMPAREOUTPUT, (LPARAM)0);
                     bCompareReg = TRUE;
-                    return(TRUE);
+                    break;
 
                 case IDM_COMPAREOUTPUT_REG:
                     bCompareFS = FALSE;
                     SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_COMPAREOUTPUT, (LPARAM)0);
                     bCompareFS = TRUE;
-                    return(TRUE);
+                    break;
 
                 case ID_COMPARE_COMPARE:  
                 case ID_COMPARE_COMPAREANDOUTPUT:
@@ -553,7 +556,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                         SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_CLEAR, (LPARAM)0);
                     else if (LOWORD(wParam) == ID_COMPARE_INFO)
                         SendMessage(hMainWnd, WM_COMMAND, (WPARAM)IDM_INFO, (LPARAM)0);
-                    return(TRUE);
+                    break;
 
                 case IDC_COMPARE:  // Button: "Compare"
                     lpMenuShot = NULL;
@@ -569,7 +572,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     GetWindowRect(GetDlgItem(hDlg, IDC_COMPARE), &rect);
                     TrackPopupMenu(hButtonsMenu, TPM_LEFTALIGN | TPM_LEFTBUTTON, rect.left + 10, rect.top + 10, 0, hDlg, NULL);
                     DestroyMenu(hButtonsMenu);
-                    return(TRUE);
+                    break;
 
                 case IDM_COMPARE:  // Compare Popup Menu: "Compare"
                     bRunning = TRUE;
@@ -589,7 +592,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     if (!fDontDisplayInfoAfterComparison) {
                         DisplayResultInfo(hDlg);
                     }
-                    return(TRUE);
+                    break;
 
                 case IDM_COMPAREOUTPUT:  // Compare Popup Menu: "Compare and Output"
                     bRunning = TRUE;
@@ -611,7 +614,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     if (!fDontDisplayInfoAfterComparison) {
                         DisplayResultInfo(hDlg);
                     }
-                    return(TRUE);
+                    break;
 
                 case IDM_OUTPUT:  // Compare Popup Menu: "Output"
                     bRunning = TRUE;
@@ -621,7 +624,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     bRunning = FALSE;
                     UI_EnableMainButtons();
                     MessageBeep(0xffffffff);
-                    return(TRUE);
+                    break;
 
                 case ID_FILE_CLEARALL:  // Button: "Clear All"
                 case IDC_CLEARALL:  
@@ -646,7 +649,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     bRunning = FALSE;
                     UI_EnableMainButtons();
                     MessageBeep(0xffffffff);
-                    return(TRUE);
+                    break;
 
                 case IDM_CLEAR:  // Shot/Compare Popup Menu: "Clear"
                     UI_SetHourGlassCursor();
@@ -678,7 +681,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     UI_RemoveHourGlassCursor();
                     UI_EnableMainButtons();
                     MessageBeep(0xffffffff);
-                    return(TRUE);
+                    break;
 
                 case IDM_INFO:  // Shot/Compare Popup Menu: "Info"
                     if (NULL != lpMenuShot) {
@@ -686,46 +689,39 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     } else {
                         DisplayResultInfo(hDlg);
                     }
-                    return(TRUE);
+                    break;
+
+                case IDC_CHECK_RESULT:
+                    EnableWindow(GetDlgItem(hDlg, IDC_CHECK_SUPPRESS_LOGS), (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_RESULT), BM_GETCHECK, (WPARAM)0, (LPARAM)0));
+                    break;
 
                 case IDC_CHECKDIR:
-                    if (SendMessage(GetDlgItem(hDlg, IDC_CHECKDIR), BM_GETCHECK, (WPARAM)0, (LPARAM)0) == 1) {
-//                        EnableWindow(GetDlgItem(hDlg, IDC_EDITDIR), TRUE);
-                        EnableWindow(GetDlgItem(hDlg, IDC_PROP_SCANS), TRUE);
-                    } else {
-                        EnableWindow(GetDlgItem(hDlg, IDC_EDITDIR), FALSE);
-                        EnableWindow(GetDlgItem(hDlg, IDC_PROP_SCANS), FALSE);
-                    }
-                    return(TRUE);
+                    EnableWindow(GetDlgItem(hDlg, IDC_PROP_SCANS), (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECKDIR), BM_GETCHECK, (WPARAM)0, (LPARAM)0));
+                    break;
 
                 case IDC_CHECK_HKLM:
                 case IDC_CHECK_HKU:
                 case IDC_CHECK_HKCU:
                 case IDC_CHECK_REGDEL:
                 case IDC_CHECK_REGINS:
-                    return(TRUE);
+                case IDC_CHECK_ONLYADDED:
+                    break;
+
+                case IDC_CHECK_SUPPRESS_LOGS:
+                    fSuppressLogs = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_SUPPRESS_LOGS), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                    break;
 
                 case IDC_CHECK_DEFAULTS:
-                    if (SendMessage(GetDlgItem(hDlg, IDC_CHECK_DEFAULTS), BM_GETCHECK, (WPARAM)0, (LPARAM)0) == 1)
-                        EnableWindow(GetDlgItem(hDlg, IDC_CHECK_AUTOCOMPARE), TRUE);
-                    else
-                        EnableWindow(GetDlgItem(hDlg, IDC_CHECK_AUTOCOMPARE), FALSE);
-                    return(TRUE);
-
-                case IDC_CHECK_ONLYADDED:
-                    //if (SendMessage(GetDlgItem(hDlg, IDC_CHECK_ONLYADDED), BM_GETCHECK, (WPARAM)0, (LPARAM)0) == 1)
-                    //    EnableWindow(GetDlgItem(hDlg, IDC_CHECK_NOVALS), FALSE);
-                    //else
-                    //    EnableWindow(GetDlgItem(hDlg, IDC_CHECK_NOVALS), TRUE);
-                    return(TRUE);
+                    EnableWindow(GetDlgItem(hDlg, IDC_CHECK_AUTOCOMPARE), (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_DEFAULTS), BM_GETCHECK, (WPARAM)0, (LPARAM)0));
+                    break;
 
                 case IDC_SAVE_INI:
                     SaveSettingsToIni(hDlg);
-                    return(TRUE);
+                    break;
 
                 case IDC_LOAD_INI:
                     LoadSettingsFromIni(hDlg);
-                    return(TRUE);
+                    break;
 
                 case ID_FILE_QUIT:  
                 case IDC_QUIT:  
@@ -745,7 +741,8 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                         SaveSettingsToIni(hDlg);
                     CleanUpGlobalMemory();
                     PostQuitMessage(0);
-                    return(TRUE);
+//_CrtDumpMemoryLeaks();
+                    break;
                 }
 
                 case IDC_BROWSE2: {  // Button: Output path
@@ -784,15 +781,6 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                 }
                 return(TRUE);
 
-                //case IDC_COMBOLANGUAGE:  // Combo Box: Language
-                //    if (CBN_SELCHANGE == HIWORD(wParam)) {  // Only react when user selected something
-                //        SetTextsToDefaultLanguage();
-                //        SetTextsToSelectedLanguage(hDlg);
-                //        UI_EnableMainButtons();
-                //        return(TRUE);
-                //    }
-                //    break;
-
                 case ID_HELP_ABOUT:   // Button: About
                 case IDC_ABOUT: {  
                     LPTSTR   lpszAboutBox;
@@ -803,7 +791,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     lpszAboutBox[SIZEOF_ABOUTBOX - 1] = (TCHAR)'\0';  // safety NULL char
                     MessageBox(hDlg, lpszAboutBox, asLangTexts[iszTextAbout].lpszText, MB_OK);
                     MYFREE(lpszAboutBox);
-                    return(TRUE);
+                    break;
                 }
                 
                 case IDC_PROP_SCANS:
@@ -820,27 +808,17 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                 
                 case IDC_PROP_LOGS:
                     DoPropertySheet(hMainWnd, PROP_COMMON_2);
-                    // ResetOutputOptions();
+                    break;
+
+                case IDC_RESET:
+                    ResetOutputOptions();
                     break;
 
                 case ID_FILE_OPTIONS:
                 case ID_SETTINGS:
                     DoPropertySheet(hMainWnd, PROP_COMMON);
-                    //if (DialogBox(hInst,
-                    //    MAKEINTRESOURCE(IDD_DIALOG_OPTIONS),
-                    //    hWnd,
-                    //    (DLGPROC)DlgOptionsProc) == IDOK)
-                    //{
-                    //    // Complete the command; szItemName contains the 
-                    //    // name of the item to delete. 
-                    //}
-
-                    //else
-                    //{
-                    //    // Cancel the command. 
-                    //}
                     break; 
-//                    return(TRUE);
+
                 case IDC_COMBO_MAINCP:  // Combo Box: Language
                     if (CBN_SELCHANGE == HIWORD(wParam)) {  // Only react when user selected something
                         //SetTextsToDefaultLanguage();
@@ -858,6 +836,18 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                         UI_EnableMainButtons();
                         return(TRUE);
                     }
+                    break;
+                
+                case IDC_CHECK_UNL:
+                    fOutputUNLfile = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_UNL), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                    break;
+                
+                case IDC_CHECK_BAT:
+                    fOutputBATfile = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_BAT), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                    break;
+                
+                case IDC_CHECK_HTML:
+                    fOutputTXTfile = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_TXT), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
                     break;
             }
     }

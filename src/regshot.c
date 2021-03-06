@@ -418,12 +418,38 @@ LPTSTR TransData(LPTSTR lpszValueData[], LPVALUECONTENT lpVC, DWORD nConversionT
                 // format  "=\"<string>\"\0"
                 nChars = iOffset + 2 * _tcslen(lpszEnclosing) + (size_t)cbData + 1;
                 lpszValueData[0] = MYALLOC0(nChars * sizeof(TCHAR));
+                // TODO: ISS-String-Korrekturen
                 if (lpszValueData[0] != NULL) {
                     _tcscpy(lpszValueData[0], lpszValueType);
                     _tcscat(lpszValueData[0], lpszEnclosing);
-                    if (NULL != lpVC->lpValueData) {
-                        memcpy(&lpszValueData[0][1+iOffset], lpVC->lpValueData, cbData);
+
+                    LPTSTR strTemp = MYALLOC0((nChars + 1) * sizeof(TCHAR));
+                    if (strTemp != NULL)
+                        memcpy(strTemp, lpVC->lpValueData, cbData);
+
+                    if ((iOutputType == OUT_ISS_DEINSTALL) || (iOutputType == OUT_ISS_INSTALL)) {
+                        strTemp = EscapeSpecialCharacters(strTemp, _T('"'), TEXT("\""));
+                        strTemp = EscapeSpecialCharacters(strTemp, _T('{'), TEXT("{"));
                     }
+                    else if ((iOutputType == OUT_NSI_DEINSTALL) || (iOutputType == OUT_NSI_INSTALL)) {
+                        strTemp = EscapeSpecialCharacters(strTemp, _T('"'), TEXT("$\\"));
+                        strTemp = EscapeSpecialCharacters(strTemp, _T('%'), TEXT("$\\"));
+                    }
+                    else if ((iOutputType == OUT_REG_DEINSTALL) || (iOutputType == OUT_REG_INSTALL)) {
+                        strTemp = EscapeSpecialCharacters(strTemp, _T('"'), TEXT("\\"));
+                        strTemp = EscapeSpecialCharacters(strTemp, _T('\\'), TEXT("\\"));
+                    }
+                    
+                    if (strTemp != NULL)
+                        _tcscat(lpszValueData[0], strTemp);
+                    
+                    MYFREE(strTemp);
+
+                    //else {
+                    //    if (NULL != lpVC->lpValueData) {
+                    //        memcpy(&lpszValueData[0][1 + iOffset], lpVC->lpValueData, cbData);
+                    //    }
+                    //}
                     _tcscat(lpszValueData[0], lpszEnclosing);
                 }
                 break;
@@ -528,10 +554,12 @@ BOOL ConvertMultiSZ2Strings(LPTSTR lpszValueData[], LPVALUECONTENT lpVC, DWORD n
     lpszDst = lpStringBuffer;
 //    _tcscpy(lpszDst, lpszValueType);
 //    _tcscpy(lpszDst, TEXT(": \""));
-    _tcscpy(lpszDst, TEXT("\""));
+    if ((iOutputType != OUT_ISS_DEINSTALL) && (iOutputType != OUT_ISS_INSTALL)) {
+        _tcscpy(lpszDst, TEXT("\""));
+        lpszDst += 1;
+    }
 //    lpszDst += 3 + _tcslen(lpszValueType);
 //    lpszDst += 3;
-    lpszDst += 1;
     cchActual = 0;
     if (NULL != lpVC->lpValueData) {
         lpszSrc = (LPTSTR)lpVC->lpValueData;
@@ -565,7 +593,9 @@ BOOL ConvertMultiSZ2Strings(LPTSTR lpszValueData[], LPVALUECONTENT lpVC, DWORD n
         }
     }
 //    _tcsncpy(lpszDst, TEXT("\""), 1);
-    lpStringBuffer[cchActual+1] = _T('\"');
+    if ((iOutputType != OUT_ISS_DEINSTALL) && (iOutputType != OUT_ISS_INSTALL)) {
+        lpStringBuffer[cchActual + 1] = _T('\"');
+    }
     lpStringBuffer[cchActual+2] = _T('\0');
     cchActual += 3 + 1 + 1;  // account for null char
     lpszValueData[0] = MYALLOC(cchActual * sizeof(TCHAR));
@@ -823,9 +853,10 @@ LPTSTR GetWholeValueData(LPTSTR lpszValueData[], LPVALUECONTENT lpVC, DWORD nAct
         }
     }
 
+    // TODO: hier werden nur noch Macros ersetzt, wie z.B. "}break}" durch "{break}"
     if ((iOutputType == OUT_ISS_DEINSTALL) || (iOutputType == OUT_ISS_INSTALL))
-        lpszValueData[0] = CorrectISSOutputString(lpszValueData[0]);
-
+        lpszValueData[0] = ReplaceISSMacros(lpszValueData[0]);
+    
     return lpszValueData[0];
 }
 
@@ -938,7 +969,6 @@ size_t ResultToString(LPTSTR rgszResultStrings[], size_t iResultStringsMac, size
     size_t iResultStringsNew;
     size_t iResultStringsTemp1;
     LPTSTR lpszIntermediateResultString;
-//    LPTSTR lpszValueData[MAX_RESULT_STRINGS+1];
     LPTSTR* lpszValueData = MYALLOC0(((size_t)nOutMaxResultLines+1) * sizeof(LPTSTR));
 //    for (int i = 0; i <= MAX_RESULT_STRINGS; i++)
     for (int i = 0; i <= nOutMaxResultLines; i++)
@@ -994,6 +1024,8 @@ size_t ResultToString(LPTSTR rgszResultStrings[], size_t iResultStringsMac, size
     else if ((VALDEL == nActionType) || (VALADD == nActionType) || (VALMODI == nActionType)) {
         // name
         lpszIntermediateResultString = GetWholeKeyName(((LPVALUECONTENT)lpContent)->lpFatherKC, fUseLongRegHead);
+//        lpszIntermediateResultString = EscapeSpecialCharacters(lpszIntermediateResultString, _T('{'), TEXT("{"));
+
 //        LPVALUECONTENT test = (LPVALUECONTENT)lpContent;
         if (iOutputType == OUT_UNL) {
             lpszName = BuildUNLOutputString(lpszIntermediateResultString, lpContent, nActionType);
@@ -1077,9 +1109,9 @@ size_t ResultToString(LPTSTR rgszResultStrings[], size_t iResultStringsMac, size
         //    lpszValueData[i] = NULL;
         //}
         MYFREE(lpszName);
-        if (NULL != lpszValueData) {
-            MYFREE(lpszValueData);
-        }
+        //if (NULL != lpszValueData) {
+        //    MYFREE(lpszValueData);
+        //}
         //if (NULL != lpszData) {
         //    MYFREE(lpszData);
         //}
@@ -1203,6 +1235,9 @@ size_t ResultToString(LPTSTR rgszResultStrings[], size_t iResultStringsMac, size
         // TODO: error message and handling
     }
 
+    if (NULL != lpszValueData) {
+        MYFREE(lpszValueData);
+    }
     return iResultStringsNew;
 }
 
@@ -1580,7 +1615,9 @@ BOOL OutputComparisonResult(VOID)
         SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_RESETADHOC), BM_SETCHECK, (WPARAM)0, (LPARAM)0);
     }
 
-    if ((BOOL)SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_RESULT), BM_GETCHECK, (WPARAM)0, (LPARAM)0)) {
+    // TODO: max. Anzahl Änderungen < 5000 (?)
+    cEnd = (fOnlyNewEntries ? CompareResult.stcAdded.cAll : CompareResult.stcChanged.cAll);
+    if ((BOOL)SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_RESULT), BM_GETCHECK, (WPARAM)0, (LPARAM)0) && (cEnd <= nMaxNodes)) {
         DoTVPropertySheet(hMainWnd, (bCompareReg ? PROP_TVREGS : PROP_TVDIRS));
         if (bNoOutput) {
             bNoOutput = FALSE;
@@ -1590,7 +1627,9 @@ BOOL OutputComparisonResult(VOID)
     }
     
     // Setup GUI for saving...
+    BOOL bNoResetOutputTypes = (cEnd > nMaxLines ? FALSE : TRUE);
     cEnd = CompareResult.stcChanged.cAll;
+
     UI_InitProgressBar();
 
     BOOL nOutputType[OUTPUTTYPES];
@@ -1598,31 +1637,28 @@ BOOL OutputComparisonResult(VOID)
         nOutputType[i] = FALSE;
 
     // Check which output types are selected
-    if (1 == SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_BAT), BM_GETCHECK, (WPARAM)0, (LPARAM)0)) {
-        nOutputType[OUT_BAT] = TRUE;
-    }
-    if (1 == SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_UNL), BM_GETCHECK, (WPARAM)0, (LPARAM)0)) {
+    if (fOutputBATfile)
+        nOutputType[OUT_BAT] = bNoResetOutputTypes;
+    if (fOutputUNLfile || !bNoResetOutputTypes)
         nOutputType[OUT_UNL] = TRUE;
-    }
-    if (1 == SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_HTML), BM_GETCHECK, (WPARAM)0, (LPARAM)0)) {
-        nOutputType[OUT_HTML] = TRUE;
-    }
+    if (fOutputHTMfile)
+        nOutputType[OUT_HTML] = bNoResetOutputTypes;
     if (fOutputTXTfile)
-        nOutputType[OUT_TXT] = TRUE;
+        nOutputType[OUT_TXT] = bNoResetOutputTypes;
     if (fISSDeinstallFile)
-        nOutputType[OUT_ISS_DEINSTALL] = TRUE;
+        nOutputType[OUT_ISS_DEINSTALL] = bNoResetOutputTypes;
     if (fISSInstallFile)
-        nOutputType[OUT_ISS_INSTALL] = TRUE;
+        nOutputType[OUT_ISS_INSTALL] = bNoResetOutputTypes;
     if (fNSIDeinstallFile)
-        nOutputType[OUT_NSI_DEINSTALL] = TRUE;
+        nOutputType[OUT_NSI_DEINSTALL] = bNoResetOutputTypes;
     if (fNSIInstallFile)
-        nOutputType[OUT_NSI_INSTALL] = TRUE;
+        nOutputType[OUT_NSI_INSTALL] = bNoResetOutputTypes;
     if (fRegDel)
-        nOutputType[OUT_REG_DEINSTALL] = TRUE;
+        nOutputType[OUT_REG_DEINSTALL] = bNoResetOutputTypes;
     if (fRegIns)
-        nOutputType[OUT_REG_INSTALL] = TRUE;
+        nOutputType[OUT_REG_INSTALL] = bNoResetOutputTypes;
 
-    LPTSTR  lpszValue = MYALLOC0(5 * sizeof(TCHAR));
+    LPTSTR lpszValue = MYALLOC0(5 * sizeof(TCHAR));
     if (lpszValue != NULL) {
         GetDlgItemText(hMainWnd, IDC_EDIT_OUTPUTLINES, lpszValue, 4);
         lpszValue[4] = (TCHAR)'\0';
@@ -1634,11 +1670,12 @@ BOOL OutputComparisonResult(VOID)
         BOOL fUseLongRegHeadBackup = fUseLongRegHead;
         BOOL fOutSeparateObjsBackup = fOutSeparateObjs;
         BOOL fLogEnvironmentStringsBackup = fLogEnvironmentStrings;
+        BOOL fLogUNLOrderBackup = fLogUNLOrder;
         
         // read common flags for output from gui (reset flags if they are wrong for certain output type)
         fNoVals = (BOOL)SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_NOVALS), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
         fOnlyNewEntries = (BOOL)SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_ONLYADDED), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
-        fLogUNLOrder = (BOOL)SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_UNLORDER), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+//        fLogUNLOrder = (BOOL)SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_UNLORDER), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
         int nResult = (int)SendDlgItemMessage(hMainWnd, IDC_COMBO_MAINCP, CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
         if (CB_ERR == nResult) {
             nCodePage = 65001;
@@ -2123,6 +2160,7 @@ BOOL OutputComparisonResult(VOID)
         fUseLongRegHead = fUseLongRegHeadBackup;
         fOutSeparateObjs = fOutSeparateObjsBackup;    
         fLogEnvironmentStrings = fLogEnvironmentStringsBackup;
+        fLogUNLOrder = fLogUNLOrderBackup;
     }
 
     UI_ShowHideProgressBar(SW_HIDE);
@@ -2138,7 +2176,7 @@ BOOL OutputComparisonResult(VOID)
     }
     
     SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_NOFILTERS), BM_SETCHECK, (WPARAM)FALSE, (LPARAM)0);
-    
+
     return TRUE;
 }
 
@@ -2252,6 +2290,14 @@ VOID FreeShot(LPREGSHOT lpShot)
 
     if (NULL != lpShot->lpszUserName) {
         MYFREE(lpShot->lpszUserName);
+    }
+
+    if (NULL != lpShot->lpszFileName) {
+        MYFREE(lpShot->lpszFileName);
+    }
+
+    if (NULL != lpShot->lpszTitle) {
+        MYFREE(lpShot->lpszTitle);
     }
 
     if (NULL != lpShot->lpHKLM) {

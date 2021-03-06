@@ -243,7 +243,7 @@ VOID SetTextsToDefaultLanguage(VOID)
     asLangTexts[iszTextCheckNoVals].nIDDlgItem          = IDC_CHECK_NOVALS;
     asLangTexts[iszTextCheckUNLOrder].lpszText          = TEXT("Log with old \"unl order\"");
     asLangTexts[iszTextCheckUNLOrder].nIDDialog         = DLG_MAIN;
-    asLangTexts[iszTextCheckUNLOrder].nIDDlgItem        = IDC_CHECK_UNLORDER;
+    asLangTexts[iszTextCheckUNLOrder].nIDDlgItem        = IDC_CHECK_OPT_UNLORDER;
     asLangTexts[iszTextCheckOpenEditor].lpszText        = TEXT("Open result in default editor");
     asLangTexts[iszTextCheckOpenEditor].nIDDialog       = DLG_MAIN;
     asLangTexts[iszTextCheckOpenEditor].nIDDlgItem      = IDC_CHECK_OPENEDITOR;

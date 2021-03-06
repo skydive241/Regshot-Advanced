@@ -31,7 +31,6 @@ https://docs.microsoft.com/en-us/windows/win32/controls/bumper-list-view-control
 
 #include "global.h"
 
-
 //--------------------------------------------------
 // Initialize TreeView for checking the comparison 
 // result
@@ -72,6 +71,7 @@ VOID DoTVPropertySheet(HWND hwndOwner, int iSelectedPage)
     psh.ppsp = (LPCPROPSHEETPAGE)&psp;
     psh.pfnCallback = NULL;
 
+    bNoOutput = fSuppressLogs;
     PropertySheet(&psh);
 
     return;
@@ -83,8 +83,6 @@ VOID DoTVPropertySheet(HWND hwndOwner, int iSelectedPage)
 //--------------------------------------------------
 BOOL CALLBACK DlgSkipTVProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    UNREFERENCED_PARAMETER(wParam);
-
     HWND hwndTV; 
     TVITEM pitem;
     LPNMHDR lpnmhdr;
@@ -94,9 +92,46 @@ BOOL CALLBACK DlgSkipTVProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
     switch (message) {
         case WM_COMMAND:
             switch (LOWORD(wParam)) {
-            case IDC_CHECK_SUPPRESS:
-                bNoOutput = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_SUPPRESS), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
-                break;
+                case IDC_CHECK_SUPPRESS:
+                    bNoOutput = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_SUPPRESS), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                    break;
+                case IDC_CHECK_OPENEDITOR:
+                    fOpenEditor = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_OPENEDITOR), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                    SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_OPENEDITOR), BM_SETCHECK, fOpenEditor, (LPARAM)0);
+                    break;
+                case IDC_CHECK_UNL:
+                    fOutputUNLfile = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_UNL), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                    //SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_UNL), BM_SETCHECK, 
+                    //    (WPARAM)(SendMessage(GetDlgItem(hDlg, IDC_CHECK_UNL), BM_GETCHECK, (WPARAM)0, (LPARAM)0)), (LPARAM)0);
+                    break;
+                case IDC_CHECK_BAT:
+                    fOutputBATfile = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_BAT), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                    //SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_BAT), BM_SETCHECK,
+                    //    (WPARAM)(SendMessage(GetDlgItem(hDlg, IDC_CHECK_BAT), BM_GETCHECK, (WPARAM)0, (LPARAM)0)), (LPARAM)0);
+                    //break;
+                case IDC_CHECK_TXT:
+                    fOutputTXTfile = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_TXT), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                    break;
+                case IDC_CHECK_ISSINS:
+                    fISSInstallFile = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_ISSINS), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                    break;
+                case IDC_CHECK_ISSDEL:
+                    fISSDeinstallFile = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_ISSDEL), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                    break;
+                case IDC_CHECK_NSIINS:
+                    fNSIInstallFile = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_NSIINS), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                    break;
+                case IDC_CHECK_NSIDEL:
+                    fNSIDeinstallFile = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_NSIDEL), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                    break;
+                case IDC_CHECK_REGINS:
+                    fRegIns = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_REGINS), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                    break;
+                case IDC_CHECK_REGDEL:
+                    fRegDel = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_REGDEL), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                    break;
+                default:
+                    break;
             }
             break;
 
@@ -104,6 +139,19 @@ BOOL CALLBACK DlgSkipTVProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
             bSuppressNotifications = TRUE;
 
             InitCommonControls();
+
+            SendMessage(GetDlgItem(hDlg, IDC_CHECK_ISSINS), BM_SETCHECK, fISSInstallFile, (LPARAM)0);
+            SendMessage(GetDlgItem(hDlg, IDC_CHECK_ISSDEL), BM_SETCHECK, fISSDeinstallFile, (LPARAM)0);
+            SendMessage(GetDlgItem(hDlg, IDC_CHECK_NSIINS), BM_SETCHECK, fNSIInstallFile, (LPARAM)0);
+            SendMessage(GetDlgItem(hDlg, IDC_CHECK_NSIDEL), BM_SETCHECK, fNSIDeinstallFile, (LPARAM)0);
+            SendMessage(GetDlgItem(hDlg, IDC_CHECK_OPENEDITOR), BM_SETCHECK, fOpenEditor, (LPARAM)0);
+            SendMessage(GetDlgItem(hDlg, IDC_CHECK_REGINS), BM_SETCHECK, fRegIns, (LPARAM)0);
+            SendMessage(GetDlgItem(hDlg, IDC_CHECK_REGDEL), BM_SETCHECK, fRegDel, (LPARAM)0);
+//            SendMessage(GetDlgItem(hDlg, IDC_CHECK_BAT), BM_SETCHECK, (WPARAM)(SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_BAT), BM_GETCHECK, (WPARAM)0, (LPARAM)0)), (LPARAM)0);    // CMD output
+            SendMessage(GetDlgItem(hDlg, IDC_CHECK_BAT), BM_SETCHECK, fOutputBATfile, (LPARAM)0);
+            SendMessage(GetDlgItem(hDlg, IDC_CHECK_TXT), BM_SETCHECK, fOutputTXTfile, (LPARAM)0);
+//            SendMessage(GetDlgItem(hDlg, IDC_CHECK_UNL), BM_SETCHECK, (WPARAM)(SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_UNL), BM_GETCHECK, (WPARAM)0, (LPARAM)0)), (LPARAM)0);    // UNL output
+            SendMessage(GetDlgItem(hDlg, IDC_CHECK_UNL), BM_SETCHECK, fOutputUNLfile, (LPARAM)0);
 
             PROPSHEETPAGE* s = (PROPSHEETPAGE*)lParam;
             iPropertyPage = (int)s->lParam;
@@ -119,6 +167,7 @@ BOOL CALLBACK DlgSkipTVProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
 
         case WM_NOTIFY: {
             lpnmhdr = (NMHDR FAR*)lParam;
+            LPPSHNOTIFY lppsn = (LPPSHNOTIFY)lParam;
             hwndTV = GetDlgItem(hDlg, IDC_TREE_SKIPS);
             switch (lpnmhdr->code)
             {
@@ -126,17 +175,42 @@ BOOL CALLBACK DlgSkipTVProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
                 {
                     iPropertyPage = PropSheet_HwndToIndex(GetParent(hDlg), hDlg);
                     SearchTVDown(hwndTV, TreeView_GetRoot(hwndTV), iPropertyPage);
+                    if (lppsn->lParam == 1) {                    // OK-Button pressed
+                        TreeView_DeleteAllItems(hwndTV);
+                    }
                     break;
                 }
 
                 case PSN_SETACTIVE:
                     SendMessage(GetDlgItem(hDlg, IDC_CHECK_SUPPRESS), BM_SETCHECK, bNoOutput, (LPARAM)0);
+                    SendMessage(GetDlgItem(hDlg, IDC_CHECK_ISSINS), BM_SETCHECK, fISSInstallFile, (LPARAM)0);
+                    SendMessage(GetDlgItem(hDlg, IDC_CHECK_ISSDEL), BM_SETCHECK, fISSDeinstallFile, (LPARAM)0);
+                    SendMessage(GetDlgItem(hDlg, IDC_CHECK_NSIINS), BM_SETCHECK, fNSIInstallFile, (LPARAM)0);
+                    SendMessage(GetDlgItem(hDlg, IDC_CHECK_NSIDEL), BM_SETCHECK, fNSIDeinstallFile, (LPARAM)0);
+                    SendMessage(GetDlgItem(hDlg, IDC_CHECK_REGINS), BM_SETCHECK, fRegIns, (LPARAM)0);
+                    SendMessage(GetDlgItem(hDlg, IDC_CHECK_REGDEL), BM_SETCHECK, fRegDel, (LPARAM)0);
+                    SendMessage(GetDlgItem(hDlg, IDC_CHECK_TXT), BM_SETCHECK, fOutputTXTfile, (LPARAM)0);
+                    SendMessage(GetDlgItem(hDlg, IDC_CHECK_BAT), BM_SETCHECK, fOutputBATfile, (LPARAM)0);
+                    SendMessage(GetDlgItem(hDlg, IDC_CHECK_UNL), BM_SETCHECK, fOutputUNLfile, (LPARAM)0);
+                    //SendMessage(GetDlgItem(hDlg, IDC_CHECK_UNL), BM_SETCHECK, (WPARAM)(SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_UNL), BM_GETCHECK, (WPARAM)0, (LPARAM)0)), (LPARAM)0);    // UNL output
+                    //SendMessage(GetDlgItem(hDlg, IDC_CHECK_BAT), BM_SETCHECK, (WPARAM)(SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_BAT), BM_GETCHECK, (WPARAM)0, (LPARAM)0)), (LPARAM)0);    // UNL output
+                    SendMessage(GetDlgItem(hDlg, IDC_CHECK_OPENEDITOR), BM_SETCHECK, fOpenEditor, (LPARAM)0);
                     break;
 
                 case PSN_RESET:
+                    TreeView_DeleteAllItems(hwndTV);
+                    break;
+
                 case PSN_QUERYCANCEL:
                 case PSN_KILLACTIVE:
+                    hwndTV = GetDlgItem(hDlg, IDC_TREE_SKIPS);
                     break;
+
+                //case TVN_DELETEITEM:
+                //    pnmtv = (LPNMTREEVIEW)lParam;
+                //    if (pnmtv->itemOld.lParam != NULL)
+                //        MYFREE(pnmtv->itemOld.lParam);
+                //    break;
 
                 case TVN_ITEMEXPANDED:
                     pnmtv = (LPNMTREEVIEW)lParam;
@@ -305,7 +379,8 @@ BOOL BuildSkipString(HWND hwndTV, HTREEITEM hItem, int iPropertyPage)
             if ((pSkipList[iSkipCounter].lpSkipString != NULL) && (lpszNodeTextTV != NULL) && (lpszNodeTextTV[i] != NULL)) {
                 _tcscat(pSkipList[iSkipCounter].lpSkipString, lpszNodeTextTV[i]);
             }
-            MYFREE(lpszNodeTextTV[i]);
+            if (lpszNodeTextTV != NULL)
+                MYFREE(lpszNodeTextTV[i]);
             if (i > 0)
                 _tcscat(pSkipList[iSkipCounter].lpSkipString, TEXT("\\"));
         }
@@ -396,12 +471,13 @@ BOOL InsertRootItems(HWND hwndTV, int iPropertyPage)
 // Search treeview down and create new item 
 // if needed
 //--------------------------------------------------
-HTREEITEM FindOrCreateTreeItem(HWND hwndTV, HTREEITEM hParent, HTREEITEM hItem, int nLevel, LPTSTR lpszNodeText, int iPropertyPage, BOOL bKey)
+HTREEITEM FindOrCreateTreeItem(HWND hwndTV, HTREEITEM hParent, HTREEITEM hItem, UINT nLevel, LPTSTR lpszNodeText, int iPropertyPage, BOOL bKey, LPCOMPRESULTNEW lpCR)
 {
     TVITEM pitem;
     TV_INSERTSTRUCT tvinsert;
     LPTSTR lpszNodeTextTV = MYALLOC0((MAX_PATH + 1) * sizeof(TCHAR));
-    
+    int iSelectedImage = 0;
+
     while (TRUE) {
         memset(&pitem, 0, sizeof(pitem));
         pitem.hItem = hItem;
@@ -420,22 +496,28 @@ HTREEITEM FindOrCreateTreeItem(HWND hwndTV, HTREEITEM hParent, HTREEITEM hItem, 
             tvinsert.item.mask = TVIF_TEXT | TVIF_IMAGE | TVIF_SELECTEDIMAGE;
             tvinsert.item.pszText = lpszNodeText;
             if (iPropertyPage == PROP_TVREGS) {
-                tvinsert.item.iImage = (bKey ? 0 : 3);
-                tvinsert.item.iSelectedImage = (bKey ? 0 : 3);
+                iSelectedImage = (bKey ? 0 : lpCR->nActionType - 1);
+                iSelectedImage = (iSelectedImage == 3 ? 5 : iSelectedImage);
+                tvinsert.item.iImage = iSelectedImage;
+                tvinsert.item.iSelectedImage = iSelectedImage;
             }
             else {
-                tvinsert.item.iImage = (bKey ? 0 : 2);
-                tvinsert.item.iSelectedImage = (bKey ? 0 : 2);
+                iSelectedImage = (bKey ? 0 : lpCR->nActionType - 7);
+                tvinsert.item.iImage = iSelectedImage;
+                tvinsert.item.iSelectedImage = iSelectedImage;
             }
             hItem = TreeView_InsertItem(hwndTV, &tvinsert);
             TreeView_SetCheckState(hwndTV, hParent, TRUE);
             TreeView_SetCheckState(hwndTV, hItem, TRUE);
-            if (nLevel <= 4)
+            if (nLevel <= nExpandLevels)
                 TreeView_Expand(hwndTV, hParent, TVE_EXPAND);
 
             break;
         }
     }
+
+    if (lpszNodeTextTV != NULL)
+        MYFREE(lpszNodeTextTV);
 
     return hItem;
 }
@@ -448,18 +530,18 @@ BOOL InitTreeViewItems(HWND hwndTV, int iPropertyPage)
     TV_INSERTSTRUCT tvinsert;
     LPCOMPRESULTNEW lpCR;
     LPTSTR lpszValueName = NULL;
-    LPTSTR lpszFullNameTV = MYALLOC0(EXTDIRLEN * sizeof(TCHAR));
+    LPTSTR lpszFullNameTV = MYALLOC0((MAX_PATH+1) * sizeof(TCHAR));
     LPTSTR pos = NULL;
     LPTSTR NamePartTV = NULL;
     BOOL bKey = TRUE;
     
-    LPCOMPRESULTNEW lpCRRelevantPart;
-    if (iPropertyPage == 0) {
-        lpCRRelevantPart = CompareResult.stCRHeads.lpCRRegistryLast;
-    }
-    else {
-        lpCRRelevantPart = CompareResult.stCRHeads.lpCRFilesystemLast;
-    }
+    LPCOMPRESULTNEW lpCRRelevantPart = (iPropertyPage == 0 ? CompareResult.stCRHeads.lpCRRegistryLast : CompareResult.stCRHeads.lpCRFilesystemLast);
+    //if (iPropertyPage == 0) {
+    //    lpCRRelevantPart = CompareResult.stCRHeads.lpCRRegistryLast;
+    //}
+    //else {
+    //    lpCRRelevantPart = CompareResult.stCRHeads.lpCRFilesystemLast;
+    //}
 
     InsertRootItems(hwndTV, iPropertyPage);
     
@@ -482,7 +564,7 @@ BOOL InitTreeViewItems(HWND hwndTV, int iPropertyPage)
         NamePartTV = lpszFullNameTV;
         pos = _tcschr(lpszFullNameTV, _T('\\'));
         
-        int nLevel = 0;
+        UINT nLevel = 0;
         HANDLE hParent;
         HANDLE hItem = TreeView_GetNextItem(hwndTV, NULL, TVGN_ROOT);
         if (pos == NULL)
@@ -507,13 +589,13 @@ BOOL InitTreeViewItems(HWND hwndTV, int iPropertyPage)
                     TreeView_Expand(hwndTV, hItem, TVE_EXPAND);
                 }
                 else {
-                    hItem = FindOrCreateTreeItem(hwndTV, hParent, hItem, nLevel, NamePartTV, iPropertyPage, TRUE);
+                    hItem = FindOrCreateTreeItem(hwndTV, hParent, hItem, nLevel, NamePartTV, iPropertyPage, TRUE, lpCR);
                 }
             }
             else {
                 hParent = hItem;
                 hItem = TreeView_GetNextItem(hwndTV, hItem, TVGN_CHILD);
-                hItem = FindOrCreateTreeItem(hwndTV, hParent, hItem, nLevel, NamePartTV, iPropertyPage, TRUE);
+                hItem = FindOrCreateTreeItem(hwndTV, hParent, hItem, nLevel, NamePartTV, iPropertyPage, TRUE, lpCR);
             }
             NamePartTV = ++pos;
             nLevel++;
@@ -522,15 +604,18 @@ BOOL InitTreeViewItems(HWND hwndTV, int iPropertyPage)
             
         hParent = hItem;
         hItem = TreeView_GetNextItem(hwndTV, hItem, TVGN_CHILD);
-        hItem = FindOrCreateTreeItem(hwndTV, hParent, hItem, nLevel, NamePartTV, iPropertyPage, (lpszValueName != NULL ? TRUE : bKey));
+        hItem = FindOrCreateTreeItem(hwndTV, hParent, hItem, nLevel, NamePartTV, iPropertyPage, (lpszValueName != NULL ? TRUE : bKey), lpCR);
 
         if (lpszValueName != NULL) {
             hParent = hItem;
             hItem = TreeView_GetNextItem(hwndTV, hItem, TVGN_CHILD);
-            hItem = FindOrCreateTreeItem(hwndTV, hParent, hItem, nLevel, lpszValueName, iPropertyPage, bKey);
+            hItem = FindOrCreateTreeItem(hwndTV, hParent, hItem, nLevel, lpszValueName, iPropertyPage, bKey, lpCR);
         }
     }
 
+    if (lpszFullNameTV != NULL)
+        MYFREE(lpszFullNameTV);
+    
     return TRUE;
 }
 
@@ -547,7 +632,7 @@ BOOL InitTreeViewImageLists(HWND hwndTV)
     HICON hi;
 
     if (TRUE) {
-        if ((hImageList = ImageList_Create(18, 18, ILC_COLOR32, 4, 4)) == NULL)
+        if ((hImageList = ImageList_Create(18, 18, ILC_COLOR32, 6, 6)) == NULL)
             return FALSE;
 
         HMODULE hmod = LoadLibraryA("shell32");
@@ -560,9 +645,21 @@ BOOL InitTreeViewImageLists(HWND hwndTV)
             ImageList_AddIcon(hImageList, hi);
             DeleteObject(hi);
 
-            hi = LoadIcon(hmod, MAKEINTRESOURCE(152));          // file
+            //#define VALDEL          3
+            hi = LoadIcon(hmod, MAKEINTRESOURCE(261));          // deleted file
             ImageList_AddIcon(hImageList, hi);
             DeleteObject(hi);
+            
+            //#define VALADD          4
+            hi = LoadIcon(hmod, MAKEINTRESOURCE(152));          // (new) file
+            ImageList_AddIcon(hImageList, hi);
+            DeleteObject(hi);
+            
+            //#define VALMODI         5
+            hi = LoadIcon(hmod, MAKEINTRESOURCE(243));          // changed file
+            ImageList_AddIcon(hImageList, hi);
+            DeleteObject(hi);
+
 
             FreeLibrary(hmod);
         }
@@ -577,7 +674,7 @@ BOOL InitTreeViewImageLists(HWND hwndTV)
         
     }
     else {
-        if ((hImageList = ImageList_Create(18, 18, FALSE, 4, 4)) == NULL)
+        if ((hImageList = ImageList_Create(18, 18, FALSE, 6, 6)) == NULL)
             return FALSE;
     
         hBitMap = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_FOLDER_CLOSED));
@@ -585,6 +682,14 @@ BOOL InitTreeViewImageLists(HWND hwndTV)
         DeleteObject(hBitMap);
     
         hBitMap = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_FOLDER_OPEN));	
+        i = ImageList_Add(hImageList, hBitMap, NULL);					
+        DeleteObject(hBitMap);											
+    
+        hBitMap = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_FILE));			
+        i = ImageList_Add(hImageList, hBitMap, NULL);					
+        DeleteObject(hBitMap);											
+    
+        hBitMap = LoadBitmap(hInst, MAKEINTRESOURCE(IDB_FILE));			
         i = ImageList_Add(hImageList, hBitMap, NULL);					
         DeleteObject(hBitMap);											
     

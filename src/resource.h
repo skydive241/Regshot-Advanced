@@ -112,12 +112,11 @@
 #define IDC_CHECK_OPT_STOREONQUIT       1081
 #define IDC_PROP_REGS                   1082
 #define IDC_CHECK_OPT_LONGREGKEYS       1082
-#define IDC_CHECK_UNLORDER              1083
 #define IDC_CHECK_OPT_SEPARATEOBJECTS   1083
 #define IDC_CHECK_OPT_DONTDISPLAYINFO   1084
 #define IDC_CHECK_NOFILTERS             1084
 #define IDC_CHECK_OPT_DONTDISPLAYRESULT 1085
-#define IDC_PROP_LOGS					1085
+#define IDC_PROP_LOGS                   1085
 #define IDC_STATIC_REG                  1086
 #define IDC_PROP_CLEAR2                 1086
 #define IDC_STATIC_INF                  1087
@@ -170,8 +169,20 @@
 #define IDM_OUTPUT_REG                  1125
 #define IDC_CHECK1                      1126
 #define IDC_CHECK_SUPPRESS              1126
+#define IDC_CHECK_SUPPRESS_LOGS         1126
 #define IDM_COMPAREOUTPUT_FS            1127
 #define IDM_COMPAREOUTPUT_REG           1128
+#define IDC_RESET                       1129
+#define IDC_SPIN_EXPANDLEVELS           1130
+#define IDC_EDIT_EXPANDLEVELS           1131
+#define IDC_CHECK_OPT_UNLORDER          1132
+#define IDC_EDIT_MAXNODES               1133
+#define IDC_SPIN_MAXNODES               1134
+#define IDC_STATIC_TVMAXNODES           1135
+#define IDC_EDIT_MAXLINES               1136
+#define IDC_SPIN_MAXLINES               1137
+#define IDC_STATIC_TVMAXNODES2          1138
+#define IDC_STATIC_TVMAXLINES           1138
 #define ID_FILE                         40007
 #define ID_HELP_ABOUT                   40010
 #define ID_FILE_QUIT                    40011
@@ -216,6 +227,8 @@
 #define IDC_STATIC_SKIP_COMMENT         -1
 #define IDC_STATIC_UNL                  -1
 #define IDC_STATIC_OUTPUTLINES          -1
+#define IDC_STATIC                      -1
+#define IDC_STATIC_TVLEVELS             -1
 
 // Next default values for new objects
 // 
@@ -223,7 +236,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        138
 #define _APS_NEXT_COMMAND_VALUE         40049
-#define _APS_NEXT_CONTROL_VALUE         1129
+#define _APS_NEXT_CONTROL_VALUE         1136
 #define _APS_NEXT_SYMED_VALUE           102
 #endif
 #endif

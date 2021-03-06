@@ -668,10 +668,36 @@ BOOL CALLBACK DlgOptionsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
             SendMessage(GetDlgItem(hDlg, IDC_CHECK_OPT_NOFILTERS), BM_SETCHECK, fNoFiltersWhenLoading, (LPARAM)0);
             SendMessage(GetDlgItem(hDlg, IDC_CHECK_OPT_SIDFILTERS), BM_SETCHECK, fShowSIDFilterRules, (LPARAM)0);
             SendMessage(GetDlgItem(hDlg, IDC_CHECK_OPT_ENVIRONMENT), BM_SETCHECK, fLogEnvironmentStrings, (LPARAM)0);
+            SendMessage(GetDlgItem(hDlg, IDC_CHECK_OPT_UNLORDER), BM_SETCHECK, fLogUNLOrder, (LPARAM)0);
             SendMessage(GetDlgItem(hDlg, IDC_CHECK_OPT_READONLY), BM_SETCHECK, fDeleteReadOnly, (LPARAM)0);
             SendMessage(GetDlgItem(hDlg, IDC_CHECK_OPT_NONEMPTY), BM_SETCHECK, fDeleteDirNotEmpty, (LPARAM)0);
             SetDlgItemText(hDlg, IDC_COMMON_EDIT_EDITOR, lpszEditor);
-
+            LPTSTR strExpandLevels = MYALLOC0(4 * sizeof(TCHAR));
+            if (strExpandLevels != NULL) {
+                _sntprintf(strExpandLevels, 3, TEXT("%i"), nExpandLevels);
+                strExpandLevels[3] = _T('\0');
+                SetDlgItemText(hDlg, IDC_EDIT_EXPANDLEVELS, strExpandLevels);
+                MYFREE(strExpandLevels);
+            }
+            SendMessage(GetDlgItem(hDlg, IDC_SPIN_EXPANDLEVELS), UDM_SETRANGE, (WPARAM)0, (LPARAM)MAKELPARAM(9,0));
+            LPTSTR strMaxNodes = MYALLOC0(5 * sizeof(TCHAR));
+            if (strMaxNodes != NULL) {
+                _sntprintf(strMaxNodes, 4, TEXT("%i"), nMaxNodes);
+                strMaxNodes[4] = _T('\0');
+                SetDlgItemText(hDlg, IDC_EDIT_MAXNODES, strMaxNodes);
+                MYFREE(strMaxNodes);
+            }
+            SendMessage(GetDlgItem(hDlg, IDC_SPIN_MAXNODES), UDM_SETRANGE, (WPARAM)0, (LPARAM)MAKELPARAM(9999,0));
+            
+            LPTSTR strMaxLines = MYALLOC0(6 * sizeof(TCHAR));
+            if (strMaxLines != NULL) {
+                _sntprintf(strMaxLines, 5, TEXT("%i"), nMaxLines);
+                strMaxLines[5] = _T('\0');
+                SetDlgItemText(hDlg, IDC_EDIT_MAXLINES, strMaxLines);
+                MYFREE(strMaxLines);
+            }
+            SendMessage(GetDlgItem(hDlg, IDC_SPIN_MAXLINES), UDM_SETRANGE32, (WPARAM)5000, (LPARAM)99999);
+//            SendMessage(GetDlgItem(hDlg, IDC_SPIN_MAXLINES), UDM_SETRANGE, (WPARAM)0, (LPARAM)MAKELPARAM(30000, 1000));
             FillComboboxWithLanguagesFromIni(hDlg);
         }
         else if (iIndex == PROP_COMMON_2) {
@@ -731,9 +757,34 @@ BOOL CALLBACK DlgOptionsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
                     fNoFiltersWhenLoading = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_OPT_NOFILTERS), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
                     fShowSIDFilterRules = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_OPT_SIDFILTERS), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
                     fLogEnvironmentStrings = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_OPT_ENVIRONMENT), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                    fLogUNLOrder = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_OPT_UNLORDER), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
                     fDeleteReadOnly = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_OPT_READONLY), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
                     fDeleteDirNotEmpty = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_OPT_NONEMPTY), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
                     GetDlgItemText(hDlg, IDC_COMMON_EDIT_EDITOR, lpszEditor, MAX_PATH);  // length incl. NULL character
+                    LPTSTR  lpszValue = MYALLOC0(8 * sizeof(TCHAR));
+                    if (lpszValue != NULL) {
+                        GetDlgItemText(hDlg, IDC_EDIT_EXPANDLEVELS, lpszValue, 4);
+                        lpszValue[4] = (TCHAR)'\0';
+                        nExpandLevels = _tstoi(lpszValue);
+                    }
+                    if (lpszValue != NULL) {
+                        GetDlgItemText(hDlg, IDC_EDIT_MAXNODES, lpszValue, 5);
+                        lpszValue[5] = (TCHAR)'\0';
+                        nMaxNodes = _tstoi(lpszValue);
+                        if ((0 >= nMaxNodes) || (nMaxNodes > 9999)) {
+                            nMaxNodes = 9999;
+                        }
+                    }
+                    if (lpszValue != NULL) {
+                        GetDlgItemText(hDlg, IDC_EDIT_MAXLINES, lpszValue, 7);
+                        lpszValue[7] = (TCHAR)'\0';
+                        nMaxLines = _tstoi(lpszValue);
+                        if ((0 >= nMaxLines) || (nMaxLines > 99999)) {
+                            nMaxNodes = 99999;
+                        }
+                    }
+                    MYFREE(lpszValue);
+
 
                     WritePrivateProfileString(lpszIniSetup, lpszIniLanguage, lpszLanguage, lpszRegshotIni);
                     

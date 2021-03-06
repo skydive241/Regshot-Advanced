@@ -180,6 +180,7 @@ VOID CompareFiles(LPFILECONTENT lpStartFC1, LPFILECONTENT lpStartFC2)
         if (REFRESHINTERVAL < (nCurrentTime - nLastTime)) {
             lpszUIBuffer = GetWholeFileName(lpFC1, 0, FALSE);
             UI_UpdateCounters(asLangTexts[iszTextDir].lpszText, asLangTexts[iszTextFile].lpszText, CompareResult.stcCompared.cDirs, CompareResult.stcCompared.cFiles, asLangTexts[iszTextDir].lpszText, lpszUIBuffer);
+            MYFREE(lpszUIBuffer);
         }
         if (!bRunning)
             break;
