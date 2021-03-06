@@ -21,10 +21,11 @@ Installation and usage of **Regshot advanced** is fairly easy: just compile (or 
 For more details about its configuration, have a look at the [wiki](https://github.com/skydive241/Regshot-Advanced/wiki). I will update the wiki during the next weeks (I hope...). 
 
 ## Latest news
+* **February, the 28nd 2021**: Some fixes, new release
 * **February, the 22nd 2021**: Initial release
 
 ## Current versions
-The current version v2.0.4.
+The current version v2.0.6.
 
 ## Support this project
 If you like this tool please consider supporting it via the PayPal button:
