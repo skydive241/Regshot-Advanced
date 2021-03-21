@@ -1,4 +1,4 @@
-﻿[$$SETUP$$]
+[$$SETUP$$]
 Extension=.nsi
 NoVals=0
 LogUNLOrder=0

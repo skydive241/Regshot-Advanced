@@ -1777,7 +1777,7 @@ BOOL OutputComparisonResult(VOID)
             OutputFileDescription.lpszComment = TEXT(";");
             cchDataline = GetPrivateProfileString(TEXT("$$SETUP$$"), TEXT("Comment"), TEXT(";"), OutputFileDescription.lpszComment, nSize, lpszMacroFileName);
             OutputFileDescription.lpszExtension = MYALLOC0(20 * sizeof(TCHAR));
-            cchDataline = GetPrivateProfileString(TEXT("$$SETUP$$"), TEXT("Extension"), TEXT(".XXXXX"), OutputFileDescription.lpszExtension, nSize, lpszMacroFileName);
+            cchDataline = GetPrivateProfileString(TEXT("$$SETUP$$"), TEXT("Extension"), TEXT(".XXX"), OutputFileDescription.lpszExtension, nSize, lpszMacroFileName);
 
             OutputFileDescription.lpszFilenameSuffix = (OutputFileDescription.bDeInstaller ? lpszFilenameUninstallerSuffix : lpszFilenameInstallerSuffix);
             iIniValue = GetPrivateProfileInt(TEXT("$$SETUP$$"), TEXT("Logger"), 0, lpszMacroFileName);

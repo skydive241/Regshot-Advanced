@@ -1,4 +1,4 @@
-﻿[$$SETUP$$]
+[$$SETUP$$]
 Extension=.htm
 NoVals=0
 Logger=1

@@ -1,8 +1,8 @@
-﻿[$$SETUP$$]
-Extension=.iss
+[$$SETUP$$]
 UseLongRegHead=0
 LogUNLOrder=0
 OutSeparateObjs=0
+Extension=.iss
 NoVals=0
 LogEnvironmentStrings=0
 
