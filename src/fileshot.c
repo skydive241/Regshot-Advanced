@@ -40,12 +40,12 @@ WIN32_FIND_DATA FindData;
 //-------------------------------------------------------------
 // Get whole file name from FILECONTENT
 //-------------------------------------------------------------
-LPTSTR GetWholeFileName(LPFILECONTENT lpStartFC, size_t cchExtra, BOOL fForOutput)
+LPTSTR GetWholeFileName(LPFILECONTENT lpStartFC, size_t cchExtra, LPOUTPUTFILEDESCRIPTION pOutputFileDescription)
 {
     LPFILECONTENT lpFC;
     LPTSTR lpszName;
     LPTSTR lpszBuffer;
-    DWORD  nBufferSize = 2048;
+    DWORD  nBufferSize = MAX_PATH + 1;
 
     LPTSTR lpszTail = NULL;
     size_t cchName;
@@ -76,10 +76,10 @@ LPTSTR GetWholeFileName(LPFILECONTENT lpStartFC, size_t cchExtra, BOOL fForOutpu
         }
     }
 
-    if (fForOutput && fLogEnvironmentStrings) {
-        lpszBuffer = MYALLOC0((MAX_PATH + 1) * sizeof(TCHAR));             // nBufferSize must > commentlength + 10 .txt 0000
+    if ((pOutputFileDescription != NULL) && pOutputFileDescription->fLogEnvironmentStrings) {
+        lpszBuffer = MYALLOC0(nBufferSize * sizeof(TCHAR));
         if ((lpszBuffer != NULL) && (lpszName != NULL)) {
-            if (PathUnExpandEnvStrings(lpszName, lpszBuffer, nBufferSize)) {
+            if (PathUnExpandEnvStrings(lpszName, lpszBuffer, nBufferSize-1)) {
                 MYFREE(lpszName);
                 return lpszBuffer;
             }
@@ -171,6 +171,7 @@ VOID CompareFiles(LPFILECONTENT lpStartFC1, LPFILECONTENT lpStartFC2)
 {
     LPFILECONTENT lpFC1;
     LPFILECONTENT lpFC2;
+    LPTSTR lpszFullName;
 
     // Compare dirs/files
     for (lpFC1 = lpStartFC1; NULL != lpFC1; lpFC1 = lpFC1->lpBrotherFC) {
@@ -178,12 +179,21 @@ VOID CompareFiles(LPFILECONTENT lpStartFC1, LPFILECONTENT lpStartFC2)
         // Update counters display
         nCurrentTime = GetTickCount64();
         if (REFRESHINTERVAL < (nCurrentTime - nLastTime)) {
-            lpszUIBuffer = GetWholeFileName(lpFC1, 0, FALSE);
+            lpszUIBuffer = GetWholeFileName(lpFC1, 0, NULL);
             UI_UpdateCounters(asLangTexts[iszTextDir].lpszText, asLangTexts[iszTextFile].lpszText, CompareResult.stcCompared.cDirs, CompareResult.stcCompared.cFiles, asLangTexts[iszTextDir].lpszText, lpszUIBuffer);
             MYFREE(lpszUIBuffer);
         }
         if (!bRunning)
             break;
+
+        // TODO: Filter when comparing
+        lpszFullName = GetWholeFileName(lpFC1, 0, NULL);
+//        if (IsInSkipList(lpszFullName, pFileSkipList, (bFileSkipAdded ? TRUE : FALSE))) {
+        if (IsInSkipList(lpszFullName, pFileSkipList, FALSE)) {
+            MYFREE(lpszFullName);
+            continue;
+        }
+        MYFREE(lpszFullName);
 
         if (ISFILE(lpFC1->nFileAttributes)) {
             CompareResult.stcCompared.cFiles++;
@@ -266,6 +276,15 @@ VOID CompareFiles(LPFILECONTENT lpStartFC1, LPFILECONTENT lpStartFC2)
         if (NOMATCH != lpFC2->fFileMatch) {
             continue;
         }
+
+        // TODO: Filter when comparing
+        lpszFullName = GetWholeFileName(lpFC2, 0, NULL);
+//        if (IsInSkipList(lpszFullName, pFileSkipList, (bFileSkipAdded ? TRUE : FALSE))) {
+        if (IsInSkipList(lpszFullName, pFileSkipList, FALSE)) {
+            MYFREE(lpszFullName);
+            continue;
+        }
+        MYFREE(lpszFullName);
 
         // FC2 has no matching FC1, so FC2 is an added dir/file
         if (ISFILE(lpFC2->nFileAttributes)) {
@@ -543,7 +562,7 @@ VOID GetFilesSnap(LPREGSHOT lpShot, LPTSTR lpszFullName, LPFILECONTENT lpFatherF
             }
 
             lpFC->lpszFileName = FindData.cFileName;  // borrow for creating whole name
-            lpszFullName = GetWholeFileName(lpFC, 4, FALSE);  // +4 for "\*.*" search when directory (possible recursive call later in iteration)
+            lpszFullName = GetWholeFileName(lpFC, 4, NULL);  // +4 for "\*.*" search when directory (possible recursive call later in iteration)
             lpFC->lpszFileName = NULL;
             if (IsInSkipList(lpszFullName, pFileSkipList, FALSE)) {
                 MYFREE(lpszFullName);
@@ -586,7 +605,7 @@ VOID GetFilesSnap(LPREGSHOT lpShot, LPTSTR lpszFullName, LPFILECONTENT lpFatherF
         // Pass this entry as father and "lpFirstSubFC" pointer for storing the first child's pointer
         if (ISDIR(lpFC->nFileAttributes)) {
             if (NULL == lpszFullName) {
-                lpszFullName = GetWholeFileName(lpFC, 4, FALSE);  // +4 for "\*.*" search (in recursive call)
+                lpszFullName = GetWholeFileName(lpFC, 4, NULL);  // +4 for "\*.*" search (in recursive call)
             }
             GetFilesSnap(lpShot, lpszFullName, lpFC, &lpFC->lpFirstSubFC);
         }
@@ -885,7 +904,7 @@ VOID LoadFiles(LPREGSHOT lpShot, DWORD ofsFile, LPFILECONTENT lpFatherFC, LPFILE
                 continue;  // ignore this entry and continue with next file
             }
 
-            lpszFullName = GetWholeFileName(lpFC, 0, FALSE);
+            lpszFullName = GetWholeFileName(lpFC, 0, NULL);
             if (IsInSkipList(lpszFullName, pFileSkipList, FALSE)) {
                 MYFREE(lpszFullName);
                 FreeAllFileContents(lpFC);

@@ -167,6 +167,45 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             lpszNSIEditor       = MYALLOC0((MAX_PATH + 1) * sizeof(TCHAR));
             lpgrszLangSection   = NULL;
 
+            // TODO: aufräumen...
+            lpszMacroFileName                   = MYALLOC0(MAX_PATH * sizeof(TCHAR));
+            lpszRegDefaultVal                   = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+            lpszMultiSzStringDivider            = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+            lpszSuppressedKeyPart               = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+            lpszVALADDNormal                    = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+            lpszVALADDShort                     = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+            lpszVALCHANGENormal                 = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+            lpszVALCHANGEShort                  = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+            lpszVALDELETENormal                 = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+            lpszVALDELETEShort                  = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+            lpszKEYADDNormal                    = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+            lpszKEYDELETENormal                 = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+            lpszFILEADDNormal                   = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+            lpszFILECHANGENormal                = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+            lpszFILEDELETENormal                = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+            lpszFILEDELETEDeleteReadOnly        = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+            lpszDIRADDNormal                    = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+            lpszDIRCHANGENormal                 = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+            lpszDIRDELETENormal                 = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+            lpszDIRDELETEDeleteRecurse          = MYALLOC0(_MACROLINESIZE_ * sizeof(TCHAR));
+
+            lpszNameREG_SZ                      = MYALLOC0(_MACROREPLACEMENTS_ * sizeof(TCHAR));
+            lpszNameREG_EXPAND_SZ               = MYALLOC0(_MACROREPLACEMENTS_ * sizeof(TCHAR));
+            lpszNameREG_MULTI_SZ                = MYALLOC0(_MACROREPLACEMENTS_ * sizeof(TCHAR));
+            lpszNameREG_DWORD_LITTLE_ENDIAN     = MYALLOC0(_MACROREPLACEMENTS_ * sizeof(TCHAR));
+            lpszNameREG_DWORD_BIG_ENDIAN        = MYALLOC0(_MACROREPLACEMENTS_ * sizeof(TCHAR));
+            lpszNameREG_QWORD_LITTLE_ENDIAN     = MYALLOC0(_MACROREPLACEMENTS_ * sizeof(TCHAR));
+            lpszNameREG_NONE                    = MYALLOC0(_MACROREPLACEMENTS_ * sizeof(TCHAR));
+            lpszNameREG_BINARY                  = MYALLOC0(_MACROREPLACEMENTS_ * sizeof(TCHAR));
+            lpszPrefixREG_SZ                    = MYALLOC0(_MACROREPLACEMENTS_ * sizeof(TCHAR));
+            lpszPrefixREG_EXPAND_SZ             = MYALLOC0(_MACROREPLACEMENTS_ * sizeof(TCHAR));
+            lpszPrefixREG_MULTI_SZ              = MYALLOC0(_MACROREPLACEMENTS_ * sizeof(TCHAR));
+            lpszPrefixREG_DWORD_LITTLE_ENDIAN   = MYALLOC0(_MACROREPLACEMENTS_ * sizeof(TCHAR));
+            lpszPrefixREG_DWORD_BIG_ENDIAN      = MYALLOC0(_MACROREPLACEMENTS_ * sizeof(TCHAR));
+            lpszPrefixREG_QWORD_LITTLE_ENDIAN   = MYALLOC0(_MACROREPLACEMENTS_ * sizeof(TCHAR));
+            lpszPrefixREG_NONE                  = MYALLOC0(_MACROREPLACEMENTS_ * sizeof(TCHAR));
+            lpszPrefixREG_BINARY                = MYALLOC0(_MACROREPLACEMENTS_ * sizeof(TCHAR));
+
             SendDlgItemMessage(hDlg, IDC_STATIC_BMP, STM_SETIMAGE, (WPARAM)IMAGE_ICON, (LPARAM)ico_green);
 
             ZeroMemory(&Shot1, sizeof(Shot1));
@@ -238,6 +277,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 
             LoadSettingsFromIni(hDlg); // tfx
             EnableWindow(GetDlgItem(hDlg, IDC_CHECK_SUPPRESS_LOGS), (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_RESULT), BM_GETCHECK, (WPARAM)0, (LPARAM)0));
+            EnableWindow(GetDlgItem(hDlg, IDC_CHECK_NOTDELETED), !(BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_ONLYADDED), BM_GETCHECK, (WPARAM)0, (LPARAM)0));
 
 // TODO: Subdirectory TITLE
             nLen = _tcslen(lpszOutputPath);
@@ -704,7 +744,11 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                 case IDC_CHECK_HKCU:
                 case IDC_CHECK_REGDEL:
                 case IDC_CHECK_REGINS:
+                case IDC_CHECK_NOTDELETED:
+                    break;
+
                 case IDC_CHECK_ONLYADDED:
+                    EnableWindow(GetDlgItem(hDlg, IDC_CHECK_NOTDELETED), !(BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_ONLYADDED), BM_GETCHECK, (WPARAM)0, (LPARAM)0));
                     break;
 
                 case IDC_CHECK_SUPPRESS_LOGS:
@@ -728,7 +772,7 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                 case IDCANCEL: {    // Button: Window Close
                     if (bRunning) {
                         bRunning = FALSE;
-                        SendDlgItemMessage(hMainWnd, IDC_TEXTCOUNT4, WM_SETTEXT, (WPARAM)0, (LPARAM)TEXT(""));
+                        SendDlgItemMessage(hMainWnd, IDC_TEXTCOUNT4, WM_SETTEXT, (WPARAM)0, (LPARAM)lpszEmpty);
                         return(TRUE);
                     }
                     if (fStoreOnQuit) {
@@ -847,8 +891,12 @@ BOOL CALLBACK DialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     break;
                 
                 case IDC_CHECK_HTML:
-                    fOutputTXTfile = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_TXT), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                    fOutputHTMfile = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_HTML), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
                     break;
+                
+                //case IDC_CHECK_AU3:
+                //    fOutputAU3file = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_AU3), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                //    break;
             }
     }
     return(FALSE);

@@ -68,6 +68,7 @@ LPTSTR lpszIniOutput                            = TEXT("Output");
 LPTSTR lpszIniFlag                              = TEXT("Flag");
 LPTSTR lpszIniOpenEditor                        = TEXT("OpenEditor");
 LPTSTR lpszIniOutputTXTFile                     = TEXT("TXTFile");
+LPTSTR lpszIniOutputAU3File                     = TEXT("AU3File");
 LPTSTR lpszIniOutputUNLFile                     = TEXT("UNLFile");
 LPTSTR lpszIniOutputBATFile                     = TEXT("BATFile");
 LPTSTR lpszIniOutputHTMFile                     = TEXT("HTMFile");
@@ -91,6 +92,7 @@ LPTSTR lpszIniCheckResult                       = TEXT("CheckResult");
 // Section [UNL]
 LPTSTR lpszIniUNL                               = TEXT("UNL");
 LPTSTR lpszIniOnlyNewEntries                    = TEXT("OnlyNewEntries");
+LPTSTR lpszIniNoDeletedEntries                  = TEXT("NoDeletedEntries");
 LPTSTR lpszIniNoVals                            = TEXT("NoVals");
 
 // Section [ISS]
@@ -147,6 +149,7 @@ SKIPLIST * pDirScanList;
 // Section [Output]
 BOOL  fOpenEditor;
 BOOL  fOutputTXTfile;
+BOOL  fOutputAU3file;
 BOOL  fOutputUNLfile;
 BOOL  fOutputBATfile;
 BOOL  fOutputHTMfile;
@@ -168,6 +171,7 @@ int   nOutMaxResultLines;
 
 // Section [UNL]
 BOOL  fOnlyNewEntries;
+BOOL  fNoDeletedEntries;
 BOOL  fNoVals;  
 
 // Section [ISS]
@@ -323,6 +327,7 @@ BOOL LoadSettingsFromIni(HWND hDlg) // tfx get ini info
     fNSIInstallFile = GetPrivateProfileInt(lpszIniOutput, lpszIniOutputNSIInstallFile, 0, lpszRegshotIni) != 0 ? TRUE : FALSE;
     fNSIDeinstallFile = GetPrivateProfileInt(lpszIniOutput, lpszIniOutputNSIDeinstallFile, 0, lpszRegshotIni) != 0 ? TRUE : FALSE;
     fOutputTXTfile = GetPrivateProfileInt(lpszIniOutput, lpszIniOutputTXTFile, 0, lpszRegshotIni) != 0 ? TRUE : FALSE;
+    fOutputAU3file = GetPrivateProfileInt(lpszIniOutput, lpszIniOutputAU3File, 0, lpszRegshotIni) != 0 ? TRUE : FALSE;
     fOutputUNLfile = GetPrivateProfileInt(lpszIniOutput, lpszIniOutputUNLFile, 0, lpszRegshotIni) != 0 ? TRUE : FALSE;
     SendMessage(GetDlgItem(hDlg, IDC_CHECK_UNL), BM_SETCHECK, fOutputUNLfile, (LPARAM)0);
     fOutputBATfile = GetPrivateProfileInt(lpszIniOutput, lpszIniOutputBATFile, 0, lpszRegshotIni) != 0 ? TRUE : FALSE;
@@ -341,6 +346,8 @@ BOOL LoadSettingsFromIni(HWND hDlg) // tfx get ini info
 // Section [UNL]
     fOnlyNewEntries = (BOOL)GetPrivateProfileInt(lpszIniUNL, lpszIniOnlyNewEntries, 0, lpszRegshotIni);
     SendMessage(GetDlgItem(hDlg, IDC_CHECK_ONLYADDED), BM_SETCHECK, fOnlyNewEntries, (LPARAM)0);
+    fNoDeletedEntries = (BOOL)GetPrivateProfileInt(lpszIniUNL, lpszIniNoDeletedEntries, 0, lpszRegshotIni);
+    SendMessage(GetDlgItem(hDlg, IDC_CHECK_NOTDELETED), BM_SETCHECK, fNoDeletedEntries, (LPARAM)0);
     fNoVals = (BOOL)GetPrivateProfileInt(lpszIniUNL, lpszIniNoVals, 0, lpszRegshotIni);
     SendMessage(GetDlgItem(hDlg, IDC_CHECK_NOVALS), BM_SETCHECK, fNoVals, (LPARAM)0);
 
@@ -538,6 +545,10 @@ BOOL SaveSettingsToIni(HWND hDlg)
     lpszValue[EXTDIRLEN - 1] = (TCHAR)'\0';
     WritePrivateProfileString(lpszIniOutput, lpszIniOutputTXTFile, lpszValue, lpszRegshotIni);
 
+    _sntprintf(lpszValue, EXTDIRLEN, TEXT("%d\0"), fOutputAU3file);
+    lpszValue[EXTDIRLEN - 1] = (TCHAR)'\0';
+    WritePrivateProfileString(lpszIniOutput, lpszIniOutputAU3File, lpszValue, lpszRegshotIni);
+
     fOutputUNLfile = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_UNL), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
     _sntprintf(lpszValue, EXTDIRLEN, TEXT("%d\0"), fOutputUNLfile);
     lpszValue[EXTDIRLEN - 1] = (TCHAR)'\0';
@@ -598,6 +609,11 @@ BOOL SaveSettingsToIni(HWND hDlg)
     _sntprintf(lpszValue, EXTDIRLEN, TEXT("%d\0"), fOnlyNewEntries);
     lpszValue[EXTDIRLEN - 1] = (TCHAR)'\0';
     WritePrivateProfileString(lpszIniUNL, lpszIniOnlyNewEntries, lpszValue, lpszRegshotIni);
+
+    fNoDeletedEntries = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_NOTDELETED), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+    _sntprintf(lpszValue, EXTDIRLEN, TEXT("%d\0"), fNoDeletedEntries);
+    lpszValue[EXTDIRLEN - 1] = (TCHAR)'\0';
+    WritePrivateProfileString(lpszIniUNL, lpszIniNoDeletedEntries, lpszValue, lpszRegshotIni);
 
     fNoVals = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_NOVALS), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
     _sntprintf(lpszValue, EXTDIRLEN, TEXT("%d\0"), fNoVals);
@@ -943,11 +959,13 @@ BOOL ResetOutputOptions(VOID)
     fRegIns = FALSE;
     fREG5 = TRUE;
     fOutputTXTfile = FALSE;
+    fOutputAU3file = FALSE;
     
     fNoVals = TRUE;
     SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_NOVALS), BM_SETCHECK, (WPARAM)(fNoVals), (LPARAM)0);             // Keine Werte protokollieren
     fOnlyNewEntries = TRUE;
     SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_ONLYADDED), BM_SETCHECK, (WPARAM)(fOnlyNewEntries), (LPARAM)0);  // nur neue Objekte protokollieren
+    SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_NOTDELETED), BM_SETCHECK, (WPARAM)(fNoDeletedEntries), (LPARAM)0);  // nur neue Objekte protokollieren
     SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_NOFILTERS), BM_SETCHECK, (WPARAM)FALSE, (LPARAM)0);
     fOpenEditor = TRUE;
     SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_OPENEDITOR), BM_SETCHECK, (WPARAM)fOpenEditor, (LPARAM)0);

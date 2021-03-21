@@ -78,6 +78,9 @@
     <ClCompile Include="src\resultcontrol.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\template.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="src\res\Regshot.exe.manifest">
@@ -90,6 +93,18 @@
     <CopyFileToFolders Include="license_lgpl-2.1.txt" />
     <CopyFileToFolders Include="ReadMe.txt" />
     <CopyFileToFolders Include="regshot.ini" />
+    <CopyFileToFolders Include="Templates\au3.tpl" />
+    <CopyFileToFolders Include="Templates\cmd.tpl" />
+    <CopyFileToFolders Include="Templates\common-deutsch.tpl" />
+    <CopyFileToFolders Include="Templates\common-english.tpl" />
+    <CopyFileToFolders Include="Templates\iss.tpl" />
+    <CopyFileToFolders Include="Templates\nsi.tpl" />
+    <CopyFileToFolders Include="Templates\reg4.tpl" />
+    <CopyFileToFolders Include="Templates\reg5.tpl" />
+    <CopyFileToFolders Include="Templates\txt.tpl" />
+    <CopyFileToFolders Include="Templates\unl.tpl" />
+    <CopyFileToFolders Include="Templates\html.tpl" />
+    <CopyFileToFolders Include="Templates\report.css" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="src\res\Icon_73.ico">

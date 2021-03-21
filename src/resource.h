@@ -108,6 +108,8 @@
 #define IDC_STATIC_BMP                  1078
 #define IDC_CHECK_NOVALS                1079
 #define IDC_CHECK_ENVIRONMENT           1080
+#define IDC_CHECK_ONLYADDED2            1080
+#define IDC_CHECK_NOTDELETED            1080
 #define IDC_PROP_DIRS                   1081
 #define IDC_CHECK_OPT_STOREONQUIT       1081
 #define IDC_PROP_REGS                   1082
@@ -141,6 +143,8 @@
 #define IDC_CHECK_TXT                   1102
 #define IDC_COMMON_EDIT_EDITOR          1103
 #define IDC_EDIT_OUTPUTLINES            1103
+#define IDC_CHECK_TXT2                  1103
+#define IDC_CHECK_AU3                   1103
 #define IDC_COMMON_BROWSEEDITOR         1104
 #define IDC_STATIC_EDITOR               1105
 #define IDC_REGEDIT5                    1106
@@ -181,7 +185,6 @@
 #define IDC_STATIC_TVMAXNODES           1135
 #define IDC_EDIT_MAXLINES               1136
 #define IDC_SPIN_MAXLINES               1137
-#define IDC_STATIC_TVMAXNODES2          1138
 #define IDC_STATIC_TVMAXLINES           1138
 #define ID_FILE                         40007
 #define ID_HELP_ABOUT                   40010

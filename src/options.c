@@ -275,7 +275,7 @@ BOOL CALLBACK DlgSkipProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                     (!pSkipList[count].bFile && (iPropertyPage != PROP_FILES)))
                     pSkipList[count].bDeleted = TRUE;
             }
-            _tcscpy(lpszExtDir, TEXT(""));
+            _tcscpy(lpszExtDir, lpszEmpty);
             for (int i = 0; (iListItems > i); i++) {
                 ListView_GetItemText(hWndListViewSkip, i, 1, Temp, 9);
                 Temp[8] = (TCHAR)'\0';
@@ -453,24 +453,34 @@ BOOL CALLBACK DlgSkipProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                 if (lpszValue == _tcsstr(lpszValue, TEXT("HK"))) {
                     bNewEntry = TRUE;
                     LPTSTR pos = _tcschr(lpszValue, _T('\\'));
-                    _tcscpy(pos++, TEXT("\0"));
+                    if (pos != NULL)
+                        _tcscpy(pos++, TEXT("\0"));
                     if (_tcscmp(lpszValue, TEXT("HKEY_LOCAL_MACHINE")) == 0) {
-                        _tcscpy(lpszValue, TEXT("HKLM\\"));
-                        _tcscat(lpszValue, pos);
+                        _tcscpy(lpszValue, TEXT("HKLM"));
+                        if (pos != NULL) {
+                            _tcscat(lpszValue, TEXT("\\"));
+                            _tcscat(lpszValue, pos);
+                        }
                     }
                     else if (_tcscmp(lpszValue, TEXT("HKEY_USERS")) == 0) {
-                        _tcscpy(lpszValue, TEXT("HKU\\"));
-                        _tcscat(lpszValue, pos);
+                        _tcscpy(lpszValue, TEXT("HKU"));
+                        if (pos != NULL) {
+                            _tcscat(lpszValue, TEXT("\\"));
+                            _tcscat(lpszValue, pos);
+                        }
                     }
                     else if (_tcscmp(lpszValue, TEXT("HKEY_CURRENT_USER")) == 0) {
-                        _tcscpy(lpszValue, TEXT("HKCU\\"));
-                        _tcscat(lpszValue, pos);
+                        _tcscpy(lpszValue, TEXT("HKCU"));
+                        if (pos != NULL) {
+                            _tcscat(lpszValue, TEXT("\\"));
+                            _tcscat(lpszValue, pos);
+                        }
                     }
                     else if ((_tcscmp(lpszValue, TEXT("HKLM")) != 0) &&
                              (_tcscmp(lpszValue, TEXT("HKU")) != 0) &&
                              (_tcscmp(lpszValue, TEXT("HKCU")) != 0)) 
                         bNewEntry = FALSE;
-                    else
+                    else if (pos != NULL)
                         _tcsncpy(--pos, _T("\\"), 1);
                 }
             }
@@ -518,7 +528,7 @@ BOOL CALLBACK DlgSkipProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
             else {
                 MYFREE(lpszValue);
             }
-            SetDlgItemText(hDlg, IDC_EDIT_ADDSKIPSTRING, TEXT(""));
+            SetDlgItemText(hDlg, IDC_EDIT_ADDSKIPSTRING, lpszEmpty);
             return TRUE;
         }
 
@@ -545,7 +555,7 @@ BOOL CALLBACK DlgSkipProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
                 pSkipList = pFileSkipList;
                 lpszIniSection = lpszIniSkipFile;
             }
-            WritePrivateProfileSection(lpszIniSection, TEXT(""), lpszRegshotIni);
+            WritePrivateProfileSection(lpszIniSection, lpszEmpty, lpszRegshotIni);
             for (int i = 0; (NULL != pSkipList[i].lpSkipString); i++) {
                 if ((TRUE != pSkipList[i].bAutomaticallyAdded) && (TRUE != pSkipList[i].bDeleted)) {
                     if ((pSkipList[i].bFile && (iPropertyPage == PROP_FILES)) || 
@@ -650,7 +660,7 @@ BOOL CALLBACK DlgOptionsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
     LPNMHDR     lpnmhdr;
     int iIndex;
     OPENFILENAME opfn;
-    TCHAR filepath[MAX_PATH+1];  // length incl. NULL character
+    TCHAR filepath[MAX_PATH+1];
 
     switch (message) {
     case WM_INITDIALOG: {
@@ -697,7 +707,6 @@ BOOL CALLBACK DlgOptionsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
                 MYFREE(strMaxLines);
             }
             SendMessage(GetDlgItem(hDlg, IDC_SPIN_MAXLINES), UDM_SETRANGE32, (WPARAM)5000, (LPARAM)99999);
-//            SendMessage(GetDlgItem(hDlg, IDC_SPIN_MAXLINES), UDM_SETRANGE, (WPARAM)0, (LPARAM)MAKELPARAM(30000, 1000));
             FillComboboxWithLanguagesFromIni(hDlg);
         }
         else if (iIndex == PROP_COMMON_2) {
@@ -729,6 +738,7 @@ BOOL CALLBACK DlgOptionsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
             SendMessage(GetDlgItem(hDlg, IDC_REGEDIT5), BM_SETCHECK, fREG5, (LPARAM)0);
             
             SendMessage(GetDlgItem(hDlg, IDC_CHECK_TXT), BM_SETCHECK, fOutputTXTfile, (LPARAM)0);
+            SendMessage(GetDlgItem(hDlg, IDC_CHECK_AU3), BM_SETCHECK, fOutputAU3file, (LPARAM)0);
         }
         return TRUE;
     }
@@ -820,6 +830,7 @@ BOOL CALLBACK DlgOptionsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPar
                     fREG5 = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_REGEDIT5), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
 
                     fOutputTXTfile = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_TXT), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                    fOutputAU3file = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_AU3), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
                 }
                 break;
             }

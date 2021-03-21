@@ -568,6 +568,7 @@ extern BOOL      fDontDisplayInfoAfterComparison;
 extern BOOL      bRunning;
 extern BOOL      fNoVals;
 extern BOOL      fOnlyNewEntries;
+extern BOOL      fNoDeletedEntries;
 extern BOOL      fLogEnvironmentStrings;
 extern BOOL      fSuppressLogs;
 extern BOOL      fLogUNLOrder;
@@ -581,6 +582,7 @@ extern UINT      nMaxNodes;
 extern UINT      nMaxLines;
 extern BOOL      fOpenEditor;
 extern BOOL      fOutputTXTfile;
+extern BOOL      fOutputAU3file;
 extern BOOL      fOutputUNLfile;
 extern BOOL      fOutputBATfile;
 extern BOOL      fOutputHTMfile;
@@ -651,7 +653,7 @@ int     UI_Refresh(VOID);
 // ----------------------------------------------------------------------
 // Routines defined in misc.c
 // ----------------------------------------------------------------------
-VOID    WriteBOM(HANDLE hFile);
+VOID    WriteBOM(HANDLE hFile, int CodePage);
 BOOL    WriteFileCP(_In_ HANDLE hFile, _In_ int CodePage, _In_reads_bytes_opt_(nNumberOfBytesToWrite) LPCVOID lpBuffer, _In_ DWORD nNumberOfBytesToWrite, _Out_opt_ LPDWORD lpNumberOfBytesWritten, _Inout_opt_ LPOVERLAPPED lpOverlapped);
 VOID    WriteFileBuffer(HANDLE hFile, long ofsFile, LPCVOID lpData, DWORD cbData);
 VOID    EmptyFileBuffer(HANDLE hFile);
@@ -682,12 +684,91 @@ BOOL    InitTreeViewImageLists(HWND hwndTV);
 BOOL    CheckFilters(LPVOID lpContent, LPTSTR lpszKeyName, LPTSTR* lpszValueName, DWORD nActionType, BOOL* pbKey);
 
 
+#define _MACROLINESIZE_ 2048
+#define _MACROREPLACEMENTS_ 100
+#define _TREEITEMTEXT_ 100
 
-LPTSTR EscapeSpecialCharacters(LPTSTR lpszText, TCHAR c, LPTSTR lpEscape);
-LPTSTR ReplaceISSMacros(LPTSTR lpszText);
+struct _OUTPUTFILEDESCRIPTION {
+    int    iOutputType;
+    BOOL   bDeInstaller;
+    BOOL   bLogger;
+    LPTSTR lpszFormat;
+    LPTSTR lpszComment;
+    LPTSTR lpszScriptFile;
+    LPTSTR lpszOutFile;
+    LPTSTR lpszOutDir;
+    int    nCodePage;
+    BOOL   bBOM;
+    LPTSTR lpszPartCountText;
+    DWORD  nPartCount;
+// Flags
+    LPTSTR lpszFilenameSuffix;
+    LPTSTR lpszExtension;
 
+    BOOL   fOnlyNewEntries;
+    BOOL   fLogUNLOrder;
+    BOOL   fUseLongRegHead;
+    BOOL   fLogEnvironmentStrings;
+    BOOL   fOutSeparateObjs;
+    BOOL   fNoVals;
+    BOOL   fGroupRegKeys;
+
+    BOOL   fFilesystem;
+    BOOL   fRegistry;
+};
+typedef struct _OUTPUTFILEDESCRIPTION OUTPUTFILEDESCRIPTION, FAR* LPOUTPUTFILEDESCRIPTION;
+//OUTPUTFILEDESCRIPTION OutputFileDescription;
+
+LPTSTR lpszMacroFileName;
+LPTSTR lpszSuppressedKeyPart;
+LPTSTR lpszRegDefaultVal;
+LPTSTR lpszMultiSzStringDivider;
+LPTSTR lpszVALADDNormal;
+LPTSTR lpszVALADDShort;
+LPTSTR lpszVALCHANGENormal;
+LPTSTR lpszVALCHANGEShort;
+LPTSTR lpszVALDELETENormal;
+LPTSTR lpszVALDELETEShort;
+LPTSTR lpszKEYADDNormal;
+LPTSTR lpszKEYDELETENormal;
+LPTSTR lpszFILEADDNormal;
+LPTSTR lpszFILECHANGENormal;
+LPTSTR lpszFILEDELETENormal;
+LPTSTR lpszFILEDELETEDeleteReadOnly;
+LPTSTR lpszDIRADDNormal;
+LPTSTR lpszDIRCHANGENormal;
+LPTSTR lpszDIRDELETENormal;
+LPTSTR lpszDIRDELETEDeleteRecurse;
+
+LPTSTR lpszNameREG_SZ;
+LPTSTR lpszNameREG_EXPAND_SZ;
+LPTSTR lpszNameREG_MULTI_SZ;
+LPTSTR lpszNameREG_DWORD_LITTLE_ENDIAN;
+LPTSTR lpszNameREG_DWORD_BIG_ENDIAN;
+LPTSTR lpszNameREG_QWORD_LITTLE_ENDIAN;
+LPTSTR lpszNameREG_NONE;
+LPTSTR lpszNameREG_BINARY;
+LPTSTR lpszPrefixREG_SZ;
+LPTSTR lpszPrefixREG_EXPAND_SZ;
+LPTSTR lpszPrefixREG_MULTI_SZ;
+LPTSTR lpszPrefixREG_DWORD_LITTLE_ENDIAN;
+LPTSTR lpszPrefixREG_DWORD_BIG_ENDIAN;
+LPTSTR lpszPrefixREG_QWORD_LITTLE_ENDIAN;
+LPTSTR lpszPrefixREG_NONE;
+LPTSTR lpszPrefixREG_BINARY;
+
+
+LPTSTR  ReplaceSpecialCharacters(LPTSTR lpszText, BOOL bNames);
+LPTSTR  EscapeSpecialCharacters(LPTSTR lpszText, TCHAR c, LPTSTR lpEscape);
+LPTSTR  ReplaceHeaderMacros(LPTSTR lpszText, LPOUTPUTFILEDESCRIPTION pOutputFileDescription);
+LPTSTR  ReplaceDataMacros(LPTSTR lpszDataLineMacro, LPTSTR lpszText, LPVOID lpContent, BOOL bSuppressKey, LPOUTPUTFILEDESCRIPTION pOutputFileDescription);
+BOOL    ReadOutputMacros(LPOUTPUTFILEDESCRIPTION pOutputFileDescription);
+BOOL    WritePartTemplate(HANDLE hFile, LPTSTR lpszTemplate, LPTSTR lpszTask, LPOUTPUTFILEDESCRIPTION pOutputFileDescription);
+LPTSTR  BuildOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType, BOOL bSuppressKey, LPOUTPUTFILEDESCRIPTION pOutputFileDescription);
+
+VOID    WriteTableHead(HANDLE hFile, LPTSTR lpszText, DWORD nCount, LPOUTPUTFILEDESCRIPTION pOutputFileDescription);
 VOID    CreateNewResult(DWORD nActionType, LPVOID lpContentOld, LPVOID lpContentNew);
-size_t  ResultToString(LPTSTR rgszResultStrings[], size_t iResultStringsMac, size_t iLinesWrittenOldPart, DWORD nActionType, LPVOID lpContent, BOOL fNewContent, BOOL bSuppressKey, int iOutputType);
+size_t  ResultToString(LPTSTR rgszResultStrings[], size_t iResultStringsMac, size_t iLinesWrittenOldPart, DWORD nActionType, LPVOID lpContent, BOOL fNewContent, BOOL bSuppressKey, LPOUTPUTFILEDESCRIPTION pOutputFileDescription);
 
 VOID    Shot(LPREGSHOT lpShot);
 VOID    CompareShots(VOID);
@@ -699,25 +780,10 @@ VOID    FreeShot(LPREGSHOT lpShot);
 VOID    FreeAllHeadFiles(LPHEADFILE lpHF);
 VOID    ClearRegKeyMatchFlags(LPKEYCONTENT lpKC);
 VOID    FileShot(LPREGSHOT lpShot);
-LPTSTR  GetWholeFileName(LPFILECONTENT lpStartFC, size_t cchExtra, BOOL fForOutput);
-VOID    WriteTableHead(HANDLE hFile, LPTSTR lpszText, DWORD nCount, int iOutputType);
-VOID    WritePart(HANDLE hFile, DWORD nActionType, LPCOMPRESULT lpStartCR, int iOutputType);
-VOID    WritePartNew(HANDLE hFile, DWORD nActionType, LPCOMPRESULTNEW lpStartCR, int iOutputType);
-VOID    WriteTitle(HANDLE hFile, LPTSTR lpszTitle, LPTSTR lpszValue, int iOutputType);
-VOID    WriteHTMLBegin(HANDLE hFile);
-VOID    WriteHTMLSectionStart(HANDLE hFile, LPTSTR lpszSection);
-VOID    WriteCommonBegin(HANDLE hFile, LPTSTR lpszDestFileName, LPTSTR lpszComment);
-VOID    WriteUNLINIKeys(HANDLE hFile);
-VOID    WriteISSSetupKeys(HANDLE hFile, BOOL bInstall);
-VOID    WriteISSEnd(HANDLE hFile);
-VOID    WriteNSISetupKeys(HANDLE hFile, BOOL bInstall);
-VOID    WriteNSISectionEnd(HANDLE hFile);
-VOID    WriteHTMLPartStart(HANDLE hFile, LPTSTR lpszPart, int nCount);
-VOID    WriteHTMLPartEnd(HANDLE hFile);
-VOID    WriteHTMLEnd(HANDLE hFile);
-VOID    WriteHTML_CSS(HANDLE hFile);
-VOID    WriteHTML_BR(HANDLE hFile);
-LPTSTR  GetWholeFileName(LPFILECONTENT lpStartFC, size_t cchExtra, BOOL fForOutput);
+LPTSTR  GetWholeFileName(LPFILECONTENT lpStartFC, size_t cchExtra, LPOUTPUTFILEDESCRIPTION pOutputFileDescription);
+VOID    WritePart(HANDLE hFile, DWORD nActionType, LPCOMPRESULT lpStartCR, LPOUTPUTFILEDESCRIPTION pOutputFileDescription);
+VOID    WritePartNew(HANDLE hFile, DWORD nActionType, LPCOMPRESULTNEW lpStartCR, LPOUTPUTFILEDESCRIPTION pOutputFileDescription);
+VOID    WriteHTMLHeader(HANDLE hFile, int CodePage);
 LPTSTR  GetWholeKeyName(LPKEYCONTENT lpVC, BOOL fUseLongNames);
 LPTSTR  GetWholeValueName(LPVALUECONTENT lpVC, BOOL fUseLongNames);
 VOID    ClearHeadFileMatchFlags(LPHEADFILE lpHF);
@@ -733,12 +799,6 @@ VOID    DoPropertySheet(HWND hwndOwner, int iSelectedPage);
 BOOL CALLBACK DlgOptionsProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 BOOL CALLBACK DlgSkipRegProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 
-LPTSTR BuildBATOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType);
-LPTSTR BuildUNLOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType);
-LPTSTR BuildISSOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType, BOOL bDeInstall);
-LPTSTR BuildNSIOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType, BOOL bDeInstall);
-LPTSTR BuildREGOutputString(LPTSTR lpszText, LPVOID lpContent, int nActionType, BOOL bSuppressKey, BOOL bDeInstall);
-
 #define REGSHOT_BUFFER_BLOCK_BYTES 1024
 
 enum eOutputFiles
@@ -751,10 +811,9 @@ enum eOutputFiles
     OUT_REG_INSTALL,
     OUT_ISS_DEINSTALL,
     OUT_ISS_INSTALL,
-    OUT_INF_INSTALL,
-    OUT_INF_DEINSTALL,
     OUT_NSI_DEINSTALL,
     OUT_NSI_INSTALL,
+    OUT_AU3,
     // ATTENTION: add new output types before this line, the last line is used to determine the count
     OUTPUTTYPES
 };
@@ -868,6 +927,7 @@ enum eLangTexts {
     iszTextButtonClear1,
     iszTextButtonClear2,
     iszTextButtonScans,
+    iszTextCheckNoDeletedEntries,
     // ATTENTION: add new language strings before this line, the last line is used to determine the count
     cLangStrings
 };
@@ -898,9 +958,9 @@ extern LPTSTR lpszCommentCommon;
 extern LPTSTR lpszCommentBAT;
 extern HICON ico_green, ico_red;
 
-#ifndef _UNICODE
+//#ifndef _UNICODE
 extern LPTSTR lpszEmpty;
-#endif
+//#endif
 
 VOID SaveHeadFiles(HANDLE hFile, LPREGSHOT lpShot, LPHEADFILE lpHF, DWORD nFPCaller);
 VOID LoadHeadFiles(LPREGSHOT lpShot, DWORD ofsHeadFile, LPHEADFILE *lplpCaller);

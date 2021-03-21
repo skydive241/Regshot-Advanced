@@ -220,6 +220,9 @@ VOID SetTextsToDefaultLanguage(VOID)
     asLangTexts[iszTextCheckOnlyAddedParts].lpszText    = TEXT("Log only added parts");
     asLangTexts[iszTextCheckOnlyAddedParts].nIDDialog   = DLG_MAIN;
     asLangTexts[iszTextCheckOnlyAddedParts].nIDDlgItem  = IDC_CHECK_ONLYADDED;
+    asLangTexts[iszTextCheckNoDeletedEntries].lpszText    = TEXT("Don't log deleted parts");
+    asLangTexts[iszTextCheckNoDeletedEntries].nIDDialog   = DLG_MAIN;
+    asLangTexts[iszTextCheckNoDeletedEntries].nIDDlgItem  = IDC_CHECK_NOTDELETED;
     asLangTexts[iszTextCheckNoFilters].lpszText         = TEXT("(*) Next comparison w/o filter");
     asLangTexts[iszTextCheckNoFilters].nIDDialog        = DLG_MAIN;
     asLangTexts[iszTextCheckNoFilters].nIDDlgItem       = IDC_CHECK_NOFILTERS;

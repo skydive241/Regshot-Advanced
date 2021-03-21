@@ -143,7 +143,7 @@ VOID UI_UpdateCounters(LPTSTR lpszTitle1, LPTSTR lpszTitle2, DWORD nCount1, DWOR
     }
     else {
 //        _sntprintf(lpszMessage, REGSHOT_MESSAGE_LENGTH, TEXT("%s %s\0"), lpszTitle3, TEXT("-"));
-        _sntprintf(lpszMessage, REGSHOT_MESSAGE_LENGTH, TEXT("%s\0"), TEXT(""));
+        _sntprintf(lpszMessage, REGSHOT_MESSAGE_LENGTH, TEXT("%s\0"), lpszEmpty);
         lpszMessage[REGSHOT_MESSAGE_LENGTH - 1] = (TCHAR)'\0';  // safety NULL char
     }
     SendDlgItemMessage(hMainWnd, IDC_TEXTCOUNT4, WM_SETTEXT, (WPARAM)0, (LPARAM)lpszMessage);

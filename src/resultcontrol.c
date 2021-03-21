@@ -112,6 +112,9 @@ BOOL CALLBACK DlgSkipTVProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
                 case IDC_CHECK_TXT:
                     fOutputTXTfile = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_TXT), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
                     break;
+                //case IDC_CHECK_AU3:
+                //    fOutputAU3file = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_AU3), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
+                //    break;
                 case IDC_CHECK_ISSINS:
                     fISSInstallFile = (BOOL)SendMessage(GetDlgItem(hDlg, IDC_CHECK_ISSINS), BM_GETCHECK, (WPARAM)0, (LPARAM)0);
                     break;
@@ -150,6 +153,7 @@ BOOL CALLBACK DlgSkipTVProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
 //            SendMessage(GetDlgItem(hDlg, IDC_CHECK_BAT), BM_SETCHECK, (WPARAM)(SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_BAT), BM_GETCHECK, (WPARAM)0, (LPARAM)0)), (LPARAM)0);    // CMD output
             SendMessage(GetDlgItem(hDlg, IDC_CHECK_BAT), BM_SETCHECK, fOutputBATfile, (LPARAM)0);
             SendMessage(GetDlgItem(hDlg, IDC_CHECK_TXT), BM_SETCHECK, fOutputTXTfile, (LPARAM)0);
+//            SendMessage(GetDlgItem(hDlg, IDC_CHECK_AU3), BM_SETCHECK, fOutputAU3file, (LPARAM)0);
 //            SendMessage(GetDlgItem(hDlg, IDC_CHECK_UNL), BM_SETCHECK, (WPARAM)(SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_UNL), BM_GETCHECK, (WPARAM)0, (LPARAM)0)), (LPARAM)0);    // UNL output
             SendMessage(GetDlgItem(hDlg, IDC_CHECK_UNL), BM_SETCHECK, fOutputUNLfile, (LPARAM)0);
 
@@ -190,6 +194,7 @@ BOOL CALLBACK DlgSkipTVProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lPara
                     SendMessage(GetDlgItem(hDlg, IDC_CHECK_REGINS), BM_SETCHECK, fRegIns, (LPARAM)0);
                     SendMessage(GetDlgItem(hDlg, IDC_CHECK_REGDEL), BM_SETCHECK, fRegDel, (LPARAM)0);
                     SendMessage(GetDlgItem(hDlg, IDC_CHECK_TXT), BM_SETCHECK, fOutputTXTfile, (LPARAM)0);
+//                    SendMessage(GetDlgItem(hDlg, IDC_CHECK_AU3), BM_SETCHECK, fOutputAU3file, (LPARAM)0);
                     SendMessage(GetDlgItem(hDlg, IDC_CHECK_BAT), BM_SETCHECK, fOutputBATfile, (LPARAM)0);
                     SendMessage(GetDlgItem(hDlg, IDC_CHECK_UNL), BM_SETCHECK, fOutputUNLfile, (LPARAM)0);
                     //SendMessage(GetDlgItem(hDlg, IDC_CHECK_UNL), BM_SETCHECK, (WPARAM)(SendMessage(GetDlgItem(hMainWnd, IDC_CHECK_UNL), BM_GETCHECK, (WPARAM)0, (LPARAM)0)), (LPARAM)0);    // UNL output
@@ -373,7 +378,8 @@ BOOL BuildSkipString(HWND hwndTV, HTREEITEM hItem, int iPropertyPage)
         }
     }
     
-    _tcscpy(pSkipList[iSkipCounter].lpSkipString, TEXT(""));
+    if (pSkipList[iSkipCounter].lpSkipString != NULL)
+        _tcscpy(pSkipList[iSkipCounter].lpSkipString, lpszEmpty);
     for (int i = iStringCounter; i >= 0; i--) {
         if (pSkipList != NULL) {
             if ((pSkipList[iSkipCounter].lpSkipString != NULL) && (lpszNodeTextTV != NULL) && (lpszNodeTextTV[i] != NULL)) {
@@ -475,7 +481,7 @@ HTREEITEM FindOrCreateTreeItem(HWND hwndTV, HTREEITEM hParent, HTREEITEM hItem, 
 {
     TVITEM pitem;
     TV_INSERTSTRUCT tvinsert;
-    LPTSTR lpszNodeTextTV = MYALLOC0((MAX_PATH + 1) * sizeof(TCHAR));
+    LPTSTR lpszNodeTextTV = MYALLOC0((_TREEITEMTEXT_ + 1) * sizeof(TCHAR));
     int iSelectedImage = 0;
 
     while (TRUE) {
@@ -536,12 +542,6 @@ BOOL InitTreeViewItems(HWND hwndTV, int iPropertyPage)
     BOOL bKey = TRUE;
     
     LPCOMPRESULTNEW lpCRRelevantPart = (iPropertyPage == 0 ? CompareResult.stCRHeads.lpCRRegistryLast : CompareResult.stCRHeads.lpCRFilesystemLast);
-    //if (iPropertyPage == 0) {
-    //    lpCRRelevantPart = CompareResult.stCRHeads.lpCRRegistryLast;
-    //}
-    //else {
-    //    lpCRRelevantPart = CompareResult.stCRHeads.lpCRFilesystemLast;
-    //}
 
     InsertRootItems(hwndTV, iPropertyPage);
     
@@ -550,6 +550,10 @@ BOOL InitTreeViewItems(HWND hwndTV, int iPropertyPage)
         if (fOnlyNewEntries && 
             (DIRADD != lpCR->nActionType) && (FILEADD != lpCR->nActionType) &&
             (VALADD != lpCR->nActionType) && (KEYADD != lpCR->nActionType))
+            continue;
+        if (fNoDeletedEntries &&
+            (DIRDEL == lpCR->nActionType) || (FILEDEL == lpCR->nActionType) ||
+            (VALDEL == lpCR->nActionType) || (KEYDEL == lpCR->nActionType))
             continue;
 
         if ((NULL != lpCR->lpContentOld) && (NULL == lpCR->lpContentNew)) {
@@ -743,7 +747,7 @@ BOOL CheckFilters(LPVOID lpContent, LPTSTR lpszKeyName, LPTSTR * lpszValueName, 
             *pbKey = TRUE;
         else
             *pbKey = FALSE;
-        lpszFullName = GetWholeFileName(lpContent, 0, FALSE);
+        lpszFullName = GetWholeFileName(lpContent, 0, NULL);
         if ((lpszKeyName != NULL) && (lpszFullName != NULL))
             _tcscpy(lpszKeyName, lpszFullName);
         if (IsInSkipList(lpszFullName, pFileSkipList, (bFileSkipAdded ? TRUE : FALSE))) {

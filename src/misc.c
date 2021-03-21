@@ -24,15 +24,15 @@
 // ----------------------------------------------------------------------
 // Write BOM, especially for ISS output files
 // ----------------------------------------------------------------------
-VOID WriteBOM(HANDLE hFile)
+VOID WriteBOM(HANDLE hFile, int CodePage)
 {
 //    FF FE 57
     unsigned char bUTF8[] = { 0xef, 0xbb, 0xbf };
     unsigned char bUTF16[] = { 0xff, 0xfe };
-    if (nCodePage == CP_UTF8) {
+    if (CodePage == CP_UTF8) {
         WriteFile(hFile, &bUTF8, sizeof(bUTF8), &NBW, NULL);
     }
-    else if (nCodePage == -1) {
+    else if (CodePage == -1) {
         WriteFile(hFile, &bUTF16, sizeof(bUTF16), &NBW, NULL);
     }
 
@@ -67,16 +67,18 @@ BOOL WriteFileCP(
 // CodePage = CP_UTF8;
     if (lpBuffer != NULL) {
 #ifdef _UNICODE
+        //nSize = WideCharToMultiByte(CP_UTF8, 0, (LPCWSTR)lpBuffer, nNumberOfBytesToWrite, NULL, 0, NULL, NULL);
+        //nSize = WideCharToMultiByte(CP_UTF8, 0, (LPCWSTR)lpBuffer, -1, lpTransformedBuffer, nSize, NULL, NULL);
         nSize = WideCharToMultiByte((UINT)CodePage, 0, (LPCWSTR)lpBuffer, -1, lpTransformedBuffer, nTransformedBufferSize, NULL, NULL);
 #else
         nSize = MultiByteToWideChar(CodePage, MB_PRECOMPOSED, (LPCCH)lpBuffer, -1, lpTransformedBuffer, nTransformedBufferSize);
 #endif
     }
+    if (nSize < 1)
+        nSize = 1;
     BOOL bReturn = WriteFile(hFile, lpTransformedBuffer, nSize - 1, lpNumberOfBytesWritten, lpOverlapped);
 
     MYFREE(lpTransformedBuffer);
-//    HeapFree(hHeap, 0, lpTransformedBuffer);
-
 
     return bReturn;
 }
